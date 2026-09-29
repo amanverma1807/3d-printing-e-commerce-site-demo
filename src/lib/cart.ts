@@ -1,0 +1,157 @@
+import { supabase } from './supabase';
+
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  slug: string;
+  color?: string;
+}
+
+const CART_KEY = 'cart';
+
+/**
+ * Safely reads the cart array from localStorage.
+ */
+export function getLocalCart(): CartItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Saves the cart array to localStorage and notifies listeners.
+ */
+export function saveLocalCart(cart: CartItem[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  dispatchCartUpdated();
+}
+
+/**
+ * Dispatches custom event for same-window sync.
+ */
+export function dispatchCartUpdated(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('cart:updated'));
+}
+
+/**
+ * Updates the navbar cart count badge if present in the DOM.
+ */
+export function updateNavbarCartBadge(): void {
+  if (typeof window === 'undefined') return;
+  const cart = getLocalCart();
+  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCountEl = document.getElementById('cart-count');
+  if (cartCountEl) {
+    cartCountEl.textContent = String(count);
+    if (count > 0) {
+      cartCountEl.classList.remove('hidden');
+    } else {
+      cartCountEl.classList.add('hidden');
+    }
+  }
+}
+
+/**
+ * Validates local cart items against the authoritative Supabase catalog.
+ * - Removes products that no longer exist or have is_active = false.
+ * - Synchronizes current DB price, name, slug, and image.
+ * - Preserves item quantities and selected colors.
+ * - Handles network/Supabase errors gracefully without wiping the user's cart.
+ */
+export async function validateAndUpdateCart(): Promise<{
+  cart: CartItem[];
+  removedItems: CartItem[];
+  hasChanges: boolean;
+}> {
+  const currentCart = getLocalCart();
+  if (currentCart.length === 0) {
+    return { cart: [], removedItems: [], hasChanges: false };
+  }
+
+  const ids = Array.from(new Set(currentCart.map((item) => item.id).filter(Boolean)));
+
+  if (ids.length === 0) {
+    saveLocalCart([]);
+    return { cart: [], removedItems: currentCart, hasChanges: true };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, slug, price, images, is_active, in_stock')
+      .in('id', ids);
+
+    // If Supabase returns an error (network drop, downtime), do NOT wipe local items
+    if (error) {
+      console.warn('Cart validation network error, preserving local cart:', error.message);
+      return { cart: currentCart, removedItems: [], hasChanges: false };
+    }
+
+    // Build map of active products from database
+    const activeProductMap = new Map<string, any>();
+    if (Array.isArray(data)) {
+      for (const p of data) {
+        if (p.is_active) {
+          activeProductMap.set(p.id, p);
+        }
+      }
+    }
+
+    const updatedCart: CartItem[] = [];
+    const removedItems: CartItem[] = [];
+    let hasChanges = false;
+
+    for (const item of currentCart) {
+      const dbProd = activeProductMap.get(item.id);
+      if (!dbProd) {
+        // Product was deleted from database OR is inactive (is_active = false)
+        removedItems.push(item);
+        hasChanges = true;
+      } else {
+        const freshPrice = Number(dbProd.price);
+        const freshName = dbProd.name;
+        const freshSlug = dbProd.slug;
+        const freshImage =
+          Array.isArray(dbProd.images) && dbProd.images.length > 0
+            ? dbProd.images[0]
+            : item.image;
+
+        if (
+          item.price !== freshPrice ||
+          item.name !== freshName ||
+          item.slug !== freshSlug ||
+          item.image !== freshImage
+        ) {
+          hasChanges = true;
+        }
+
+        updatedCart.push({
+          ...item,
+          name: freshName,
+          price: freshPrice,
+          slug: freshSlug,
+          image: freshImage,
+          // Preserves user quantity and selected color
+        });
+      }
+    }
+
+    if (hasChanges) {
+      saveLocalCart(updatedCart);
+      updateNavbarCartBadge();
+    }
+
+    return { cart: updatedCart, removedItems, hasChanges };
+  } catch (err) {
+    console.warn('Exception during cart validation, preserving local cart:', err);
+    return { cart: currentCart, removedItems: [], hasChanges: false };
+  }
+}

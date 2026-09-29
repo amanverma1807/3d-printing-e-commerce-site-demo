@@ -1,0 +1,145 @@
+---
+import type { Product } from '../types';
+import { formatPrice } from '../config/site';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const discount = product.originalPrice
+  ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  : 0;
+---
+
+<article class="group relative flex flex-col h-full bg-surface-bright border border-border rounded-lg overflow-hidden transition-all duration-300 hover:border-stone-400 hover:shadow-product" data-category={product.category} data-price={product.price} data-created={product.createdAt || ''}>
+  <!-- Image -->
+  <a href={`/product/${product.slug}`} class="relative aspect-square overflow-hidden bg-stone-100/50 p-6 flex items-center justify-center border-b border-border/60">
+    <img
+      src={product.images[0]}
+      alt={product.name}
+      class="w-full h-full object-contain transition-transform duration-500 ease-out-expo group-hover:scale-105"
+      loading="lazy"
+    />
+
+    {product.badge && (
+      <span class="absolute top-3 left-3 px-2.5 py-0.5 text-[11px] font-medium tracking-wide bg-stone-900/90 text-white rounded-full shadow-xs backdrop-blur-xs">
+        {product.badge}
+      </span>
+    )}
+
+    {discount > 0 && (
+      <span class="absolute top-3 right-3 px-2 py-0.5 text-[11px] font-semibold tracking-tight bg-red-600/90 text-white rounded-full shadow-xs backdrop-blur-xs">
+        -{discount}%
+      </span>
+    )}
+
+    {!product.inStock && (
+      <div class="absolute inset-0 bg-stone-900/40 backdrop-blur-[2px] flex items-center justify-center">
+        <span class="px-3 py-1 bg-white text-stone-900 text-xs font-medium rounded-full shadow-subtle">
+          Out of Stock
+        </span>
+      </div>
+    )}
+  </a>
+
+  <!-- Content -->
+  <div class="flex-1 flex flex-col p-4 sm:p-5">
+    <!-- Category -->
+    <p class="text-[11px] font-medium text-stone-500 uppercase tracking-wider mb-1">
+      {product.category}
+    </p>
+
+    <!-- Name -->
+    <h3 class="text-sm sm:text-base font-semibold text-stone-900 mb-1.5 tracking-tight group-hover:text-stone-700 transition-colors line-clamp-1">
+      <a href={`/product/${product.slug}`}>
+        {product.name}
+      </a>
+    </h3>
+
+    <!-- Description -->
+    <p class="text-xs sm:text-sm text-stone-600 mb-4 line-clamp-2 leading-relaxed flex-1 font-light">
+      {product.shortDescription}
+    </p>
+
+    <!-- Price and CTA -->
+    <div class="flex items-center justify-between gap-3 mt-auto pt-2 border-t border-border/40">
+      <div class="flex items-baseline gap-2">
+        <span class="text-base sm:text-lg font-semibold text-stone-900 tabular-nums tracking-tight">
+          {formatPrice(product.price)}
+        </span>
+        {product.originalPrice && (
+          <span class="text-xs sm:text-sm text-stone-400 line-through tabular-nums">
+            {formatPrice(product.originalPrice)}
+          </span>
+        )}
+      </div>
+
+      {product.inStock && (
+        <button
+          class="add-to-cart-btn inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-medium bg-stone-900 text-white rounded-md hover:bg-stone-800 active:scale-[0.97] transition-all shadow-xs cursor-pointer select-none"
+          data-product-id={product.id}
+          data-product-name={product.name}
+          data-product-price={product.price}
+          data-product-image={product.images[0]}
+          data-product-slug={product.slug}
+          aria-label={`Add ${product.name} to cart`}
+        >
+          Add to Cart
+        </button>
+      )}
+    </div>
+  </div>
+</article>
+
+<script>
+  import { getLocalCart, saveLocalCart, updateNavbarCartBadge } from '../lib/cart';
+
+  function addToCart(product: { id: string; name: string; price: number; image: string; slug: string }, quantity: number = 1) {
+    const cart = getLocalCart();
+    const existingIndex = cart.findIndex((item) => item.id === product.id);
+    
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += quantity;
+    } else {
+      cart.push({ ...product, quantity });
+    }
+    
+    saveLocalCart(cart);
+  }
+
+  // Initialize cart badge on page load
+  updateNavbarCartBadge();
+
+  // Event delegation for add to cart buttons (handles multiple ProductCard instances)
+  document.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest('.add-to-cart-btn');
+    if (target) {
+      const productId = target.dataset.productId;
+      const productName = target.dataset.productName;
+      const productPrice = parseFloat(target.dataset.productPrice || '0');
+      const productImage = target.dataset.productImage || '';
+      const productSlug = target.dataset.productSlug || '';
+
+      if (productId && productName && !isNaN(productPrice)) {
+        addToCart({
+          id: productId,
+          name: productName,
+          price: productPrice,
+          image: productImage,
+          slug: productSlug
+        }, 1);
+
+        // Visual feedback
+        const originalText = target.textContent;
+        target.textContent = '✓';
+        target.classList.add('bg-success', 'text-white');
+
+        setTimeout(() => {
+          target.textContent = originalText;
+          target.classList.remove('bg-success', 'text-white');
+        }, 800);
+      }
+    }
+  });
+</script>

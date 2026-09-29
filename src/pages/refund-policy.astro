@@ -1,0 +1,225 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PolicyNav from '../components/PolicyNav.astro';
+import Button from '../components/Button.astro';
+import { siteConfig, getWhatsAppLink } from '../config/site';
+
+const lastUpdated = "September 2024";
+---
+
+<Layout
+  title={`Refund Policy — ${siteConfig.brand.name}`}
+  description="Our refund, replacement, and cancellation guidelines for orders and custom requests."
+>
+  <main class="py-12 md:py-20 bg-surface">
+    <div class="container-page max-w-4xl">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs text-text-tertiary">
+          <li><a href="/" class="hover:text-brand-600 transition-colors">Home</a></li>
+          <li>/</li>
+          <li class="text-text-primary font-medium">Refund Policy</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Transparent Transactions & Fair Resolution
+        </span>
+        <h1 class="text-4xl md:text-5xl font-bold text-text-primary tracking-tight mb-4">
+          Refund Policy
+        </h1>
+        <p class="text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          We want you to feel confident shopping with {siteConfig.brand.name}. Here is an honest, straightforward guide on how refunds and order cancellations are handled.
+        </p>
+        <p class="text-xs text-text-tertiary mt-3">
+          Last revised: {lastUpdated} • Applicable to all purchases on {siteConfig.brand.name}
+        </p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <PolicyNav active="refund" />
+
+      <!-- Highlight stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div class="p-5 rounded-2xl bg-surface-bright border border-border text-center">
+          <div class="text-2xl font-bold text-brand-600 mb-1">5–7 Days</div>
+          <div class="text-xs text-text-secondary">Refund Processing Window</div>
+        </div>
+        <div class="p-5 rounded-2xl bg-surface-bright border border-border text-center">
+          <div class="text-2xl font-bold text-brand-600 mb-1">100% Support</div>
+          <div class="text-xs text-text-secondary">Free replacement for damaged items</div>
+        </div>
+        <div class="p-5 rounded-2xl bg-surface-bright border border-border text-center">
+          <div class="text-2xl font-bold text-brand-600 mb-1">Direct to Source</div>
+          <div class="text-xs text-text-secondary">UPI, Cards, NetBanking</div>
+        </div>
+      </div>
+
+      <!-- Main Policy Sections -->
+      <div class="space-y-8">
+        <!-- Section 1: When Refunds Are Granted -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">1</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Refund Eligibility Scenarios</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            You are entitled to a full refund under the following verified conditions:
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-muted text-sm text-text-secondary">
+              <span class="text-green-600 font-bold">✓</span>
+              <div>
+                <strong class="text-text-primary block">Severe Transit Damage / Total Breakage</strong>
+                If your item arrives cracked, shattered, or damaged and you prefer a refund over an expedited free replacement.
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-muted text-sm text-text-secondary">
+              <span class="text-green-600 font-bold">✓</span>
+              <div>
+                <strong class="text-text-primary block">Major Manufacturing Flaws</strong>
+                Severe manufacturing defects, missing structural components, or deviations not attributable to normal usage.
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-muted text-sm text-text-secondary">
+              <span class="text-green-600 font-bold">✓</span>
+              <div>
+                <strong class="text-text-primary block">Lost Shipments</strong>
+                Packages confirmed lost in transit by our courier partner after the standard delivery window.
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-muted text-sm text-text-secondary">
+              <span class="text-green-600 font-bold">✓</span>
+              <div>
+                <strong class="text-text-primary block">Incorrect Item Received</strong>
+                If our team shipped a different variant, color, or model than what was specified on your order receipt.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Non-Refundable Items -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">2</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Non-Refundable Situations</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            Due to the custom nature of personalized or made-to-order items, refunds are <strong>not issued</strong> in the following cases:
+          </p>
+          <ul class="space-y-3 text-sm md:text-base text-text-secondary list-disc pl-5">
+            <li>
+              <strong>Natural Material & Production Variations:</strong> Made-to-order items inherently display subtle surface variations, grain differences, or minor contact characteristics. These are natural manufacturing traits and not defective workmanship.
+            </li>
+            <li>
+              <strong>Custom Personalized Orders:</strong> Customized designs, personalized engravings, nameplates, or bespoke items once production has commenced.
+            </li>
+            <li>
+              <strong>Customer-Supplied Specification Errors:</strong> Custom orders produced according to specifications or files provided directly by the customer that contain errors or inadequate dimensions.
+            </li>
+            <li>
+              <strong>Improper Care & Misuse:</strong> Damage caused by improper care, exposure to extreme heat, water damage (unless waterproof), or rough handling.
+            </li>
+            <li>
+              <strong>Delivery Failures Due to Buyer:</strong> Packages returned to origin due to incorrect shipping addresses, unanswered courier calls, or repeated refusal to accept delivery.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Section 3: Order Cancellations -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">3</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Order Cancellation Windows</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            Orders can be cancelled under the following timeline:
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="p-5 rounded-xl bg-surface-muted border border-border">
+              <h3 class="font-semibold text-text-primary text-sm mb-1">Within 2 Hours / Before Processing</h3>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                100% full refund with zero cancellation charges. Reach out immediately to support.
+              </p>
+              <span class="inline-block text-[11px] font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">100% Refund</span>
+            </div>
+            <div class="p-5 rounded-xl bg-surface-muted border border-border">
+              <h3 class="font-semibold text-text-primary text-sm mb-1">After Custom Production Commences</h3>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                Materials have been allocated and dedicated preparation has begun. Custom orders cannot be cancelled once active.
+              </p>
+              <span class="inline-block text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Non-Cancellable</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Refund Processing & Timelines -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">4</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Refund Method & Processing Timeline</h2>
+          </div>
+          <div class="space-y-4 text-sm md:text-base text-text-secondary leading-relaxed">
+            <p>
+              Once your refund request is authorized by our team, the credit is initiated back to your original payment method:
+            </p>
+            <div class="grid sm:grid-cols-3 gap-3 my-2 text-xs">
+              <div class="p-3 rounded-lg bg-surface-muted border border-border text-center">
+                <span class="font-bold text-text-primary block mb-1">UPI Payments</span>
+                <span class="text-text-secondary">Reflected within 24 to 48 hours</span>
+              </div>
+              <div class="p-3 rounded-lg bg-surface-muted border border-border text-center">
+                <span class="font-bold text-text-primary block mb-1">Credit / Debit Cards</span>
+                <span class="text-text-secondary">3 to 7 working bank business days</span>
+              </div>
+              <div class="p-3 rounded-lg bg-surface-muted border border-border text-center">
+                <span class="font-bold text-text-primary block mb-1">Net Banking</span>
+                <span class="text-text-secondary">4 to 7 working bank business days</span>
+              </div>
+            </div>
+            <p class="text-xs text-text-tertiary">
+              *Note: Bank holidays and weekends are not counted as working business days by banking clearinghouses.
+            </p>
+          </div>
+        </section>
+
+        <!-- Section 5: Late or Missing Refunds -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">5</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Late or Missing Refunds</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-3">
+            If you haven't received your refund after 7 business days from our confirmation notice:
+          </p>
+          <ol class="list-decimal pl-5 space-y-2 text-sm text-text-secondary">
+            <li>Re-check your bank account statement or UPI app transaction history.</li>
+            <li>Contact your credit card issuer or bank; there is often processing lag before the refund is officially posted.</li>
+            <li>If you have done this and still have not received your funds, please contact our support desk at <a href={`mailto:${siteConfig.contact.email}`} class="text-brand-600 underline font-medium">{siteConfig.contact.email}</a> with your reference number.</li>
+          </ol>
+        </section>
+      </div>
+
+      <!-- Assistance Footer -->
+      <div class="mt-12 p-8 rounded-3xl bg-surface-bright border border-border text-center">
+        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-2">Have a question about an ongoing refund?</h2>
+        <p class="text-text-secondary text-sm mb-6 max-w-lg mx-auto">
+          Message our billing and support team with your order number for an immediate status update.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <Button href={getWhatsAppLink("Hello! I am inquiring about the status of my refund.")} variant="primary">
+            Inquire on WhatsApp
+          </Button>
+          <Button href="/contact" variant="outline">
+            Contact Form
+          </Button>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

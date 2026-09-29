@@ -1,0 +1,33 @@
+---
+interface Props {
+  active: 'return' | 'refund' | 'privacy' | 'disclaimer';
+}
+
+const { active } = Astro.props;
+
+const links = [
+  { id: 'return', label: 'Return Policy', href: '/return-policy' },
+  { id: 'refund', label: 'Refund Policy', href: '/refund-policy' },
+  { id: 'privacy', label: 'Privacy Policy', href: '/privacy-policy' },
+  { id: 'disclaimer', label: 'Disclaimer & Guidelines', href: '/disclaimer' },
+];
+---
+
+<nav aria-label="Policy navigation" class="flex flex-wrap items-center gap-2 p-1.5 bg-surface-muted rounded-2xl border border-border max-w-fit mx-auto mb-10 shadow-xs">
+  {links.map((link) => {
+    const isActive = link.id === active;
+    return (
+      <a
+        href={link.href}
+        class:list={[
+          'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200',
+          isActive
+            ? 'bg-surface-bright text-brand-700 shadow-sm font-semibold'
+            : 'text-text-secondary hover:text-text-primary hover:bg-surface-bright/50'
+        ]}
+      >
+        {link.label}
+      </a>
+    );
+  })}
+</nav>

@@ -1,0 +1,92 @@
+---
+import { siteConfig, getWhatsAppLink } from '../config/site';
+---
+
+<footer class="bg-surface-subtle border-t border-border mt-auto">
+  <div class="container-page py-16 sm:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-border">
+      <!-- Brand & Mission Column -->
+      <div class="lg:col-span-4">
+        <a href="/" class="group inline-flex items-center gap-2.5 text-xl font-semibold tracking-tight text-stone-900 mb-4">
+          <img src="/favicon.svg" alt={`${siteConfig.brand.name} logo`} width="26" height="26" class="w-6.5 h-6.5 rounded-md object-contain shrink-0" />
+          <span>{siteConfig.brand.name}</span>
+        </a>
+        <p class="text-sm text-stone-600 leading-relaxed max-w-sm mb-6 font-light">
+          Quality craftsmanship delivered directly to your door. Curated collections, thoughtful design, and reliable service.
+        </p>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-stone-200/60 border border-border text-xs text-stone-700 font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Quality Assured · Fast Delivery</span>
+        </div>
+      </div>
+
+      <!-- Shop Links -->
+      <div class="lg:col-span-2 lg:col-start-6">
+        <h3 class="text-xs font-mono uppercase tracking-widest font-semibold text-stone-900 mb-5">Shop Catalog</h3>
+        <ul class="space-y-3" role="list">
+          <li><a href="/shop" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">All Products</a></li>
+          <li><a href="/shop#featured" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Featured Items</a></li>
+          <li><a href="/shop#new" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">New Releases</a></li>
+          <li><a href="/shop?category=home-living" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Home & Living</a></li>
+          <li><a href="/shop?category=office" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Office</a></li>
+          <li><a href="/track-order" class="text-sm font-medium text-brand-700 hover:text-brand-900 transition-colors">Track My Order →</a></li>
+        </ul>
+      </div>
+
+      <!-- Company Links -->
+      <div class="lg:col-span-2">
+        <h3 class="text-xs font-mono uppercase tracking-widest font-semibold text-stone-900 mb-5">Company</h3>
+        <ul class="space-y-3" role="list">
+          <li><a href="/about" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">About Us</a></li>
+          <li><a href="/custom" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Custom Orders</a></li>
+          <li><a href="/contact" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Contact Us</a></li>
+          <li><a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">WhatsApp: {siteConfig.contact.whatsappDisplay}</a></li>
+          <li><a href={`mailto:${siteConfig.contact.email}`} class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">{siteConfig.contact.email}</a></li>
+        </ul>
+      </div>
+
+      <!-- Policies & Assurance -->
+      <div class="lg:col-span-3">
+        <h3 class="text-xs font-mono uppercase tracking-widest font-semibold text-stone-900 mb-5">Policies & Care</h3>
+        <ul class="space-y-3" role="list">
+          <li><a href="/return-policy" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Return Policy</a></li>
+          <li><a href="/refund-policy" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Refund & Replacement</a></li>
+          <li><a href="/privacy-policy" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Privacy Policy</a></li>
+          <li><a href="/disclaimer" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Disclaimer & Guidelines</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom sub-bar -->
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-xs text-stone-500 font-light">
+        <p>© {new Date().getFullYear()} {siteConfig.brand.name}. All rights reserved.</p>
+        <div class="flex items-center gap-3">
+          <a href="/privacy-policy" class="hover:text-stone-800 transition-colors">Privacy</a>
+          <span>·</span>
+          <a href="/refund-policy" class="hover:text-stone-800 transition-colors">Refunds</a>
+          <span>·</span>
+          <a href="/return-policy" class="hover:text-stone-800 transition-colors">Returns</a>
+        </div>
+      </div>
+
+      <!-- Social links -->
+      <div class="flex items-center gap-5">
+        <a
+          href={siteConfig.social.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors text-xs font-mono"
+          aria-label="Instagram"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+          </svg>
+          <span>{siteConfig.social.instagramHandle}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

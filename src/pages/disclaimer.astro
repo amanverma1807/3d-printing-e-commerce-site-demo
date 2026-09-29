@@ -1,0 +1,202 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PolicyNav from '../components/PolicyNav.astro';
+import Button from '../components/Button.astro';
+import { siteConfig, getWhatsAppLink } from '../config/site';
+
+const lastUpdated = "September 2024";
+---
+
+<Layout
+  title={`Disclaimer & Guidelines — ${siteConfig.brand.name}`}
+  description="Important disclosures regarding product usage, care instructions, tolerances, and custom orders."
+>
+  <main class="py-12 md:py-20 bg-surface">
+    <div class="container-page max-w-4xl">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs text-text-tertiary">
+          <li><a href="/" class="hover:text-brand-600 transition-colors">Home</a></li>
+          <li>/</li>
+          <li class="text-text-primary font-medium">Disclaimer</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          Product Disclosures & Usage Notice
+        </span>
+        <h1 class="text-4xl md:text-5xl font-bold text-text-primary tracking-tight mb-4">
+          Disclaimer & Guidelines
+        </h1>
+        <p class="text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          Please read these product guidelines before ordering. Understanding our materials and production processes ensures you get the most out of your purchase.
+        </p>
+        <p class="text-xs text-text-tertiary mt-3">
+          Last revised: {lastUpdated} • Applies to all items sold by {siteConfig.brand.name}
+        </p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <PolicyNav active="disclaimer" />
+
+      <!-- Important Notice Box -->
+      <div class="mb-10 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-text-primary">
+        <h2 class="text-base font-semibold text-text-primary mb-1">Craftsmanship & Production Notice</h2>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          Our products are crafted with attention to detail and high manufacturing standards. Due to the nature of individualized and small-batch production, items may exhibit unique textures and slight natural variations that reflect their bespoke character.
+        </p>
+      </div>
+
+      <!-- Main Sections -->
+      <div class="space-y-8">
+        <!-- Section 1: Surface Finish & Appearance -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">1</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Surface Finish & Appearance</h2>
+          </div>
+          <div class="space-y-3 text-sm md:text-base text-text-secondary leading-relaxed">
+            <p>
+              • <strong>Natural Variations:</strong> Subtle textural variations or grain lines are inherent to custom crafted and assembled objects and are not considered manufacturing defects.
+            </p>
+            <p>
+              • <strong>Color Nuance:</strong> Slight differences in sheen or shade may occur between different production batches, material supplies, or lighting conditions.
+            </p>
+            <p>
+              • <strong>Hand Finishing:</strong> Items that undergo manual assembly or finishing may possess minor distinctive touchpoints that highlight their individual character.
+            </p>
+          </div>
+        </section>
+
+        <!-- Section 2: Care & Environmental Guidelines -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">2</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Care & Environmental Guidelines</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            Please observe the following care instructions to ensure optimal product longevity:
+          </p>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-text-primary text-sm">Standard Materials</span>
+                <span class="text-[11px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Indoor Use</span>
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                Designed primarily for indoor domestic and office environments.
+              </p>
+              <div class="text-[11px] text-amber-800 bg-amber-500/10 p-2 rounded">
+                ⚠️ Avoid prolonged direct exposure to extreme heat, open flames, or direct scorching sunlight.
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-text-primary text-sm">Durable Composites</span>
+                <span class="text-[11px] font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded">Resilient</span>
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                Built for everyday handling with higher mechanical resilience.
+              </p>
+              <div class="text-[11px] text-text-secondary bg-surface-bright p-2 rounded">
+                ✓ Wipe clean with a soft, slightly damp cloth. Avoid harsh abrasive cleaners.
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-text-primary text-sm">Delicate Collectibles</span>
+                <span class="text-[11px] font-semibold text-brand-700 bg-brand-100 px-2 py-0.5 rounded">Handle with Care</span>
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                Fine details and delicate appendages require gentle handling.
+              </p>
+              <div class="text-[11px] text-text-secondary bg-surface-bright p-2 rounded">
+                ⚠️ Display on stable, vibration-free surfaces; avoid drops onto hard floors.
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-text-primary text-sm">Food & Liquid Safety</span>
+                <span class="text-[11px] font-semibold text-red-700 bg-red-100 px-2 py-0.5 rounded">Decorative</span>
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed mb-2">
+                Unless explicitly certified as food-grade, products are designed for decorative use.
+              </p>
+              <div class="text-[11px] text-red-800 bg-red-500/10 p-2 rounded">
+                🚫 Not dishwasher safe. Do not use for direct food contact or hot beverages.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Intended Use & Structural Limitations -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">3</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Intended Use & Limitations</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-3">
+            Unless explicitly designated and certified for specific load-bearing or industrial utility:
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-text-secondary">
+            <li>Products sold on {siteConfig.brand.name} are intended for decorative, display, ambient lighting, and light domestic or workspace utility.</li>
+            <li>Our products are not certified for critical load-bearing, mountaineering, aeronautical, automotive, or medical life-support applications.</li>
+            <li>{siteConfig.brand.name} shall not be held liable for damages resulting from improper stress, excessive loads, or unauthorized modifications.</li>
+          </ul>
+        </section>
+
+        <!-- Section 4: Child Safety Warning -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">4</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Child Safety & Choking Hazard</h2>
+          </div>
+          <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-900 text-sm leading-relaxed">
+            <strong class="block mb-1 text-red-950">⚠️ Choking Hazard — Small Parts:</strong>
+            Certain decorative items, models, or accessories contain small elements that may detach under force. These items are <strong>not toys</strong> and are not recommended for unsupervised children under 3 years of age.
+          </div>
+        </section>
+
+        <!-- Section 5: Customer-Provided Content & Copyright -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">5</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Customer-Provided Designs & Copyright</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-3">
+            When ordering custom or personalized items:
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-text-secondary">
+            <li>The customer certifies that they hold the necessary rights, licenses, or permissions for any logos, graphics, texts, or files supplied for production.</li>
+            <li>{siteConfig.brand.name} acts purely as a fabrication service and assumes no liability for intellectual property or trademark infringements arising from customer-provided assets.</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Contact / Support Card -->
+      <div class="mt-12 p-8 rounded-3xl bg-surface-bright border border-border text-center">
+        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-2">Have questions about product specifications?</h2>
+        <p class="text-text-secondary text-sm mb-6 max-w-lg mx-auto">
+          Need guidance on material choices or custom requirements? Our support team is here to assist.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <Button href={getWhatsAppLink("Hi! I have a question regarding product specifications.")} variant="primary">
+            Ask Us on WhatsApp
+          </Button>
+          <Button href="/custom" variant="outline">
+            Custom Orders
+          </Button>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

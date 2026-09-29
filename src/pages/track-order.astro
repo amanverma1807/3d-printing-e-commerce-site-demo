@@ -1,0 +1,570 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import { siteConfig, getWhatsAppLink } from '../config/site';
+---
+
+<Layout title={`Track & Find My Order — ${siteConfig.brand.name}`} description="Lookup live fulfillment status, tracking numbers, and manage your order.">
+  <section class="py-12 md:py-20 bg-surface-subtle min-h-[80vh]">
+    <div class="container-page max-w-2xl">
+
+      <!-- Page Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200/70 border border-stone-300 text-xs font-mono text-stone-700 mb-3">
+          <svg class="w-3.5 h-3.5 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span>Order Dispatch & Tracking</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight mb-2">Track Your Order</h1>
+        <p class="text-sm sm:text-base text-stone-600 max-w-md mx-auto leading-relaxed">
+          Enter your Order Number and the phone number used at checkout to check live fulfillment, courier dispatch, and delivery status.
+        </p>
+      </div>
+
+      <!-- Lookup Form Card -->
+      <div class="bg-surface-bright rounded-2xl p-6 sm:p-8 border border-border shadow-xs mb-8">
+        <form id="track-form" class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label for="input-order-id" class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
+                Order Number / ID <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="input-order-id"
+                required
+                placeholder="e.g. ORD-2026-01017"
+                class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-900 font-mono"
+              />
+              <span class="text-[11px] text-stone-500 mt-1 block">From your confirmation screen or SMS</span>
+            </div>
+
+            <div>
+              <label for="input-phone" class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
+                Phone Number <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="tel"
+                id="input-phone"
+                required
+                placeholder="e.g. 9876543210"
+                class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-900 font-mono"
+              />
+              <span class="text-[11px] text-stone-500 mt-1 block">10-digit number used at checkout</span>
+            </div>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <button
+              type="button"
+              id="autofill-recent-btn"
+              class="hidden text-xs text-brand-700 hover:text-brand-900 font-medium transition-colors"
+            >
+              Fill recent order from this device
+            </button>
+
+            <button
+              type="submit"
+              id="submit-lookup-btn"
+              class="w-full sm:w-auto sm:ml-auto px-6 py-2.5 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-xl transition-all shadow-xs text-sm cursor-pointer inline-flex items-center justify-center gap-2"
+            >
+              <span id="lookup-btn-text">Find Order</span>
+              <svg id="lookup-btn-spinner" class="animate-spin w-4 h-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- Error Notification Banner -->
+        <div id="lookup-error-banner" class="hidden mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-3">
+          <svg class="w-5 h-5 shrink-0 text-red-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div id="lookup-error-message">Order not found. Please verify your order number and 10-digit phone number.</div>
+        </div>
+      </div>
+
+      <!-- Result Card (Hidden until successful lookup) -->
+      <div id="order-result-card" class="hidden bg-surface-bright rounded-2xl p-6 sm:p-8 border border-border shadow-subtle space-y-6 animate-scale-in">
+        <!-- Top Reference Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-border/80">
+          <div>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-stone-500 font-semibold block mb-0.5">Order Reference</span>
+            <span id="result-order-number" class="text-2xl font-bold font-mono text-stone-900">--</span>
+            <div id="result-order-date" class="text-xs text-stone-500 mt-0.5">Placed on --</div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Payment Badge -->
+            <div id="result-badge-payment" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-800 border border-stone-200">
+              <span class="text-[10px] uppercase font-bold text-stone-600">Payment:</span>
+              <span id="result-badge-payment-text">PENDING</span>
+            </div>
+            <!-- Fulfillment Badge -->
+            <div id="result-badge-fulfillment" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+              <span class="text-[10px] uppercase font-bold text-amber-600">Fulfillment:</span>
+              <span id="result-badge-fulfillment-text">PENDING</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipment Tracking Banner (Shown ONLY when status is shipped/delivered and tracking number is available) -->
+        <div id="result-tracking-section" class="hidden p-4 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-stone-900 text-white flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+              </div>
+              <div>
+                <div class="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-semibold">Courier Dispatch Tracking</div>
+                <div class="text-sm font-bold text-stone-900">
+                  Tracking / AWB: <span id="result-tracking-val" class="font-mono text-brand-700 tracking-wide select-all">--</span>
+                </div>
+              </div>
+            </div>
+            <button
+              id="result-copy-awb-btn"
+              type="button"
+              class="text-xs font-medium px-3 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-lg transition-colors border border-stone-300 cursor-pointer inline-flex items-center gap-1.5"
+            >
+              <svg class="w-3.5 h-3.5 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+              </svg>
+              <span id="result-copy-awb-text">Copy AWB</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Customer & Destination Details -->
+        <div class="p-4 rounded-xl bg-surface border border-border-subtle text-xs text-stone-600 flex flex-wrap justify-between items-center gap-2">
+          <div>
+            <span class="text-stone-500 block text-[11px] font-mono uppercase tracking-wider">Delivering To</span>
+            <span id="result-customer-name" class="font-semibold text-stone-900 text-sm">--</span>
+          </div>
+          <div class="text-right sm:text-left">
+            <span class="text-stone-500 block text-[11px] font-mono uppercase tracking-wider">Destination</span>
+            <span id="result-destination" class="font-medium text-stone-800">--</span>
+          </div>
+        </div>
+
+        <!-- Items Summary List -->
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-stone-500 font-semibold mb-3">Items in this Order</div>
+          <div id="result-items-container" class="space-y-3 divide-y divide-border/60">
+            <!-- Dynamically injected item rows -->
+          </div>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="pt-4 border-t border-border/80 space-y-2 text-xs sm:text-sm text-stone-600">
+          <div class="flex justify-between items-center">
+            <span>Subtotal</span>
+            <span id="result-subtotal" class="font-medium text-stone-900 font-mono tabular-nums">₹0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-1.5">
+              <span>Shipping Fee</span>
+              <span class="text-[10px] font-mono text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">Flat rate</span>
+            </div>
+            <span id="result-shipping" class="font-medium text-stone-900 font-mono tabular-nums">₹110</span>
+          </div>
+          <div class="pt-3 border-t border-border flex justify-between items-center text-base font-bold text-stone-900">
+            <span>Total Payable</span>
+            <span id="result-total" class="font-mono text-xl text-stone-900">₹0</span>
+          </div>
+        </div>
+
+        <!-- Customer Cancellation Section (Shown ONLY when eligible: pending fulfillment & pending payment) -->
+        <div id="cancel-order-section" class="hidden pt-4 border-t border-border">
+          <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-stone-900">Need to cancel this order?</h4>
+              <p class="text-xs text-stone-600 mt-0.5">
+                You can cancel this order while it is still pending preparation in our workshop.
+              </p>
+            </div>
+            <button
+              type="button"
+              id="trigger-cancel-modal-btn"
+              class="px-4 py-2 bg-white hover:bg-red-50 text-red-600 border border-red-200 hover:border-red-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0"
+            >
+              Cancel Order
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions / Support Footer -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 border-t border-border/80">
+          <a
+            id="result-whatsapp-btn"
+            href={getWhatsAppLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1.5 transition-colors"
+          >
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            <span>Have questions? WhatsApp Support</span>
+          </a>
+          <a href="/shop" class="text-stone-700 hover:text-stone-900 font-medium">Continue Shopping →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Confirmation Modal for Customer Cancellation -->
+  <div id="cancel-confirm-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-surface-bright rounded-2xl max-w-sm w-full p-6 border border-border shadow-2xl text-center space-y-4 animate-scale-in">
+      <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-stone-900">Cancel this order?</h3>
+        <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+          Are you sure you want to cancel this order? This action cannot be undone.
+        </p>
+      </div>
+
+      <div id="cancel-modal-error" class="hidden text-xs text-red-600 font-medium"></div>
+
+      <div class="flex gap-3 justify-center pt-2">
+        <button
+          type="button"
+          id="dismiss-cancel-modal-btn"
+          class="flex-1 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+        >
+          Keep Order
+        </button>
+        <button
+          type="button"
+          id="confirm-cancel-btn"
+          class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5"
+        >
+          <span id="confirm-cancel-btn-text">Yes, Cancel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+  import { getWhatsAppLink } from '../config/site';
+
+  // Form Elements
+  const trackForm = document.getElementById('track-form') as HTMLFormElement;
+  const inputOrderId = document.getElementById('input-order-id') as HTMLInputElement;
+  const inputPhone = document.getElementById('input-phone') as HTMLInputElement;
+  const submitLookupBtn = document.getElementById('submit-lookup-btn') as HTMLButtonElement;
+  const lookupBtnText = document.getElementById('lookup-btn-text');
+  const lookupBtnSpinner = document.getElementById('lookup-btn-spinner');
+  const autofillRecentBtn = document.getElementById('autofill-recent-btn');
+  const lookupErrorBanner = document.getElementById('lookup-error-banner');
+  const lookupErrorMessage = document.getElementById('lookup-error-message');
+
+  // Result Elements
+  const orderResultCard = document.getElementById('order-result-card');
+  const resultOrderNumber = document.getElementById('result-order-number');
+  const resultOrderDate = document.getElementById('result-order-date');
+  const resultBadgePayment = document.getElementById('result-badge-payment');
+  const resultBadgePaymentText = document.getElementById('result-badge-payment-text');
+  const resultBadgeFulfillment = document.getElementById('result-badge-fulfillment');
+  const resultBadgeFulfillmentText = document.getElementById('result-badge-fulfillment-text');
+
+  const resultTrackingSection = document.getElementById('result-tracking-section');
+  const resultTrackingVal = document.getElementById('result-tracking-val');
+  const resultCopyAwbBtn = document.getElementById('result-copy-awb-btn');
+  const resultCopyAwbText = document.getElementById('result-copy-awb-text');
+
+  const resultCustomerName = document.getElementById('result-customer-name');
+  const resultDestination = document.getElementById('result-destination');
+  const resultItemsContainer = document.getElementById('result-items-container');
+  const resultSubtotal = document.getElementById('result-subtotal');
+  const resultShipping = document.getElementById('result-shipping');
+  const resultTotal = document.getElementById('result-total');
+  const resultWhatsAppBtn = document.getElementById('result-whatsapp-btn') as HTMLAnchorElement | null;
+
+  // Cancellation Elements
+  const cancelOrderSection = document.getElementById('cancel-order-section');
+  const triggerCancelModalBtn = document.getElementById('trigger-cancel-modal-btn');
+  const cancelConfirmModal = document.getElementById('cancel-confirm-modal');
+  const dismissCancelModalBtn = document.getElementById('dismiss-cancel-modal-btn');
+  const confirmCancelBtn = document.getElementById('confirm-cancel-btn') as HTMLButtonElement;
+  const confirmCancelBtnText = document.getElementById('confirm-cancel-btn-text');
+  const cancelModalError = document.getElementById('cancel-modal-error');
+
+  let currentLoadedOrder: any = null;
+
+  // Pre-fill from localStorage if available
+  const lastOrderStr = localStorage.getItem('lastOrder');
+  if (lastOrderStr && autofillRecentBtn) {
+    try {
+      const localOrder = JSON.parse(lastOrderStr);
+      if (localOrder?.phone) {
+        autofillRecentBtn.classList.remove('hidden');
+        autofillRecentBtn.addEventListener('click', () => {
+          if (localOrder.orderNumber) inputOrderId.value = localOrder.orderNumber;
+          else if (localOrder.orderUuid) inputOrderId.value = localOrder.orderUuid;
+          if (localOrder.phone) inputPhone.value = localOrder.phone;
+          performLookup();
+        });
+      }
+    } catch (e) {
+      console.warn('Failed parsing lastOrder snapshot:', e);
+    }
+  }
+
+  // Pre-fill from URL query parameters (e.g. from Order Confirmation link)
+  const urlParams = new URLSearchParams(window.location.search);
+  const qOrder = urlParams.get('order') || urlParams.get('order_id');
+  const qPhone = urlParams.get('phone');
+  if (qOrder && qPhone) {
+    inputOrderId.value = qOrder;
+    inputPhone.value = qPhone;
+    performLookup();
+  }
+
+  async function performLookup() {
+    const rawOrder = inputOrderId.value.trim();
+    const rawPhone = inputPhone.value.trim();
+
+    if (!rawOrder || !rawPhone) {
+      showError('Please provide both an Order Number and Phone Number.');
+      return;
+    }
+
+    // Set Loading UI
+    hideError();
+    if (submitLookupBtn) submitLookupBtn.disabled = true;
+    lookupBtnText?.classList.add('hidden');
+    lookupBtnSpinner?.classList.remove('hidden');
+
+    try {
+      const { data: order, error } = await supabase.rpc('get_guest_order', {
+        p_order_id: rawOrder,
+        p_phone: rawPhone,
+      });
+
+      if (error || !order || !order.id) {
+        showError('No matching order was found. Please check that your Order Number and 10-digit Phone Number match your checkout details.');
+        orderResultCard?.classList.add('hidden');
+        currentLoadedOrder = null;
+        return;
+      }
+
+      currentLoadedOrder = order;
+      renderOrder(order);
+    } catch (err: any) {
+      console.error('Track order lookup error:', err);
+      showError('Network error while looking up order. Please check your internet connection or try again.');
+    } finally {
+      if (submitLookupBtn) submitLookupBtn.disabled = false;
+      lookupBtnText?.classList.remove('hidden');
+      lookupBtnSpinner?.classList.add('hidden');
+    }
+  }
+
+  function renderOrder(order: any) {
+    if (!orderResultCard) return;
+
+    if (resultOrderNumber) resultOrderNumber.textContent = `#${order.order_number}`;
+    if (resultOrderDate && order.created_at) {
+      resultOrderDate.textContent = 'Placed on ' + new Date(order.created_at).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+
+    if (resultCustomerName) resultCustomerName.textContent = order.customer_name || 'Customer';
+    if (resultDestination) {
+      resultDestination.textContent = `${order.shipping_city || ''}, ${order.shipping_state || ''}`;
+    }
+
+    // 1. Payment Status Badge
+    if (resultBadgePayment && resultBadgePaymentText) {
+      if (order.payment_method === 'cod') {
+        resultBadgePayment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-800 border border-stone-300';
+        resultBadgePaymentText.textContent = 'PENDING (COD)';
+      } else if (order.payment_status === 'paid') {
+        resultBadgePayment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        resultBadgePaymentText.textContent = 'PAID (Razorpay)';
+      } else {
+        resultBadgePayment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+        resultBadgePaymentText.textContent = (order.payment_status || 'PENDING').toUpperCase();
+      }
+    }
+
+    // 2. Fulfillment Status Badge
+    const fulfillmentStatus = (order.status || 'pending').toLowerCase();
+    if (resultBadgeFulfillment && resultBadgeFulfillmentText) {
+      resultBadgeFulfillmentText.textContent = fulfillmentStatus.toUpperCase();
+
+      if (fulfillmentStatus === 'pending') {
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+      } else if (fulfillmentStatus === 'confirmed' || fulfillmentStatus === 'processing') {
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200';
+      } else if (fulfillmentStatus === 'shipped' || fulfillmentStatus === 'delivered') {
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+      } else if (fulfillmentStatus === 'cancelled') {
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200';
+      } else {
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200';
+      }
+    }
+
+    // 3. Tracking Banner (Conditional: ONLY when shipped/delivered AND tracking number exists)
+    const hasTracking = order.tracking_number && typeof order.tracking_number === 'string' && order.tracking_number.trim() !== '';
+    if ((fulfillmentStatus === 'shipped' || fulfillmentStatus === 'delivered') && hasTracking) {
+      resultTrackingSection?.classList.remove('hidden');
+      if (resultTrackingVal) resultTrackingVal.textContent = order.tracking_number.trim();
+    } else {
+      resultTrackingSection?.classList.add('hidden');
+    }
+
+    // 4. Items rendering
+    if (resultItemsContainer && Array.isArray(order.items)) {
+      resultItemsContainer.innerHTML = order.items.map((item: any) => `
+        <div class="flex items-center justify-between text-sm pt-2.5 first:pt-0">
+          <div class="flex items-center gap-3">
+            ${item.product_image ? `<img src="${item.product_image}" alt="${item.product_name}" class="w-11 h-11 rounded-lg object-contain bg-stone-100/60 p-1 border border-border shrink-0" />` : ''}
+            <div>
+              <span class="font-medium text-stone-900 block leading-tight">${item.product_name}</span>
+              <span class="text-xs text-stone-500">Qty: ${item.quantity}${item.selected_color ? ` · Color: ${item.selected_color}` : ''}</span>
+            </div>
+          </div>
+          <span class="font-semibold font-mono text-stone-900">₹${Number(item.total_price).toLocaleString('en-IN')}</span>
+        </div>
+      `).join('');
+    }
+
+    // 5. Financial Summary
+    if (resultSubtotal) resultSubtotal.textContent = `₹${Number(order.subtotal || 0).toLocaleString('en-IN')}`;
+    if (resultShipping) resultShipping.textContent = `₹${Number(order.shipping_fee || 110).toLocaleString('en-IN')}`;
+    if (resultTotal) resultTotal.textContent = `₹${Number(order.total || 0).toLocaleString('en-IN')}`;
+
+    // 6. Cancellation Eligibility
+    // Allowed ONLY when status is 'pending' AND payment_status is 'pending' (unfulfilled COD or uncompleted payment attempt)
+    // Never allow cancelling paid Razorpay orders or orders that have reached confirmed/processing/shipped/delivered/cancelled.
+    const isEligibleForCancel = fulfillmentStatus === 'pending' && order.payment_status === 'pending';
+    if (cancelOrderSection) {
+      if (isEligibleForCancel) {
+        cancelOrderSection.classList.remove('hidden');
+      } else {
+        cancelOrderSection.classList.add('hidden');
+      }
+    }
+
+    // 7. WhatsApp Support button link
+    if (resultWhatsAppBtn) {
+      const msg = hasTracking
+        ? `Hi! Checking in on order #${order.order_number} (AWB: ${order.tracking_number.trim()}).`
+        : `Hi! Inquiring about order #${order.order_number}.`;
+      resultWhatsAppBtn.href = getWhatsAppLink(msg);
+    }
+
+    orderResultCard.classList.remove('hidden');
+    orderResultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function showError(msg: string) {
+    if (lookupErrorBanner && lookupErrorMessage) {
+      lookupErrorMessage.textContent = msg;
+      lookupErrorBanner.classList.remove('hidden');
+    }
+  }
+
+  function hideError() {
+    lookupErrorBanner?.classList.add('hidden');
+  }
+
+  // Copy AWB
+  resultCopyAwbBtn?.addEventListener('click', () => {
+    const awb = resultTrackingVal?.textContent?.trim();
+    if (awb && awb !== '--') {
+      navigator.clipboard.writeText(awb).then(() => {
+        if (resultCopyAwbText) resultCopyAwbText.textContent = 'Copied!';
+        setTimeout(() => {
+          if (resultCopyAwbText) resultCopyAwbText.textContent = 'Copy AWB';
+        }, 2000);
+      }).catch(() => {});
+    }
+  });
+
+  // Modal open & close
+  triggerCancelModalBtn?.addEventListener('click', () => {
+    cancelConfirmModal?.classList.remove('hidden');
+    cancelConfirmModal?.classList.add('flex');
+    if (cancelModalError) cancelModalError.classList.add('hidden');
+  });
+
+  dismissCancelModalBtn?.addEventListener('click', () => {
+    cancelConfirmModal?.classList.add('hidden');
+    cancelConfirmModal?.classList.remove('flex');
+  });
+
+  // Confirm Cancellation Handler
+  confirmCancelBtn?.addEventListener('click', async () => {
+    if (!currentLoadedOrder) return;
+
+    confirmCancelBtn.disabled = true;
+    if (confirmCancelBtnText) confirmCancelBtnText.textContent = 'Cancelling...';
+
+    try {
+      const { data, error } = await supabase.rpc('cancel_guest_order', {
+        p_order_id: currentLoadedOrder.order_number || currentLoadedOrder.id,
+        p_phone: inputPhone.value.trim(),
+      });
+
+      if (error || !data || !data.success) {
+        throw new Error(data?.error || error?.message || 'Cancellation failed.');
+      }
+
+      // Close modal
+      cancelConfirmModal?.classList.add('hidden');
+      cancelConfirmModal?.classList.remove('flex');
+
+      // Update in-memory and UI state
+      currentLoadedOrder.status = 'cancelled';
+      currentLoadedOrder.payment_status = 'failed';
+
+      // Update badges
+      if (resultBadgeFulfillment && resultBadgeFulfillmentText) {
+        resultBadgeFulfillmentText.textContent = 'CANCELLED';
+        resultBadgeFulfillment.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200';
+      }
+
+      // Hide cancellation section
+      cancelOrderSection?.classList.add('hidden');
+
+      // Show temporary notice
+      showError('Order #' + currentLoadedOrder.order_number + ' has been cancelled successfully.');
+      if (lookupErrorBanner) {
+        lookupErrorBanner.className = 'mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-3';
+      }
+    } catch (err: any) {
+      console.error('Cancellation error:', err);
+      if (cancelModalError) {
+        cancelModalError.textContent = err.message || 'Unable to cancel order.';
+        cancelModalError.classList.remove('hidden');
+      }
+    } finally {
+      confirmCancelBtn.disabled = false;
+      if (confirmCancelBtnText) confirmCancelBtnText.textContent = 'Yes, Cancel';
+    }
+  });
+
+  trackForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    performLookup();
+  });
+</script>

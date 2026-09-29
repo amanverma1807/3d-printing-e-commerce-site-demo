@@ -1,0 +1,230 @@
+---
+import { siteConfig } from '../config/site';
+
+const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/';
+---
+
+<header
+  id="main-header"
+  data-is-home={isHome ? 'true' : 'false'}
+  class:list={[
+    'header-bar transition-all duration-300 z-[100]',
+    isHome
+      ? 'fixed top-0 inset-x-0 is-top text-white bg-black/30 backdrop-blur-md border-b border-white/10'
+      : 'sticky top-0 bg-surface-bright/90 backdrop-blur-xl border-b border-border text-text-primary',
+  ]}
+>
+  <nav class="container-page flex items-center justify-between h-16 md:h-18" aria-label="Main navigation">
+    <!-- Wordmark -->
+    <a href="/" class="nav-brand group flex items-center gap-2.5 text-lg md:text-xl font-semibold tracking-tight transition-colors duration-300">
+      <img
+        src="/favicon.svg"
+        alt={`${siteConfig.brand.name} logo`}
+        width="28"
+        height="28"
+        class="brand-logo w-7 h-7 rounded-md object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+      />
+      <span class="tracking-tight">{siteConfig.brand.name}</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden md:flex items-center gap-8" role="list">
+      {siteConfig.nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              'nav-link relative text-sm font-medium transition-colors duration-300 py-1 tracking-tight',
+              currentPath === item.href ? 'nav-link-active' : 'nav-link-inactive',
+            ]}
+          >
+            {item.label}
+            <span class:list={[
+              'nav-indicator absolute -bottom-1 left-0 h-0.5 transition-all duration-300',
+              currentPath === item.href ? 'w-full' : 'w-0',
+            ]}></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Right side -->
+    <div class="flex items-center gap-4">
+      <!-- Cart icon -->
+      <a href="/cart" class="nav-cart relative p-2 transition-colors duration-300" aria-label="Shopping cart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" x2="21" y1="6" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span id="cart-count" class="hidden absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-stone-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-white/20 shadow-xs tabular-nums">0</span>
+      </a>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        class="nav-toggle md:hidden p-2 transition-colors duration-300"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="4" x2="20" y1="6" y2="6"/>
+          <line x1="4" x2="20" y1="12" y2="12"/>
+          <line x1="4" x2="20" y1="18" y2="18"/>
+        </svg>
+        <svg class="close-icon hidden" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="18" x2="6" y1="6" y2="18"/>
+          <line x1="6" x2="18" y1="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="nav-mobile-drawer md:hidden hidden border-t transition-colors duration-300" role="dialog" aria-label="Mobile navigation">
+    <ul class="container-page py-6 space-y-1" role="list">
+      {siteConfig.nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              'mobile-nav-link block py-3 text-base font-medium transition-colors',
+              currentPath === item.href ? 'mobile-nav-active font-semibold' : 'mobile-nav-inactive',
+            ]}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<style>
+  /* Home Navbar - Top state */
+  .header-bar.is-top {
+    color: #ffffff;
+  }
+  .header-bar.is-top .nav-brand {
+    color: #ffffff;
+  }
+  .header-bar.is-top .nav-link-inactive {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .header-bar.is-top .nav-link-inactive:hover {
+    color: #ffffff;
+  }
+  .header-bar.is-top .nav-link-active {
+    color: #ffffff;
+  }
+  .header-bar.is-top .nav-indicator {
+    background-color: #ffffff;
+  }
+  .header-bar.is-top .nav-cart,
+  .header-bar.is-top .nav-toggle {
+    color: #ffffff;
+  }
+  .header-bar.is-top .nav-mobile-drawer {
+    background-color: rgba(10, 10, 10, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .header-bar.is-top .mobile-nav-inactive {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .header-bar.is-top .mobile-nav-inactive:hover,
+  .header-bar.is-top .mobile-nav-active {
+    color: #ffffff;
+  }
+
+  /* Scrolled state on home OR Default on non-home */
+  .header-bar.is-scrolled,
+  .header-bar:not([data-is-home="true"]) {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+  .header-bar.is-scrolled .nav-brand,
+  .header-bar:not([data-is-home="true"]) .nav-brand {
+    color: var(--color-text-primary);
+  }
+  .header-bar.is-scrolled .nav-link-inactive,
+  .header-bar:not([data-is-home="true"]) .nav-link-inactive {
+    color: var(--color-text-secondary);
+  }
+  .header-bar.is-scrolled .nav-link-inactive:hover,
+  .header-bar:not([data-is-home="true"]) .nav-link-inactive:hover {
+    color: var(--color-text-primary);
+  }
+  .header-bar.is-scrolled .nav-link-active,
+  .header-bar:not([data-is-home="true"]) .nav-link-active {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .header-bar.is-scrolled .nav-indicator,
+  .header-bar:not([data-is-home="true"]) .nav-indicator {
+    background-color: var(--color-text-primary);
+  }
+  .header-bar.is-scrolled .nav-cart,
+  .header-bar.is-scrolled .nav-toggle,
+  .header-bar:not([data-is-home="true"]) .nav-cart,
+  .header-bar:not([data-is-home="true"]) .nav-toggle {
+    color: var(--color-text-primary);
+  }
+  .header-bar.is-scrolled .nav-mobile-drawer,
+  .header-bar:not([data-is-home="true"]) .nav-mobile-drawer {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+  }
+  .header-bar.is-scrolled .mobile-nav-inactive,
+  .header-bar:not([data-is-home="true"]) .mobile-nav-inactive {
+    color: var(--color-text-secondary);
+  }
+  .header-bar.is-scrolled .mobile-nav-inactive:hover,
+  .header-bar:not([data-is-home="true"]) .mobile-nav-inactive:hover,
+  .header-bar.is-scrolled .mobile-nav-active,
+  .header-bar:not([data-is-home="true"]) .mobile-nav-active {
+    color: var(--color-text-primary);
+  }
+</style>
+
+<script>
+  import { updateNavbarCartBadge } from '../lib/cart';
+
+  const header = document.getElementById('main-header');
+  const isHome = header?.dataset.isHome === 'true';
+
+  if (isHome && header) {
+    const onScroll = () => {
+      if (window.scrollY > 40) {
+        header.classList.remove('is-top', 'bg-black/30', 'border-white/10', 'text-white');
+        header.classList.add('is-scrolled');
+      } else {
+        header.classList.add('is-top', 'bg-black/30', 'border-white/10', 'text-white');
+        header.classList.remove('is-scrolled');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const menuIcon = btn?.querySelector('.menu-icon');
+  const closeIcon = btn?.querySelector('.close-icon');
+
+  btn?.addEventListener('click', () => {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    menu?.classList.toggle('hidden');
+    menuIcon?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+  });
+
+  // Keep cart badge synchronized
+  updateNavbarCartBadge();
+  window.addEventListener('cart:updated', updateNavbarCartBadge);
+  window.addEventListener('storage', updateNavbarCartBadge);
+</script>

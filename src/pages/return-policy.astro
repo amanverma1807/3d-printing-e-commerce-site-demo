@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PolicyNav from '../components/PolicyNav.astro';
+import Button from '../components/Button.astro';
+import { siteConfig, getWhatsAppLink } from '../config/site';
+
+const lastUpdated = "September 2024";
+---
+
+<Layout
+  title={`Return Policy — ${siteConfig.brand.name}`}
+  description="Learn about our return policy for standard and custom products, replacement guidelines, and order terms."
+>
+  <main class="py-12 md:py-20 bg-surface">
+    <div class="container-page max-w-4xl">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs text-text-tertiary">
+          <li><a href="/" class="hover:text-brand-600 transition-colors">Home</a></li>
+          <li>/</li>
+          <li class="text-text-primary font-medium">Return Policy</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Customer Protection & Quality Guarantee
+        </span>
+        <h1 class="text-4xl md:text-5xl font-bold text-text-primary tracking-tight mb-4">
+          Return Policy
+        </h1>
+        <p class="text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          At {siteConfig.brand.name}, our products are crafted with high quality and care. Here is our transparent policy on returns, replacements, and order issues.
+        </p>
+        <p class="text-xs text-text-tertiary mt-3">
+          Last revised: {lastUpdated} • Effective immediately
+        </p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <PolicyNav active="return" />
+
+      <!-- Notice Banner: Custom vs Standard Specifics -->
+      <div class="mb-10 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-text-primary flex flex-col sm:flex-row gap-4 items-start w-full min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div class="w-full min-w-0 flex-1">
+          <h2 class="text-base font-semibold text-text-primary mb-1 min-w-0 break-words [overflow-wrap:anywhere]">Key Summary: Custom vs Standard Catalog Items</h2>
+          <p class="text-sm text-text-secondary leading-relaxed min-w-0 break-words [overflow-wrap:anywhere]">
+            Standard catalog items can be returned within <strong>7 days</strong> of delivery. Custom bespoke orders (personalized items or custom specifications) are prepared specifically for you on-demand and are protected under our <strong>100% Free Replacement Guarantee</strong> if damaged or defective.
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Content Cards -->
+      <div class="space-y-8">
+        <!-- Section 1 -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">1</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Standard Catalog Products</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            If you ordered a standard, non-customized product directly from our ready-made catalog and are not completely satisfied:
+          </p>
+          <ul class="space-y-3 text-sm md:text-base text-text-secondary mb-4 list-disc pl-5">
+            <li>You may initiate a return within <strong>7 calendar days</strong> from the delivery timestamp confirmed by our shipping courier.</li>
+            <li>The item must be in its original, unused condition, free of alterations, and packed with all original packaging, tags, and protective padding.</li>
+            <li>Once inspected at our facility, you can opt for an immediate store credit or a direct refund to your original payment method.</li>
+          </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">2</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Custom & Made-to-Order Products</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            Because custom and made-to-order products involve individualized specifications and dedicated fabrication tailored exclusively for your order:
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4 my-4">
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center gap-2 font-semibold text-sm text-text-primary mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-green-600">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                Covered by Free Replacement
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                Item broke in transit, severe manufacturing defects exceeding standard tolerances, or wrong item prepared.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-muted border border-border">
+              <div class="flex items-center gap-2 font-semibold text-sm text-text-primary mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-red-500">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                Not Returnable
+              </div>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                Change of mind after customized production begins, minor natural material variations, or customer-provided specification errors.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">3</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Damaged or Defective Deliveries</h2>
+          </div>
+          <p class="text-text-secondary text-sm md:text-base leading-relaxed mb-4">
+            While we pack every item in high-grade shock-absorbent protective packaging, transit accidents can occasionally happen.
+          </p>
+          <div class="p-4 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 text-sm leading-relaxed mb-4">
+            <strong>Crucial Requirement:</strong> Please notify us within <strong>48 hours of delivery</strong> with unboxing video or clear high-resolution photos of the outer shipping box, courier label, and the damaged item. This allows us to hold the courier responsible and dispatch your free replacement immediately.
+          </div>
+        </section>
+
+        <!-- Section 4: Step-by-Step Return Process -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">4</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">How to Initiate a Return or Replacement</h2>
+          </div>
+
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="p-4 rounded-xl bg-surface-muted border border-border relative">
+              <span class="text-xs font-bold text-brand-600 block mb-1">STEP 01</span>
+              <h3 class="font-semibold text-text-primary text-sm mb-1.5">Contact Us</h3>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                Reach out via WhatsApp or email with your Order ID and photo/video evidence.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border relative">
+              <span class="text-xs font-bold text-brand-600 block mb-1">STEP 02</span>
+              <h3 class="font-semibold text-text-primary text-sm mb-1.5">Support Review</h3>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                Our support team reviews the report within 24 business hours to approve the return or replacement.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border relative">
+              <span class="text-xs font-bold text-brand-600 block mb-1">STEP 03</span>
+              <h3 class="font-semibold text-text-primary text-sm mb-1.5">Reverse Pickup</h3>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                We schedule our courier partner to collect the item from your doorstep at zero extra cost for defective items.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-muted border border-border relative">
+              <span class="text-xs font-bold text-brand-600 block mb-1">STEP 04</span>
+              <h3 class="font-semibold text-text-primary text-sm mb-1.5">Resolution</h3>
+              <p class="text-xs text-text-secondary leading-relaxed">
+                We dispatch an expedited free replacement or issue a full refund to your original payment method.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: Shipping Fees -->
+        <section class="bg-surface-bright rounded-2xl p-6 md:p-8 border border-border shadow-xs">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">5</span>
+            <h2 class="text-xl md:text-2xl font-bold text-text-primary">Return Shipping Expenses</h2>
+          </div>
+          <div class="space-y-3 text-sm md:text-base text-text-secondary">
+            <p>
+              • <strong>Transit Damage, Wrong Product, or Manufacturing Defect:</strong> {siteConfig.brand.name} covers 100% of reverse courier collection and forward shipping costs.
+            </p>
+            <p>
+              • <strong>Customer Preference / Discretionary Returns (Standard Catalog Only):</strong> The customer is responsible for the actual return shipping cost or a flat pickup deduction fee (typically ₹80 - ₹150 depending on location).
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Quick Help CTA -->
+      <div
+        class="mt-12 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden border border-[#3b1d6b]"
+        style="background-color: #1e0e38; border-color: #3b1d6b;"
+      >
+        <div class="relative z-10 max-w-xl mx-auto">
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-white">Need to return or report an issue?</h2>
+          <p class="text-[#e2d4fd] text-sm md:text-base mb-6">
+            Our team is available 6 days a week to ensure you are 100% satisfied with your order.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-4">
+            <a
+              href={getWhatsAppLink("Hi! I would like to request assistance with a return/order.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center font-semibold transition-all duration-300 px-6 py-3 text-base rounded-xl gap-2.5 bg-[#25D366] text-[#052e16] hover:bg-[#20ba59] shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              Chat on WhatsApp
+            </a>
+            <a
+              href={`mailto:${siteConfig.contact.email}`}
+              class="inline-flex items-center justify-center font-medium transition-all duration-300 px-6 py-3 text-base rounded-xl gap-2.5 border-2 border-white/60 bg-white/10 text-white hover:bg-white/20 hover:border-white shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m2 7 10 7 10-7"/>
+              </svg>
+              Email Support
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

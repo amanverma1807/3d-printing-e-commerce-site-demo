@@ -1,0 +1,758 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Dashboard — E-commerce Admin" activeSection="dashboard">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-text-primary">Admin Dashboard</h1>
+      <p class="text-sm text-text-secondary mt-1">
+        Live store metrics, order processing, and catalog status.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button
+        id="refresh-btn"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-surface-bright border border-border text-sm font-medium rounded-xl hover:bg-surface-muted transition-colors shadow-xs"
+        title="Refresh data from database"
+      >
+        <svg id="refresh-icon" class="w-4 h-4 text-text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Refresh Data</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Key Metrics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Stat 1: Total Orders -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs">
+      <div class="flex items-center justify-between text-text-secondary mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider">Total Orders</span>
+        <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+      </div>
+      <div id="stat-total-orders" class="text-3xl font-bold text-text-primary">--</div>
+      <div class="text-xs text-text-tertiary mt-2">All-time customer orders</div>
+    </div>
+
+    <!-- Stat 2: Pending Orders -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs">
+      <div class="flex items-center justify-between text-text-secondary mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider">Pending Orders</span>
+        <div class="w-8 h-8 rounded-lg bg-warning/15 text-warning flex items-center justify-center">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <div id="stat-pending-orders" class="text-3xl font-bold text-text-primary">--</div>
+      <div class="text-xs text-warning mt-2 font-medium">Requires fulfillment action</div>
+    </div>
+
+    <!-- Stat 3: Total Revenue -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs">
+      <div class="flex items-center justify-between text-text-secondary mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider">Verified Revenue</span>
+        <div class="w-8 h-8 rounded-lg bg-success/15 text-success flex items-center justify-center">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <div id="stat-total-revenue" class="text-3xl font-bold text-text-primary">₹--</div>
+      <div class="text-xs text-text-tertiary mt-2">Genuinely paid & captured orders</div>
+    </div>
+
+    <!-- Stat 4: Catalog Products -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs">
+      <div class="flex items-center justify-between text-text-secondary mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider">Catalog Products</span>
+        <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+      </div>
+      <div id="stat-active-products" class="text-3xl font-bold text-text-primary">--</div>
+      <div class="text-xs text-text-tertiary mt-2">Active items in database</div>
+    </div>
+  </div>
+
+  <!-- Orders Section -->
+  <div class="bg-surface-bright rounded-2xl border border-border shadow-xs overflow-hidden">
+    <!-- Section Toolbar -->
+    <div class="p-6 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-bold text-text-primary">Customer Orders</h2>
+        <p class="text-xs text-text-secondary mt-0.5">Real-time records from PostgreSQL `orders` table</p>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Status Filter -->
+        <select
+          id="status-filter"
+          class="px-3 py-2 bg-surface text-xs font-medium rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        >
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+
+        <!-- Search Input -->
+        <div class="relative">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search order #, name, phone..."
+            class="pl-8 pr-3 py-2 bg-surface text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600 w-56"
+          />
+          <svg class="w-3.5 h-3.5 text-text-tertiary absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Table Container -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr class="bg-surface/50 border-b border-border text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
+            <th class="py-3 px-4">Order #</th>
+            <th class="py-3 px-4">Date</th>
+            <th class="py-3 px-4">Customer</th>
+            <th class="py-3 px-4">Destination</th>
+            <th class="py-3 px-4">Payment</th>
+            <th class="py-3 px-4">Fulfillment</th>
+            <th class="py-3 px-4 text-right">Total</th>
+            <th class="py-3 px-4 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody" class="divide-y divide-border">
+          <tr>
+            <td colspan="8" class="py-12 text-center text-text-tertiary">
+              <div class="inline-flex items-center gap-2">
+                <svg class="animate-spin w-4 h-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <span>Loading orders from database...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State Message -->
+    <div id="empty-orders-state" class="hidden py-16 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-surface-muted text-text-tertiary mx-auto mb-3 flex items-center justify-center">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <h3 class="font-semibold text-text-primary text-base">No orders found</h3>
+      <p class="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
+        No orders match your filter criteria. When customers place orders via checkout, they will appear here.
+      </p>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div id="order-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-surface-bright rounded-2xl max-w-2xl w-full border border-border shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-border flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="modal-order-number" class="text-lg font-bold text-text-primary">Order Details</h3>
+            <span id="modal-order-status" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-100 text-brand-700">Pending</span>
+          </div>
+          <p id="modal-order-date" class="text-xs text-text-secondary mt-0.5">Placed on ...</p>
+        </div>
+        <button
+          id="close-modal-btn"
+          class="p-2 text-text-tertiary hover:text-text-primary rounded-xl hover:bg-surface-muted transition-colors"
+        >
+          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-5 flex-1 text-sm">
+        <!-- Customer & Shipping Block -->
+        <div class="grid sm:grid-cols-2 gap-4 p-4 rounded-xl bg-surface border border-border-subtle">
+          <div>
+            <div class="text-[11px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">Customer</div>
+            <div id="modal-customer-name" class="font-medium text-text-primary">--</div>
+            <div id="modal-customer-phone" class="text-xs text-text-secondary mt-0.5">--</div>
+            <div id="modal-customer-email" class="text-xs text-text-tertiary mt-0.5">--</div>
+          </div>
+          <div>
+            <div class="text-[11px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">Shipping Address</div>
+            <div id="modal-shipping-address" class="text-xs text-text-secondary leading-relaxed">--</div>
+          </div>
+        </div>
+
+        <!-- Order Items Snapshots -->
+        <div>
+          <div class="text-xs font-semibold text-text-primary mb-3 uppercase tracking-wider">Ordered Items</div>
+          <div id="modal-items-container" class="space-y-2.5">
+            <!-- Dynamically injected items -->
+          </div>
+        </div>
+
+        <!-- Financial Summary -->
+        <div class="pt-4 border-t border-border-subtle space-y-2">
+          <div class="flex justify-between text-xs text-text-secondary">
+            <span>Subtotal</span>
+            <span id="modal-subtotal">₹0</span>
+          </div>
+          <div class="flex justify-between text-xs text-text-secondary">
+            <span>Shipping</span>
+            <span id="modal-shipping">₹0</span>
+          </div>
+          <div class="flex justify-between text-base font-bold text-text-primary pt-2 border-t border-border-subtle">
+            <span>Total</span>
+            <span id="modal-total" class="text-brand-600">₹0</span>
+          </div>
+        </div>
+
+        <!-- Payment Info (Separated from Fulfillment) -->
+        <div class="p-3.5 rounded-xl bg-surface border border-border-subtle text-xs text-text-secondary space-y-1.5">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary mb-1">Payment Status & Method</div>
+          <div class="flex justify-between items-center">
+            <span>Payment Method:</span>
+            <span id="modal-payment-method" class="font-medium text-text-primary uppercase">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Payment Status:</span>
+            <span id="modal-payment-status" class="font-semibold text-text-primary capitalize">--</span>
+          </div>
+          <div id="modal-razorpay-row" class="hidden justify-between pt-1 border-t border-border-subtle">
+            <span>Razorpay Payment ID:</span>
+            <span id="modal-razorpay-id" class="font-mono text-[11px] text-text-primary">--</span>
+          </div>
+        </div>
+
+        <!-- Fulfillment & Shipment Tracking (Admin Dispatch Control) -->
+        <div class="p-4 rounded-xl bg-surface-muted/60 border border-border shadow-2xs space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+              </svg>
+              Fulfillment & Shipment Tracking
+            </span>
+            <span class="text-[11px] text-text-tertiary">Admin Dispatch</span>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label for="modal-fulfillment-status" class="block text-[11px] font-semibold text-text-secondary uppercase tracking-wider mb-1">
+                Fulfillment Status
+              </label>
+              <select
+                id="modal-fulfillment-status"
+                class="w-full px-3 py-2 bg-surface-bright text-xs font-medium rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600 text-text-primary"
+              >
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="modal-tracking-number" class="block text-[11px] font-semibold text-text-secondary uppercase tracking-wider mb-1">
+                Tracking / AWB Number
+              </label>
+              <input
+                type="text"
+                id="modal-tracking-number"
+                placeholder="e.g. BLUEDART-123456789"
+                class="w-full px-3 py-2 bg-surface-bright text-xs font-mono rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600 text-text-primary"
+              />
+              <span class="text-[10px] text-text-tertiary block mt-0.5">Optional. Saved with status when parcel is dispatched.</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-border-subtle gap-2">
+            <div id="modal-fulfillment-feedback" class="text-xs font-medium hidden"></div>
+            <button
+              type="button"
+              id="modal-save-fulfillment-btn"
+              class="ml-auto px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+            >
+              <span>Save Status & Tracking</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../lib/supabase';
+
+    let allOrders: any[] = [];
+    let currentModalOrderId: string | null = null;
+
+    const tbody = document.getElementById('orders-tbody');
+    const emptyState = document.getElementById('empty-orders-state');
+    const statusFilter = document.getElementById('status-filter') as HTMLSelectElement;
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const refreshBtn = document.getElementById('refresh-btn');
+    const refreshIcon = document.getElementById('refresh-icon');
+
+    // Stat Elements
+    const statTotalOrders = document.getElementById('stat-total-orders');
+    const statPendingOrders = document.getElementById('stat-pending-orders');
+    const statTotalRevenue = document.getElementById('stat-total-revenue');
+    const statActiveProducts = document.getElementById('stat-active-products');
+
+    // Modal Elements
+    const modal = document.getElementById('order-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalOrderNumber = document.getElementById('modal-order-number');
+    const modalOrderStatus = document.getElementById('modal-order-status');
+    const modalOrderDate = document.getElementById('modal-order-date');
+    const modalCustomerName = document.getElementById('modal-customer-name');
+    const modalCustomerPhone = document.getElementById('modal-customer-phone');
+    const modalCustomerEmail = document.getElementById('modal-customer-email');
+    const modalShippingAddress = document.getElementById('modal-shipping-address');
+    const modalItemsContainer = document.getElementById('modal-items-container');
+    const modalSubtotal = document.getElementById('modal-subtotal');
+    const modalShipping = document.getElementById('modal-shipping');
+    const modalTotal = document.getElementById('modal-total');
+    const modalPaymentMethod = document.getElementById('modal-payment-method');
+    const modalPaymentStatus = document.getElementById('modal-payment-status');
+    const modalRazorpayRow = document.getElementById('modal-razorpay-row');
+    const modalRazorpayId = document.getElementById('modal-razorpay-id');
+
+    // Fulfillment & Tracking Controls
+    const modalFulfillmentStatus = document.getElementById('modal-fulfillment-status') as HTMLSelectElement;
+    const modalTrackingNumber = document.getElementById('modal-tracking-number') as HTMLInputElement;
+    const modalSaveFulfillmentBtn = document.getElementById('modal-save-fulfillment-btn') as HTMLButtonElement;
+    const modalFulfillmentFeedback = document.getElementById('modal-fulfillment-feedback');
+
+    function updateModalStatusBadge(status: string) {
+      if (!modalOrderStatus) return;
+      modalOrderStatus.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      let badgeClass = 'text-xs font-semibold px-2 py-0.5 rounded-full ';
+      if (status === 'pending') badgeClass += 'bg-warning/15 text-warning';
+      else if (status === 'confirmed' || status === 'processing') badgeClass += 'bg-brand-100 text-brand-700';
+      else if (status === 'shipped' || status === 'delivered') badgeClass += 'bg-success/15 text-success';
+      else if (status === 'cancelled') badgeClass += 'bg-danger/15 text-danger';
+      else badgeClass += 'bg-surface-muted text-text-secondary';
+      modalOrderStatus.className = badgeClass;
+    }
+
+    function computeMetrics(orders: any[], productCount?: number) {
+      // Rule 1: Gross Order Value / Revenue includes ONLY genuinely paid/captured orders
+      const paidOrders = orders.filter(o => o.payment_status === 'paid');
+      const totalRevenueSum = paidOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+
+      // Rule 2: Total Orders includes only genuinely placed orders:
+      // - Razorpay: only if payment_status = 'paid' (cancelled/failed/pending attempts excluded)
+      // - COD: active COD orders (status !== 'cancelled')
+      const actualOrders = orders.filter(o => {
+        if (o.payment_method === 'razorpay') {
+          return o.payment_status === 'paid';
+        }
+        if (o.payment_method === 'cod') {
+          return o.status !== 'cancelled';
+        }
+        return o.payment_status === 'paid';
+      });
+      const totalOrdersCount = actualOrders.length;
+
+      // Rule 3: Pending Orders includes ONLY orders requiring fulfillment action:
+      // - Razorpay: payment_status = 'paid' AND fulfillment status = 'pending'
+      // - COD: active COD orders with fulfillment status = 'pending'
+      // - Cancelled, failed, or uncompleted payment attempts NEVER count
+      const pendingFulfillmentOrders = orders.filter(o => {
+        if (o.status !== 'pending') return false;
+        if (o.payment_method === 'razorpay') {
+          return o.payment_status === 'paid';
+        }
+        if (o.payment_method === 'cod') {
+          return true;
+        }
+        return o.payment_status === 'paid';
+      });
+      const pendingCount = pendingFulfillmentOrders.length;
+
+      if (statTotalOrders) statTotalOrders.textContent = totalOrdersCount.toString();
+      if (statPendingOrders) statPendingOrders.textContent = pendingCount.toString();
+      if (statTotalRevenue) statTotalRevenue.textContent = `₹${totalRevenueSum.toLocaleString('en-IN')}`;
+      if (productCount !== undefined && statActiveProducts) {
+        statActiveProducts.textContent = productCount.toString();
+      }
+    }
+
+    // Fetch dashboard data
+    async function loadDashboardData() {
+      if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+      try {
+        // 1. Fetch Orders from Supabase including tracking_number
+        const { data: orders, error: ordersError } = await supabase
+          .from('orders')
+          .select(`
+            id,
+            order_number,
+            status,
+            tracking_number,
+            subtotal,
+            shipping_fee,
+            total,
+            payment_method,
+            payment_status,
+            razorpay_order_id,
+            razorpay_payment_id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            shipping_address,
+            shipping_city,
+            shipping_state,
+            shipping_pincode,
+            notes,
+            created_at,
+            order_items (
+              id,
+              product_name,
+              product_image,
+              selected_color,
+              unit_price,
+              quantity,
+              total_price
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (ordersError) {
+          console.error('Failed to load orders:', ordersError);
+          renderError('Failed to load orders from database: ' + ordersError.message);
+          return;
+        }
+
+        allOrders = orders || [];
+
+        // 2. Fetch Catalog Stats
+        const { count: productCount } = await supabase
+          .from('products')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_active', true);
+
+        // 3. Compute Metrics
+        computeMetrics(allOrders, productCount ?? 0);
+
+        // 4. Render Table
+        renderOrders();
+      } catch (err: any) {
+        console.error('Unexpected error loading dashboard data:', err);
+        renderError('Failed to load data: ' + (err?.message || 'Unknown error'));
+      } finally {
+        if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+      }
+    }
+
+    function renderError(msg: string) {
+      if (!tbody) return;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" class="py-8 text-center text-danger text-sm">
+            ${msg}
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderOrders() {
+      if (!tbody || !emptyState) return;
+
+      const selectedStatus = statusFilter?.value || 'all';
+      const search = searchInput?.value.trim().toLowerCase() || '';
+
+      const filtered = allOrders.filter(order => {
+        const matchesStatus = selectedStatus === 'all' || order.status === selectedStatus;
+        const matchesSearch =
+          !search ||
+          order.order_number?.toLowerCase().includes(search) ||
+          order.customer_name?.toLowerCase().includes(search) ||
+          order.customer_phone?.toLowerCase().includes(search) ||
+          order.shipping_city?.toLowerCase().includes(search) ||
+          order.tracking_number?.toLowerCase().includes(search);
+
+        return matchesStatus && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      tbody.innerHTML = filtered.map(order => {
+        const dateStr = new Date(order.created_at).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        });
+        const timeStr = new Date(order.created_at).toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        // Status badge colors
+        let statusBadgeClass = 'bg-surface-muted text-text-secondary';
+        if (order.status === 'pending') statusBadgeClass = 'bg-warning/15 text-warning font-semibold';
+        else if (order.status === 'confirmed' || order.status === 'processing') statusBadgeClass = 'bg-brand-100 text-brand-700 font-semibold';
+        else if (order.status === 'shipped' || order.status === 'delivered') statusBadgeClass = 'bg-success/15 text-success font-semibold';
+        else if (order.status === 'cancelled') statusBadgeClass = 'bg-danger/15 text-danger font-semibold';
+
+        return `
+          <tr class="hover:bg-surface/30 transition-colors">
+            <td class="py-3 px-4 font-mono font-semibold text-brand-700">${order.order_number}</td>
+            <td class="py-3 px-4 text-xs text-text-secondary">
+              <div>${dateStr}</div>
+              <div class="text-[10px] text-text-tertiary">${timeStr}</div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-medium text-text-primary">${order.customer_name}</div>
+              <div class="text-xs text-text-secondary">${order.customer_phone}</div>
+            </td>
+            <td class="py-3 px-4 text-xs text-text-secondary">
+              ${order.shipping_city || '--'}, ${order.shipping_state || ''}
+            </td>
+            <td class="py-3 px-4 text-xs">
+              <div class="font-semibold text-[11px] uppercase text-text-primary">${order.payment_method}</div>
+              <div class="text-[10px] capitalize ${order.payment_status === 'paid' ? 'text-success font-medium' : 'text-text-tertiary'}">${order.payment_status}</div>
+            </td>
+            <td class="py-3 px-4">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs capitalize ${statusBadgeClass}">
+                ${order.status}
+              </span>
+              ${order.tracking_number ? `
+                <div class="text-[11px] font-mono text-text-secondary mt-1 flex items-center gap-1">
+                  <svg class="w-3 h-3 text-text-tertiary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                  </svg>
+                  <span class="truncate max-w-[120px]" title="AWB: ${order.tracking_number}">AWB: ${order.tracking_number}</span>
+                </div>
+              ` : ''}
+            </td>
+            <td class="py-3 px-4 text-right font-semibold text-text-primary">
+              ₹${Number(order.total).toLocaleString('en-IN')}
+            </td>
+            <td class="py-3 px-4 text-center">
+              <button
+                type="button"
+                data-order-id="${order.id}"
+                class="view-order-btn px-2.5 py-1 text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 rounded-lg transition-colors border border-brand-200 cursor-pointer"
+              >
+                View
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Attach view order event listeners
+      document.querySelectorAll('.view-order-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const orderId = target.getAttribute('data-order-id');
+          const order = allOrders.find(o => o.id === orderId);
+          if (order) openOrderModal(order);
+        });
+      });
+    }
+
+    function openOrderModal(order: any) {
+      if (!modal) return;
+      currentModalOrderId = order.id;
+
+      if (modalOrderNumber) modalOrderNumber.textContent = order.order_number;
+      updateModalStatusBadge(order.status);
+      if (modalOrderDate) {
+        modalOrderDate.textContent = 'Placed on ' + new Date(order.created_at).toLocaleString('en-IN');
+      }
+      if (modalCustomerName) modalCustomerName.textContent = order.customer_name;
+      if (modalCustomerPhone) modalCustomerPhone.textContent = 'Phone: ' + order.customer_phone;
+      if (modalCustomerEmail) modalCustomerEmail.textContent = order.customer_email ? 'Email: ' + order.customer_email : 'No email provided';
+      if (modalShippingAddress) {
+        modalShippingAddress.innerHTML = `
+          ${order.shipping_address}<br/>
+          ${order.shipping_city}, ${order.shipping_state} - ${order.shipping_pincode}
+          ${order.notes ? `<div class="mt-2 text-warning font-medium">Note: ${order.notes}</div>` : ''}
+        `;
+      }
+
+      if (modalSubtotal) modalSubtotal.textContent = `₹${Number(order.subtotal).toLocaleString('en-IN')}`;
+      if (modalShipping) modalShipping.textContent = `₹${Number(order.shipping_fee).toLocaleString('en-IN')}`;
+      if (modalTotal) modalTotal.textContent = `₹${Number(order.total).toLocaleString('en-IN')}`;
+
+      if (modalPaymentMethod) modalPaymentMethod.textContent = order.payment_method;
+      if (modalPaymentStatus) modalPaymentStatus.textContent = order.payment_status;
+
+      if (order.razorpay_payment_id && modalRazorpayRow && modalRazorpayId) {
+        modalRazorpayRow.classList.remove('hidden');
+        modalRazorpayRow.classList.add('flex');
+        modalRazorpayId.textContent = order.razorpay_payment_id;
+      } else if (modalRazorpayRow) {
+        modalRazorpayRow.classList.add('hidden');
+        modalRazorpayRow.classList.remove('flex');
+      }
+
+      // Initialize Fulfillment Controls
+      if (modalFulfillmentStatus) {
+        modalFulfillmentStatus.value = order.status;
+      }
+      if (modalTrackingNumber) {
+        modalTrackingNumber.value = order.tracking_number || '';
+      }
+      if (modalFulfillmentFeedback) {
+        modalFulfillmentFeedback.textContent = '';
+        modalFulfillmentFeedback.className = 'text-xs font-medium hidden';
+      }
+
+      // Render Order Items
+      if (modalItemsContainer) {
+        const items = order.order_items || [];
+        if (items.length === 0) {
+          modalItemsContainer.innerHTML = '<div class="text-xs text-text-tertiary">No line items snapshot recorded.</div>';
+        } else {
+          modalItemsContainer.innerHTML = items.map((item: any) => `
+            <div class="flex items-center justify-between p-3 rounded-xl bg-surface border border-border-subtle">
+              <div class="flex items-center gap-3">
+                ${item.product_image ? `<img src="${item.product_image}" alt="${item.product_name}" class="w-10 h-10 object-cover rounded-lg bg-surface-muted" />` : ''}
+                <div>
+                  <div class="font-medium text-text-primary text-xs">${item.product_name}</div>
+                  <div class="text-[11px] text-text-secondary">
+                    ${item.selected_color ? `Color: ${item.selected_color} &bull; ` : ''}Qty: ${item.quantity} × ₹${Number(item.unit_price).toLocaleString('en-IN')}
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs font-semibold text-text-primary">
+                ₹${Number(item.total_price).toLocaleString('en-IN')}
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+      currentModalOrderId = null;
+    }
+
+    // Save Fulfillment & Tracking Handler
+    modalSaveFulfillmentBtn?.addEventListener('click', async () => {
+      if (!currentModalOrderId) return;
+
+      const newStatus = modalFulfillmentStatus.value;
+      const newTracking = modalTrackingNumber.value.trim() || null;
+
+      // Provide UI feedback while saving
+      modalSaveFulfillmentBtn.disabled = true;
+      modalSaveFulfillmentBtn.classList.add('opacity-75', 'cursor-not-allowed');
+      const originalText = modalSaveFulfillmentBtn.innerHTML;
+      modalSaveFulfillmentBtn.innerHTML = `
+        <svg class="animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <span>Saving...</span>
+      `;
+
+      try {
+        const { error } = await supabase
+          .from('orders')
+          .update({
+            status: newStatus,
+            tracking_number: newTracking
+          })
+          .eq('id', currentModalOrderId);
+
+        if (error) {
+          throw error;
+        }
+
+        // Update in-memory state
+        const targetOrder = allOrders.find(o => o.id === currentModalOrderId);
+        if (targetOrder) {
+          targetOrder.status = newStatus;
+          targetOrder.tracking_number = newTracking;
+        }
+
+        // Update modal UI
+        updateModalStatusBadge(newStatus);
+        if (modalFulfillmentFeedback) {
+          modalFulfillmentFeedback.textContent = '✓ Saved successfully!';
+          modalFulfillmentFeedback.className = 'text-xs font-medium text-success';
+        }
+
+        // Recompute metrics and re-render orders table
+        computeMetrics(allOrders);
+        renderOrders();
+
+        setTimeout(() => {
+          if (modalFulfillmentFeedback) {
+            modalFulfillmentFeedback.className = 'text-xs font-medium hidden';
+          }
+        }, 3000);
+      } catch (err: any) {
+        console.error('Failed to update order fulfillment:', err);
+        if (modalFulfillmentFeedback) {
+          modalFulfillmentFeedback.textContent = 'Failed: ' + (err?.message || 'Database error');
+          modalFulfillmentFeedback.className = 'text-xs font-medium text-danger';
+        }
+      } finally {
+        modalSaveFulfillmentBtn.disabled = false;
+        modalSaveFulfillmentBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+        modalSaveFulfillmentBtn.innerHTML = originalText;
+      }
+    });
+
+    closeModalBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    statusFilter?.addEventListener('change', renderOrders);
+    searchInput?.addEventListener('input', renderOrders);
+    refreshBtn?.addEventListener('click', loadDashboardData);
+
+    // Listen to admin-ready event dispatched by AdminLayout after auth verification
+    window.addEventListener('template:admin-ready', () => {
+      loadDashboardData();
+    });
+  </script>
+</AdminLayout>

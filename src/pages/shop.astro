@@ -1,0 +1,251 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { getStoreProducts, getStoreCategories } from '../lib/catalog';
+
+const products = await getStoreProducts();
+const categories = await getStoreCategories();
+---
+
+<Layout title="Shop Catalog — E-commerce Store" description="Browse our complete collection of quality products, accessories, and curated essentials.">
+  <!-- Architectural Header -->
+  <section class="py-12 sm:py-16 bg-surface-subtle border-b border-border">
+    <div class="container-page">
+      <nav class="flex items-center gap-2 text-xs font-mono text-stone-500 mb-3" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-stone-900 transition-colors">Index</a>
+        <span>/</span>
+        <span class="text-stone-900">Catalog</span>
+      </nav>
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-stone-900 mb-3">Shop Collection</h1>
+          <p class="text-sm sm:text-base text-stone-600 max-w-xl font-light leading-relaxed">
+            Explore our curated selection of quality items designed for style, durability, and modern living.
+          </p>
+        </div>
+        <div class="hidden lg:block text-xs font-mono text-stone-500">
+          Showing <span id="product-count" class="font-bold text-stone-900 tabular-nums">{products.length}</span> products
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters and Catalog Grid -->
+  <section class="py-12 sm:py-16 bg-surface">
+    <div class="container-page">
+      <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <!-- Backdrop for mobile drawer -->
+        <div id="filter-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+        <!-- Sidebar / Mobile Drawer Filters -->
+        <aside id="filter-drawer" class="fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-surface-bright border-r border-border p-6 shadow-2xl transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:w-64 lg:p-0 lg:bg-transparent lg:border-none lg:shadow-none shrink-0 overflow-y-auto">
+          <div class="sticky top-24 space-y-8">
+            <!-- Mobile Drawer Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-border lg:hidden">
+              <h2 class="text-base font-semibold text-stone-900">Filter Catalog</h2>
+              <button id="close-filter-btn" type="button" class="p-2 text-stone-500 hover:text-stone-900 rounded-md hover:bg-stone-100 transition-colors" aria-label="Close filters">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Category Filter Section -->
+            <div class="p-5 rounded-xl bg-surface-bright border border-border shadow-subtle">
+              <div class="flex items-center justify-between mb-4 pb-2 border-b border-border/60">
+                <h3 class="text-xs font-mono uppercase tracking-widest font-semibold text-stone-900">Categories</h3>
+                <button id="reset-filter-btn" type="button" class="text-xs font-mono text-stone-500 hover:text-stone-950 transition-colors cursor-pointer">Reset</button>
+              </div>
+              <div class="space-y-1.5" role="radiogroup" aria-label="Product categories">
+                <label class="flex items-center justify-between p-2 rounded-md hover:bg-stone-100/70 cursor-pointer group transition-colors">
+                  <span class="text-sm text-stone-700 group-hover:text-stone-950 font-light">All Products</span>
+                  <input type="radio" name="category" value="all" class="w-4 h-4 text-stone-900 border-border focus:ring-stone-900 accent-stone-900 cursor-pointer" />
+                </label>
+                {categories.map((cat) => (
+                  <label class="flex items-center justify-between p-2 rounded-md hover:bg-stone-100/70 cursor-pointer group transition-colors">
+                    <span class="text-sm text-stone-700 group-hover:text-stone-950 font-light">{cat.name}</span>
+                    <input type="radio" name="category" value={cat.slug} class="w-4 h-4 text-stone-900 border-border focus:ring-stone-900 accent-stone-900 cursor-pointer" />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Sort By Section -->
+            <div class="p-5 rounded-xl bg-surface-bright border border-border shadow-subtle">
+              <h3 class="text-xs font-mono uppercase tracking-widest font-semibold text-stone-900 mb-3 pb-2 border-b border-border/60">Sort Options</h3>
+              <select id="sort-select" class="w-full px-3.5 py-2.5 text-sm border border-border rounded-md focus:outline-none focus:border-stone-900 bg-white text-stone-900 transition-colors cursor-pointer shadow-xs">
+                <option value="featured">Featured Collection</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="newest">Newest Additions</option>
+              </select>
+            </div>
+
+            <!-- Mobile Drawer Close/Apply Action -->
+            <div class="pt-2 lg:hidden">
+              <button id="apply-filter-btn" type="button" class="w-full py-3 bg-stone-900 text-white rounded-md font-medium text-sm transition-all active:scale-[0.98] shadow-subtle">
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Products Grid Container -->
+        <div class="flex-1">
+          <!-- Mobile Controls Bar -->
+          <div class="flex items-center justify-between mb-6 lg:hidden">
+            <span class="text-xs font-mono text-stone-500">
+              <span id="product-count" class="font-bold text-stone-900 tabular-nums">{products.length}</span> products
+            </span>
+
+            <button id="mobile-filter-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider bg-stone-900 text-white rounded-full shadow-xs hover:bg-stone-800 transition-colors cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+              </svg>
+              Filter / Sort
+            </button>
+          </div>
+
+          <div id="products-grid" class:list={["grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8", products.length === 0 && "hidden"]}>
+            {products.map((product) => (
+              <ProductCard product={product} />
+            ))}
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class:list={["text-center py-24 rounded-2xl bg-surface-bright border border-border p-8", products.length > 0 && "hidden"]}>
+            <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-stone-100 border border-stone-200 text-stone-400 flex items-center justify-center">
+              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold tracking-tight text-stone-900 mb-2">No matching products found</h3>
+            <p class="text-sm text-stone-500 font-light max-w-sm mx-auto mb-6">Try selecting a different category or resetting your active filters.</p>
+            <button
+              type="button"
+              onclick="document.querySelector('input[name=\'category\'][value=\'all\']').click()"
+              class="px-4 py-2 text-xs font-mono uppercase tracking-wider bg-stone-900 text-white rounded-md hover:bg-stone-800 transition-colors"
+            >
+              Reset to All Products
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Client-side filtering and sorting
+  const categoryInputs = document.querySelectorAll<HTMLInputElement>('input[name="category"]');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const productsGrid = document.getElementById('products-grid');
+  const emptyState = document.getElementById('empty-state');
+  const productCount = document.getElementById('product-count');
+
+  const mobileFilterBtn = document.getElementById('mobile-filter-btn');
+  const closeFilterBtn = document.getElementById('close-filter-btn');
+  const applyFilterBtn = document.getElementById('apply-filter-btn');
+  const resetFilterBtn = document.getElementById('reset-filter-btn');
+  const filterDrawer = document.getElementById('filter-drawer');
+  const filterBackdrop = document.getElementById('filter-backdrop');
+
+  function openDrawer() {
+    filterDrawer?.classList.remove('-translate-x-full');
+    filterDrawer?.classList.add('translate-x-0');
+    filterBackdrop?.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function closeDrawer() {
+    filterDrawer?.classList.add('-translate-x-full');
+    filterDrawer?.classList.remove('translate-x-0');
+    filterBackdrop?.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  mobileFilterBtn?.addEventListener('click', openDrawer);
+  closeFilterBtn?.addEventListener('click', closeDrawer);
+  applyFilterBtn?.addEventListener('click', closeDrawer);
+  filterBackdrop?.addEventListener('click', closeDrawer);
+
+  resetFilterBtn?.addEventListener('click', () => {
+    const allInput = document.querySelector<HTMLInputElement>('input[name="category"][value="all"]');
+    if (allInput) {
+      allInput.checked = true;
+      filterAndSort();
+    }
+  });
+
+  let allProducts = Array.from(document.querySelectorAll('#products-grid > article'));
+
+  function filterAndSort() {
+    const selectedCategory = document.querySelector<HTMLInputElement>('input[name="category"]:checked')?.value || 'all';
+    const sortBy = sortSelect?.value || 'featured';
+
+    // Filter
+    let filtered = allProducts.filter((product) => {
+      if (selectedCategory === 'all') return true;
+      const productCategory = (product.getAttribute('data-category') || product.querySelector('p')?.textContent || '').trim().toLowerCase();
+      return productCategory === selectedCategory.toLowerCase();
+    });
+
+    // Sort by robust numeric data attributes
+    if (sortBy === 'price-low' || sortBy === 'price-high') {
+      filtered.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price') || a.querySelector('[data-product-price]')?.getAttribute('data-product-price') || '0');
+        const priceB = parseFloat(b.getAttribute('data-price') || b.querySelector('[data-product-price]')?.getAttribute('data-product-price') || '0');
+        return sortBy === 'price-low' ? priceA - priceB : priceB - priceA;
+      });
+    } else if (sortBy === 'newest') {
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.getAttribute('data-created') || 0).getTime();
+        const dateB = new Date(b.getAttribute('data-created') || 0).getTime();
+        return dateB - dateA;
+      });
+    }
+
+    // Update DOM
+    if (productsGrid) productsGrid.innerHTML = '';
+
+    if (filtered.length === 0) {
+      emptyState?.classList.remove('hidden');
+      productsGrid?.classList.add('hidden');
+    } else {
+      emptyState?.classList.add('hidden');
+      productsGrid?.classList.remove('hidden');
+      filtered.forEach((product) => productsGrid?.appendChild(product));
+    }
+
+    if (productCount) productCount.textContent = String(filtered.length);
+  }
+
+  // Initialize category from URL query parameter
+  function initializeCategoryFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    
+    if (categoryParam) {
+      const categoryInput = document.querySelector<HTMLInputElement>(`input[name="category"][value="${categoryParam}"]`);
+      if (categoryInput) {
+        categoryInput.checked = true;
+      }
+    } else {
+      // Default to "all" if no category parameter
+      const allInput = document.querySelector<HTMLInputElement>('input[name="category"][value="all"]');
+      if (allInput) {
+        allInput.checked = true;
+      }
+    }
+    
+    // Trigger initial filter
+    filterAndSort();
+  }
+
+  categoryInputs.forEach((input) => input.addEventListener('change', filterAndSort));
+  sortSelect?.addEventListener('change', filterAndSort);
+
+  // Initialize on page load
+  initializeCategoryFromURL();
+</script>

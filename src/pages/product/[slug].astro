@@ -1,0 +1,415 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { siteConfig, formatPrice } from '../../config/site';
+import { getProductBySlug, getRelatedProducts } from '../../lib/catalog';
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/404');
+}
+
+const product = await getProductBySlug(slug);
+
+if (!product) {
+  return Astro.redirect('/404');
+}
+
+const relatedProducts = await getRelatedProducts(product);
+const discount = product.originalPrice
+  ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  : 0;
+---
+
+<Layout title={`${product.name} — ${siteConfig.brand.name}`} description={product.shortDescription}>
+  <section class="py-10 sm:py-16 bg-surface">
+    <div class="container-page">
+      <!-- Breadcrumb Navigation -->
+      <nav class="text-xs font-mono text-stone-500 mb-8 sm:mb-12" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2">
+          <li><a href="/" class="hover:text-stone-900 transition-colors">Home</a></li>
+          <li>/</li>
+          <li><a href="/shop" class="hover:text-stone-900 transition-colors">Catalog</a></li>
+          <li>/</li>
+          <li class="text-stone-900 font-medium truncate max-w-[200px] sm:max-w-none">{product.name}</li>
+        </ol>
+      </nav>
+
+      <!-- Main Product View: 58% Gallery / 42% Sticky Rail -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        
+        <!-- Large Product Gallery (Occupies ~58% on Desktop) -->
+        <div class="lg:col-span-7 space-y-4">
+          <!-- Main Hero Image Frame -->
+          <div class="relative aspect-square sm:aspect-[4/3] lg:aspect-[1/1] rounded-2xl overflow-hidden bg-stone-100/60 border border-border p-6 sm:p-12 flex items-center justify-center shadow-subtle group">
+            <img
+              id="main-image"
+              src={product.images[0]}
+              alt={product.name}
+              class="w-full h-full object-contain transition-transform duration-500 ease-out-expo group-hover:scale-105"
+            />
+            {product.badge && (
+              <span class="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1 text-xs font-medium tracking-wide bg-stone-900 text-white rounded-full shadow-xs">
+                {product.badge}
+              </span>
+            )}
+            {discount > 0 && (
+              <span class="absolute top-4 right-4 sm:top-6 sm:right-6 px-3 py-1 text-xs font-semibold tracking-tight bg-red-600 text-white rounded-full shadow-xs">
+                -{discount}% OFF
+              </span>
+            )}
+          </div>
+
+          <!-- Thumbnail Strip -->
+          {product.images.length > 1 && (
+            <div class="grid grid-cols-4 sm:grid-cols-6 gap-3">
+              {product.images.map((img, i) => (
+                <button
+                  type="button"
+                  class="aspect-square rounded-lg overflow-hidden border border-border hover:border-stone-900 p-2 bg-surface-bright flex items-center justify-center transition-all cursor-pointer shadow-subtle focus:outline-none focus:ring-2 focus:ring-stone-900"
+                  onclick={`document.getElementById('main-image').src = '${img}'`}
+                  aria-label={`View image ${i + 1}`}
+                >
+                  <img src={img} alt={`${product.name} view ${i + 1}`} class="w-full h-full object-contain" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Sticky Details Rail (Occupies ~42% on Desktop) -->
+        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-8">
+          <div>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-stone-200/60 text-[11px] font-mono uppercase tracking-wider text-stone-700 mb-3">
+              {product.category}
+            </div>
+            <h1 class="text-2xl sm:text-4xl lg:text-[2.5rem] font-semibold tracking-tight text-stone-900 leading-tight mb-3 break-words">
+              {product.name}
+            </h1>
+
+            <div class="flex items-baseline gap-3 mb-6">
+              <span class="text-3xl font-semibold text-stone-900 tabular-nums tracking-tight">
+                {formatPrice(product.price)}
+              </span>
+              {product.originalPrice && (
+                <>
+                  <span class="text-lg text-stone-400 line-through tabular-nums">
+                    {formatPrice(product.originalPrice)}
+                  </span>
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded bg-red-50 text-red-700 border border-red-200/60">
+                    Save {discount}%
+                  </span>
+                </>
+              )}
+            </div>
+
+            <p class="text-sm sm:text-base text-stone-600 leading-relaxed font-light break-words">
+              {product.description}
+            </p>
+          </div>
+
+          <!-- Stock Indicator -->
+          <div class="p-3.5 rounded-lg bg-surface-bright border border-border/80 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              {product.inStock ? (
+                <>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span class="font-medium text-stone-900">In Stock and ready for print fabrication</span>
+                </>
+              ) : (
+                <>
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                  <span class="font-medium text-red-700">Currently unavailable for order</span>
+                </>
+              )}
+            </div>
+            {product.stockCount && (
+              <span class="text-stone-400 font-mono">Stock: {product.stockCount}</span>
+            )}
+          </div>
+
+          <!-- Color Variant Selector -->
+          {product.colors && product.colors.length > 0 && (
+            <div>
+              <label class="block text-xs font-mono uppercase tracking-wider text-stone-500 mb-3">
+                Selected Filament Color
+              </label>
+              <div class="flex flex-wrap gap-2" id="color-options">
+                {product.colors.map((color, idx) => (
+                  <button
+                    type="button"
+                    class={`color-btn px-4 py-2 text-xs font-medium rounded-md border transition-all duration-200 cursor-pointer select-none ${
+                      idx === 0
+                        ? 'border-stone-900 bg-stone-900 text-white shadow-xs'
+                        : 'border-border text-stone-700 hover:border-stone-400 bg-surface-bright'
+                    }`}
+                    data-color={color}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Quantity Stepper -->
+          <div>
+            <label for="quantity" class="block text-xs font-mono uppercase tracking-wider text-stone-500 mb-3">
+              Quantity
+            </label>
+            <div class="inline-flex items-center rounded-md border border-border bg-surface-bright p-1 shadow-xs">
+              <button
+                id="qty-decrease"
+                type="button"
+                class="w-9 h-9 rounded flex items-center justify-center text-stone-700 hover:bg-stone-100 active:scale-95 transition-all text-base cursor-pointer"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+              <input
+                id="quantity"
+                type="number"
+                value="1"
+                min="1"
+                max={product.stockCount || 99}
+                class="w-14 text-center font-medium text-sm text-stone-900 tabular-nums focus:outline-none bg-transparent"
+                readonly
+              />
+              <button
+                id="qty-increase"
+                type="button"
+                class="w-9 h-9 rounded flex items-center justify-center text-stone-700 hover:bg-stone-100 active:scale-95 transition-all text-base cursor-pointer"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Purchase Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              id="add-to-cart-main"
+              type="button"
+              class="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-stone-900 hover:bg-stone-800 text-white text-sm font-medium rounded-md transition-all duration-200 active:scale-[0.98] shadow-subtle disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none"
+              disabled={!product.inStock}
+              data-product-id={product.id}
+              data-product-name={product.name}
+              data-product-price={product.price}
+              data-product-image={product.images[0]}
+              data-product-slug={product.slug}
+              aria-label={`Add ${product.name} to cart`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+              <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+            </button>
+
+            <Button
+              id="buy-now-btn"
+              variant="outline"
+              size="md"
+              class="flex-1 text-sm font-medium py-3.5 border-stone-800 hover:border-stone-950"
+              disabled={!product.inStock}
+            >
+              Buy Now
+            </Button>
+          </div>
+
+          <!-- Expandable Technical & Shipping Accordions -->
+          <div class="border-t border-border pt-6 space-y-3">
+            {product.details && product.details.length > 0 && (
+              <details class="group rounded-lg border border-border bg-surface-bright p-4 text-sm" open>
+                <summary class="flex items-center justify-between font-medium text-stone-900 cursor-pointer list-none select-none">
+                  <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    Specifications & Details
+                  </span>
+                  <span class="transition-transform group-open:rotate-180">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </summary>
+                <div class="pt-4 border-t border-border/60 mt-3">
+                  <ul class="space-y-2">
+                    {product.details.map((detail) => (
+                      <li class="flex items-start gap-2 text-stone-600 font-light text-xs sm:text-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-stone-900 mt-2 shrink-0"></span>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </details>
+            )}
+
+            <details class="group rounded-lg border border-border bg-surface-bright p-4 text-sm">
+              <summary class="flex items-center justify-between font-medium text-stone-900 cursor-pointer list-none select-none">
+                <span class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                  Materials & Care
+                </span>
+                <span class="transition-transform group-open:rotate-180">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <div class="pt-4 border-t border-border/60 mt-3 text-xs sm:text-sm text-stone-600 font-light leading-relaxed">
+                Fabricated with high-grade, durable thermoplastics. Clean with a dry microfiber cloth or lukewarm water. Keep away from extreme continuous heat (>60°C).
+              </div>
+            </details>
+
+            <details class="group rounded-lg border border-border bg-surface-bright p-4 text-sm">
+              <summary class="flex items-center justify-between font-medium text-stone-900 cursor-pointer list-none select-none">
+                <span class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="16" height="13" x="4" y="5" rx="2"/><path d="M16 2v3M8 2v3M4 10h16"/>
+                  </svg>
+                  Shipping & Production
+                </span>
+                <span class="transition-transform group-open:rotate-180">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <div class="pt-4 border-t border-border/60 mt-3 text-xs sm:text-sm text-stone-600 font-light leading-relaxed">
+                Orders typically dispatch within 2–3 business days. Packaged in custom shock-absorbing transit boxes with full tracking. Flat ₹110 shipping fee per order applied at checkout.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Products Section -->
+  {relatedProducts.length > 0 && (
+    <section class="py-16 sm:py-24 bg-surface-subtle border-t border-border">
+      <div class="container-page">
+        <div class="flex items-end justify-between mb-8 sm:mb-12">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-mono mb-2">Related Items</p>
+            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900">Complementary Products</h2>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {relatedProducts.map((p) => (
+            <ProductCard product={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<script>
+  const qtyInput = document.getElementById('quantity') as HTMLInputElement;
+  const qtyDecrease = document.getElementById('qty-decrease');
+  const qtyIncrease = document.getElementById('qty-increase');
+
+  qtyDecrease?.addEventListener('click', () => {
+    const current = parseInt(qtyInput.value);
+    if (current > 1) qtyInput.value = String(current - 1);
+  });
+
+  qtyIncrease?.addEventListener('click', () => {
+    const current = parseInt(qtyInput.value);
+    const max = parseInt(qtyInput.max);
+    if (current < max) qtyInput.value = String(current + 1);
+  });
+
+  // Cart functions - shared with cart page
+  import { getLocalCart, saveLocalCart, updateNavbarCartBadge } from '../../lib/cart';
+
+  function addToCart(product: { id: string; name: string; price: number; image: string; slug: string; color?: string }, quantity: number = 1) {
+    const cart = getLocalCart();
+    const existingIndex = cart.findIndex((item) => item.id === product.id && item.color === product.color);
+    
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += quantity;
+    } else {
+      cart.push({ ...product, quantity });
+    }
+    
+    saveLocalCart(cart);
+  }
+
+  // Initialize cart badge on page load
+  updateNavbarCartBadge();
+
+  // Color selection
+  let selectedColor = document.querySelector<HTMLButtonElement>('.color-btn')?.dataset.color;
+  const colorBtns = document.querySelectorAll<HTMLButtonElement>('.color-btn');
+  colorBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      colorBtns.forEach(b => {
+        b.classList.remove('border-text-primary', 'bg-text-primary', 'text-text-inverse', 'font-medium');
+        b.classList.add('border-border', 'text-text-secondary', 'bg-surface');
+      });
+      btn.classList.remove('border-border', 'text-text-secondary', 'bg-surface');
+      btn.classList.add('border-text-primary', 'bg-text-primary', 'text-text-inverse', 'font-medium');
+      selectedColor = btn.dataset.color;
+    });
+  });
+
+  // Add to cart button handler for main CTA
+  const addToCartBtn = document.getElementById('add-to-cart-main');
+  addToCartBtn?.addEventListener('click', () => {
+    const quantity = parseInt(qtyInput.value) || 1;
+    const productId = addToCartBtn.dataset.productId;
+    const productName = addToCartBtn.dataset.productName;
+    const productPrice = parseFloat(addToCartBtn.dataset.productPrice || '0');
+    const productImage = addToCartBtn.dataset.productImage || '';
+    const productSlug = addToCartBtn.dataset.productSlug || '';
+
+    if (productId && productName && !isNaN(productPrice)) {
+      addToCart({
+        id: productId,
+        name: productName,
+        price: productPrice,
+        image: productImage,
+        slug: productSlug,
+        color: selectedColor
+      }, quantity);
+
+      // Visual feedback
+      const originalText = addToCartBtn.textContent;
+      addToCartBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Added`;
+      addToCartBtn.classList.add('bg-success');
+
+      setTimeout(() => {
+        addToCartBtn.innerHTML = originalText || '';
+        addToCartBtn.classList.remove('bg-success');
+      }, 800);
+    }
+  });
+
+  // Buy Now handler
+  const buyNowBtn = document.getElementById('buy-now-btn');
+  buyNowBtn?.addEventListener('click', () => {
+    const quantity = parseInt(qtyInput.value) || 1;
+    const productId = addToCartBtn?.dataset.productId;
+    const productName = addToCartBtn?.dataset.productName;
+    const productPrice = parseFloat(addToCartBtn?.dataset.productPrice || '0');
+    const productImage = addToCartBtn?.dataset.productImage || '';
+    const productSlug = addToCartBtn?.dataset.productSlug || '';
+
+    if (productId && productName && !isNaN(productPrice)) {
+      addToCart({
+        id: productId,
+        name: productName,
+        price: productPrice,
+        image: productImage,
+        slug: productSlug,
+        color: selectedColor
+      }, quantity);
+
+      window.location.href = '/checkout';
+    }
+  });
+</script>

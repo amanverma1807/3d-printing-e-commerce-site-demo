@@ -1,0 +1,57 @@
+---
+type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'inverted';
+type Size = 'sm' | 'md' | 'lg';
+
+interface Props {
+  variant?: Variant;
+  size?: Size;
+  href?: string;
+  class?: string;
+  id?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  [key: string]: any;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  class: className,
+  id,
+  type = 'button',
+  disabled = false,
+  ...rest
+} = Astro.props;
+
+const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 ease-sharp disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] rounded-md select-none';
+
+const variants = {
+  primary: 'bg-surface-inverse text-text-inverse hover:bg-stone-800 shadow-subtle hover:shadow-soft',
+  secondary: 'bg-surface-muted text-text-primary hover:bg-stone-200/80 border border-border',
+  outline: 'border border-border-dark/80 text-text-primary hover:bg-surface-muted hover:border-text-primary',
+  ghost: 'text-text-secondary hover:text-text-primary hover:bg-surface-muted',
+  inverted: 'bg-surface-bright text-text-primary hover:bg-stone-100 shadow-subtle border border-border',
+};
+
+const sizes = {
+  sm: 'px-3.5 py-1.5 text-xs gap-1.5',
+  md: 'px-5 py-2.5 text-sm gap-2',
+  lg: 'px-7 py-3.5 text-base gap-2.5',
+};
+
+const classes = [baseStyles, variants[variant], sizes[size], className].filter(Boolean).join(' ');
+
+const Component = href ? 'a' : 'button';
+---
+
+<Component
+  id={id}
+  href={href}
+  type={!href ? type : undefined}
+  class={classes}
+  disabled={!href ? disabled : undefined}
+  {...rest}
+>
+  <slot />
+</Component>

@@ -1,0 +1,481 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Products — E-commerce Admin" activeSection="products">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-text-primary">Products</h1>
+      <p class="text-sm text-text-secondary mt-1">
+        Manage catalog products, pricing, inventory stock, images, and visibility.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a
+        href="/admin/products/new"
+        class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow"
+      >
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add New Product</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast-banner" class="hidden mb-6 p-4 rounded-xl text-sm transition-all flex items-start justify-between gap-3 shadow-xs">
+    <div class="flex items-start gap-3">
+      <div id="toast-icon" class="mt-0.5 shrink-0"></div>
+      <div id="toast-text" class="font-medium"></div>
+    </div>
+    <button id="toast-close" class="text-text-tertiary hover:text-text-primary">
+      <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Products Table Card -->
+  <div class="bg-surface-bright rounded-2xl border border-border shadow-xs overflow-hidden">
+    <!-- Filters Toolbar -->
+    <div class="p-6 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <!-- Search Input -->
+      <div class="relative flex-1 max-w-md">
+        <input
+          type="text"
+          id="product-search"
+          placeholder="Search products by name, slug, material..."
+          class="w-full pl-9 pr-4 py-2 bg-surface text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        />
+        <svg class="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+
+      <!-- Dropdown Filters -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Category Filter -->
+        <select
+          id="category-filter"
+          class="px-3 py-2 bg-surface text-xs font-medium rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        >
+          <option value="all">All Categories</option>
+          <!-- Injected dynamically -->
+        </select>
+
+        <!-- Status Filter -->
+        <select
+          id="status-filter"
+          class="px-3 py-2 bg-surface text-xs font-medium rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        >
+          <option value="all">All Statuses</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive / Hidden</option>
+          <option value="out_of_stock">Out of Stock</option>
+          <option value="featured">Featured Only</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr class="bg-surface/50 border-b border-border text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
+            <th class="py-3 px-4 w-16">Item</th>
+            <th class="py-3 px-4">Product Details</th>
+            <th class="py-3 px-4">Category</th>
+            <th class="py-3 px-4 text-right">Price</th>
+            <th class="py-3 px-4 text-center">Stock</th>
+            <th class="py-3 px-4 text-center">Visibility</th>
+            <th class="py-3 px-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody" class="divide-y divide-border">
+          <tr>
+            <td colspan="7" class="py-12 text-center text-text-tertiary">
+              <div class="inline-flex items-center gap-2">
+                <svg class="animate-spin w-4 h-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <span>Loading catalog products from database...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden py-16 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-surface-muted text-text-tertiary mx-auto mb-3 flex items-center justify-center">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      </div>
+      <h3 class="font-semibold text-text-primary text-base">No products match your criteria</h3>
+      <p class="text-xs text-text-secondary mt-1 max-w-sm mx-auto mb-4">
+        Try adjusting your search terms or filters, or create a new product.
+      </p>
+      <a
+        href="/admin/products/new"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-xl hover:bg-brand-700 transition-colors"
+      >
+        Add First Product
+      </a>
+    </div>
+  </div>
+
+  <!-- Delete / Deactivate Confirmation Modal -->
+  <div id="delete-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-surface-bright rounded-2xl max-w-md w-full border border-border shadow-2xl p-6 animate-scale-in">
+      <div class="w-12 h-12 rounded-2xl bg-danger/10 text-danger mx-auto mb-4 flex items-center justify-center">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 id="delete-title" class="text-lg font-bold text-text-primary text-center mb-1">Delete Product</h3>
+      <p id="delete-msg" class="text-xs text-text-secondary text-center mb-4 leading-relaxed">
+        Are you sure you want to remove this product?
+      </p>
+
+      <!-- History warning box if product was ever ordered -->
+      <div id="order-history-warning" class="hidden p-3 rounded-xl bg-warning/10 border border-warning/20 text-xs text-warning mb-6 text-left">
+        <strong>Historical Orders Notice:</strong> This product is referenced in customer order history. Permanently deleting it will unlink it from past receipts. Deactivating it (hiding from the store) is strongly recommended.
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-end gap-2.5 pt-2 border-t border-border">
+        <button
+          type="button"
+          id="cancel-delete-btn"
+          class="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-text-secondary hover:bg-surface-muted rounded-xl transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          id="deactivate-btn"
+          class="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold bg-warning/15 hover:bg-warning/25 text-warning rounded-xl transition-colors"
+        >
+          Deactivate (Hide Only)
+        </button>
+        <button
+          type="button"
+          id="confirm-delete-btn"
+          class="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold bg-danger hover:bg-danger/90 text-white rounded-xl transition-colors shadow-sm"
+        >
+          Permanent Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../lib/supabase';
+
+    let allProducts: any[] = [];
+    let allCategories: any[] = [];
+    let targetProduct: any = null;
+
+    // Elements
+    const tbody = document.getElementById('products-tbody');
+    const emptyState = document.getElementById('empty-state');
+    const searchInput = document.getElementById('product-search') as HTMLInputElement;
+    const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
+    const statusFilter = document.getElementById('status-filter') as HTMLSelectElement;
+
+    const toast = document.getElementById('toast-banner');
+    const toastText = document.getElementById('toast-text');
+    const toastIcon = document.getElementById('toast-icon');
+    const toastClose = document.getElementById('toast-close');
+
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteTitle = document.getElementById('delete-title');
+    const deleteMsg = document.getElementById('delete-msg');
+    const orderHistoryWarning = document.getElementById('order-history-warning');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const deactivateBtn = document.getElementById('deactivate-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+    function showToast(message: string, isError = false) {
+      if (!toast || !toastText || !toastIcon) return;
+      toastText.textContent = message;
+      if (isError) {
+        toast.className = 'mb-6 p-4 rounded-xl text-sm flex items-start justify-between gap-3 shadow-xs bg-danger/10 border border-danger/20 text-danger';
+        toastIcon.innerHTML = `<svg class="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2"/></svg>`;
+      } else {
+        toast.className = 'mb-6 p-4 rounded-xl text-sm flex items-start justify-between gap-3 shadow-xs bg-success/10 border border-success/20 text-success';
+        toastIcon.innerHTML = `<svg class="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+      }
+      toast.classList.remove('hidden');
+    }
+
+    toastClose?.addEventListener('click', () => {
+      toast?.classList.add('hidden');
+    });
+
+    // Load data from Supabase
+    async function loadCatalog() {
+      try {
+        // 1. Load Categories
+        const { data: catData, error: catError } = await supabase
+          .from('categories')
+          .select('id, name, slug')
+          .order('display_order', { ascending: true });
+
+        if (!catError && catData) {
+          allCategories = catData;
+          if (categoryFilter) {
+            categoryFilter.innerHTML = `
+              <option value="all">All Categories</option>
+              ${allCategories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+            `;
+          }
+        }
+
+        // 2. Load Products (Admins can read all products regardless of is_active)
+        const { data: prodData, error: prodError } = await supabase
+          .from('products')
+          .select(`
+            id,
+            category_id,
+            name,
+            slug,
+            price,
+            original_price,
+            images,
+            badge,
+            material,
+            in_stock,
+            stock_count,
+            featured,
+            is_active,
+            created_at,
+            categories (
+              id,
+              name,
+              slug
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (prodError) {
+          showToast('Failed to load products: ' + prodError.message, true);
+          return;
+        }
+
+        allProducts = prodData || [];
+        renderTable();
+      } catch (err: any) {
+        showToast('Error loading catalog: ' + (err?.message || 'Network error'), true);
+      }
+    }
+
+    function renderTable() {
+      if (!tbody || !emptyState) return;
+
+      const search = searchInput?.value.trim().toLowerCase() || '';
+      const catVal = categoryFilter?.value || 'all';
+      const statusVal = statusFilter?.value || 'all';
+
+      const filtered = allProducts.filter(p => {
+        // Search
+        const matchesSearch =
+          !search ||
+          p.name.toLowerCase().includes(search) ||
+          p.slug.toLowerCase().includes(search) ||
+          (p.material && p.material.toLowerCase().includes(search));
+
+        // Category
+        const matchesCategory = catVal === 'all' || p.category_id === catVal;
+
+        // Status
+        let matchesStatus = true;
+        if (statusVal === 'active') matchesStatus = p.is_active === true;
+        else if (statusVal === 'inactive') matchesStatus = p.is_active === false;
+        else if (statusVal === 'out_of_stock') matchesStatus = p.in_stock === false || p.stock_count <= 0;
+        else if (statusVal === 'featured') matchesStatus = p.featured === true;
+
+        return matchesSearch && matchesCategory && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      tbody.innerHTML = filtered.map(p => {
+        const thumb = Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : '/images/products/placeholder.svg';
+        const categoryName = p.categories?.name || 'Unassigned';
+
+        return `
+          <tr class="hover:bg-surface/30 transition-colors">
+            <td class="py-3 px-4">
+              <img
+                src="${thumb}"
+                alt="${p.name}"
+                class="w-12 h-12 object-cover rounded-xl bg-surface-muted border border-border-subtle"
+                onerror="this.src='/images/products/placeholder.svg'"
+              />
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-text-primary text-sm">${p.name}</span>
+                ${p.featured ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Featured</span>' : ''}
+                ${p.badge ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-100 text-brand-700">${p.badge}</span>` : ''}
+              </div>
+              <div class="text-xs font-mono text-text-tertiary">/${p.slug}</div>
+              ${p.material ? `<div class="text-[11px] text-text-secondary mt-0.5">${p.material}</div>` : ''}
+            </td>
+            <td class="py-3 px-4">
+              <span class="inline-block px-2.5 py-1 rounded-lg text-xs font-medium bg-surface border border-border-subtle text-text-secondary">
+                ${categoryName}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-right">
+              <div class="font-semibold text-text-primary text-sm">₹${Number(p.price).toLocaleString('en-IN')}</div>
+              ${p.original_price ? `<div class="text-xs text-text-tertiary line-through">₹${Number(p.original_price).toLocaleString('en-IN')}</div>` : ''}
+            </td>
+            <td class="py-3 px-4 text-center">
+              ${
+                p.in_stock
+                  ? `<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-success/15 text-success">In Stock (${p.stock_count})</span>`
+                  : `<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-danger/15 text-danger">Out of Stock</span>`
+              }
+            </td>
+            <td class="py-3 px-4 text-center">
+              ${
+                p.is_active
+                  ? `<span class="inline-flex items-center gap-1.5 text-xs text-success font-medium">
+                      <span class="w-2 h-2 rounded-full bg-success"></span> Active
+                    </span>`
+                  : `<span class="inline-flex items-center gap-1.5 text-xs text-text-tertiary font-medium">
+                      <span class="w-2 h-2 rounded-full bg-text-tertiary"></span> Hidden
+                    </span>`
+              }
+            </td>
+            <td class="py-3 px-4 text-right">
+              <div class="inline-flex items-center gap-1.5">
+                <a
+                  href="/admin/products/${p.id}/edit"
+                  class="px-2.5 py-1 text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 rounded-lg transition-colors border border-brand-200"
+                >
+                  Edit
+                </a>
+                <button
+                  type="button"
+                  data-delete-id="${p.id}"
+                  class="delete-prod-btn px-2.5 py-1 text-xs font-medium text-danger hover:text-white hover:bg-danger rounded-lg transition-colors border border-danger/30"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Attach Delete Listeners
+      document.querySelectorAll('.delete-prod-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute('data-delete-id');
+          const product = allProducts.find(p => p.id === id);
+          if (product) openDeleteModal(product);
+        });
+      });
+    }
+
+    async function openDeleteModal(product: any) {
+      targetProduct = product;
+      if (!deleteModal || !deleteTitle || !deleteMsg) return;
+
+      deleteTitle.textContent = `Remove "${product.name}"`;
+      deleteMsg.textContent = `Choose whether to deactivate "${product.name}" (hide from store) or permanently delete it from the database.`;
+
+      // Check if product is in order_items
+      const { count } = await supabase
+        .from('order_items')
+        .select('id', { count: 'exact', head: true })
+        .eq('product_id', product.id);
+
+      if (orderHistoryWarning) {
+        if (count && count > 0) {
+          orderHistoryWarning.classList.remove('hidden');
+        } else {
+          orderHistoryWarning.classList.add('hidden');
+        }
+      }
+
+      deleteModal.classList.remove('hidden');
+      deleteModal.classList.add('flex');
+    }
+
+    // Soft Deactivation (Recommended)
+    deactivateBtn?.addEventListener('click', async () => {
+      if (!targetProduct) return;
+      try {
+        deactivateBtn.disabled = true;
+        const { error } = await supabase
+          .from('products')
+          .update({ is_active: false })
+          .eq('id', targetProduct.id);
+
+        if (error) throw error;
+        showToast(`Product "${targetProduct.name}" deactivated and hidden from storefront.`);
+        closeDeleteModal();
+        await loadCatalog();
+      } catch (err: any) {
+        showToast('Failed to deactivate product: ' + err.message, true);
+      } finally {
+        deactivateBtn.disabled = false;
+      }
+    });
+
+    // Permanent Deletion
+    confirmDeleteBtn?.addEventListener('click', async () => {
+      if (!targetProduct) return;
+      try {
+        confirmDeleteBtn.disabled = true;
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', targetProduct.id);
+
+        if (error) throw error;
+        showToast(`Product "${targetProduct.name}" permanently deleted.`);
+        closeDeleteModal();
+        await loadCatalog();
+      } catch (err: any) {
+        showToast('Failed to delete product: ' + err.message, true);
+      } finally {
+        confirmDeleteBtn.disabled = false;
+      }
+    });
+
+    function closeDeleteModal() {
+      if (deleteModal) {
+        deleteModal.classList.add('hidden');
+        deleteModal.classList.remove('flex');
+      }
+      targetProduct = null;
+    }
+
+    cancelDeleteBtn?.addEventListener('click', closeDeleteModal);
+
+    // Event listeners
+    searchInput?.addEventListener('input', renderTable);
+    categoryFilter?.addEventListener('change', renderTable);
+    statusFilter?.addEventListener('change', renderTable);
+
+    // Initial load when admin authentication is confirmed
+    window.addEventListener('template:admin-ready', () => {
+      loadCatalog();
+    });
+  </script>
+</AdminLayout>

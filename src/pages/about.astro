@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title={`About Us — ${siteConfig.brand.name}`}>
+  <section class="py-20 bg-surface">
+    <div class="container-page max-w-4xl">
+      <h1 class="text-5xl font-bold text-text-primary mb-6 text-center">About {siteConfig.brand.name}</h1>
+      <p class="text-xl text-text-secondary text-center mb-16 max-w-2xl mx-auto">
+        Dedicated to delivering premium quality products and an exceptional shopping experience.
+      </p>
+
+      <div class="prose prose-lg max-w-none">
+        <div class="space-y-6 text-text-secondary leading-relaxed">
+          <p>
+            {siteConfig.brand.name} was established with a clear mission: to bring together thoughtful design, exceptional craftsmanship, and dependable quality in every product we offer.
+          </p>
+
+          <p>
+            Every product in our collection is carefully selected for its design quality, functionality, and aesthetic appeal. We work with trusted partners and artisans to ensure each piece meets our high standards.
+          </p>
+
+          <p>
+            From everyday lifestyle essentials to bespoke customer orders, our focus remains on providing seamless service, transparent delivery, and products built to stand the test of time.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-20 grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="text-4xl font-bold text-brand-600 mb-2">100%</div>
+          <p class="text-text-secondary">Inspected Quality</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-brand-600 mb-2">Fast</div>
+          <p class="text-text-secondary">Reliable Shipping</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-brand-600 mb-2">Dedicated</div>
+          <p class="text-text-secondary">Customer Support</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-surface-muted">
+    <div class="container-page max-w-4xl">
+      <h2 class="text-3xl font-bold text-text-primary mb-12 text-center">Our Values</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-text-primary mb-3">Quality First</h3>
+          <p class="text-text-secondary">Every product is crafted with care and inspected for quality before it reaches you.</p>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-text-primary mb-3">Design Matters</h3>
+          <p class="text-text-secondary">We believe everyday products should be aesthetically pleasing as well as functional.</p>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-text-primary mb-3">Sustainability</h3>
+          <p class="text-text-secondary">We use eco-friendly materials and print-on-demand to minimize waste.</p>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-text-primary mb-3">Customer Focus</h3>
+          <p class="text-text-secondary">Your satisfaction is our priority. We're here to help at every step.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

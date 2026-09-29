@@ -1,0 +1,222 @@
+---
+import '../../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="E-commerce Admin" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>Admin Login — E-commerce Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-surface flex items-center justify-center p-4 text-text-primary">
+    <div class="w-full max-w-md">
+      <!-- Brand Header -->
+      <div class="text-center mb-8">
+        <a href="/" class="inline-flex items-center gap-2 mb-3 text-text-primary hover:opacity-80 transition-opacity">
+          <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xl shadow-md">
+            ES
+          </div>
+          <span class="text-2xl font-bold tracking-tight">E-commerce Store</span>
+        </a>
+        <div class="inline-block px-3 py-1 bg-brand-100 text-brand-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+          Admin Portal
+        </div>
+      </div>
+
+      <!-- Login Card -->
+      <div class="bg-surface-bright rounded-2xl p-8 border border-border shadow-lg">
+        <h1 class="text-2xl font-bold text-text-primary mb-2 text-center">Sign In</h1>
+        <p class="text-sm text-text-secondary mb-6 text-center">
+          Restricted access for authorized administrators only.
+        </p>
+
+        <!-- Error Notification Banner -->
+        <div id="error-banner" class="hidden mb-6 p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm flex items-start gap-3">
+          <svg class="w-5 h-5 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+            <line x1="12" y1="8" x2="12" y2="12" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div id="error-message">Invalid email or password</div>
+        </div>
+
+        <form id="admin-login-form" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-text-primary mb-1.5">Admin Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder="admin@example.com"
+              class="w-full px-4 py-3 bg-surface rounded-xl border border-border text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-text-primary mb-1.5">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              placeholder="••••••••••••"
+              class="w-full px-4 py-3 bg-surface rounded-xl border border-border text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all"
+            />
+          </div>
+
+          <button
+            type="submit"
+            id="submit-button"
+            class="w-full mt-2 py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span id="button-text">Authenticate & Enter</span>
+            <svg id="button-spinner" class="hidden animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-6 border-t border-border-subtle text-center">
+          <a href="/" class="text-xs text-text-secondary hover:text-brand-600 transition-colors inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Return to Storefront
+          </a>
+        </div>
+      </div>
+
+      <div class="text-center mt-6 text-xs text-text-tertiary">
+        E-Commerce Store &bull; Production Administration
+      </div>
+    </div>
+
+    <script>
+      import { supabase, getAdminProfile, verifyAdminSession } from '../../lib/supabase';
+
+      const form = document.getElementById('admin-login-form') as HTMLFormElement;
+      const emailInput = document.getElementById('email') as HTMLInputElement;
+      const passwordInput = document.getElementById('password') as HTMLInputElement;
+      const submitButton = document.getElementById('submit-button') as HTMLButtonElement;
+      const buttonText = document.getElementById('button-text') as HTMLSpanElement;
+      const buttonSpinner = document.getElementById('button-spinner') as HTMLElement;
+      const errorBanner = document.getElementById('error-banner') as HTMLDivElement;
+      const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+
+      // Handle query param errors (e.g., unauthorized redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('error') === 'unauthorized') {
+        showError('Access denied: You must be an authorized administrator to view the dashboard.');
+      } else if (urlParams.get('error') === 'session_expired') {
+        showError('Your administrative session has expired. Please log in again.');
+      }
+
+      // Check if user is already logged in as admin
+      (async function checkExistingAuth() {
+        try {
+          const authData = await verifyAdminSession();
+          if (authData) {
+            window.location.replace('/admin');
+          }
+        } catch {
+          // ignore error on initial check
+        }
+      })();
+
+      function showError(msg: string) {
+        if (errorMessage && errorBanner) {
+          errorMessage.textContent = msg;
+          errorBanner.classList.remove('hidden');
+        }
+      }
+
+      function hideError() {
+        if (errorBanner) {
+          errorBanner.classList.add('hidden');
+        }
+      }
+
+      function setLoading(loading: boolean) {
+        if (!submitButton || !buttonText || !buttonSpinner) return;
+        submitButton.disabled = loading;
+        if (loading) {
+          buttonText.textContent = 'Authenticating...';
+          buttonSpinner.classList.remove('hidden');
+        } else {
+          buttonText.textContent = 'Authenticate & Enter';
+          buttonSpinner.classList.add('hidden');
+        }
+      }
+
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideError();
+
+        const email = emailInput?.value.trim();
+        const password = passwordInput?.value;
+
+        if (!email || !password) {
+          showError('Please enter both your admin email and password.');
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          // 1. Authenticate with Supabase Auth
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (error) {
+            setLoading(false);
+            if (error.message.toLowerCase().includes('invalid login credentials')) {
+              showError('Invalid email or password.');
+            } else {
+              showError(error.message);
+            }
+            return;
+          }
+
+          if (!data.user) {
+            setLoading(false);
+            showError('Authentication failed. No user returned.');
+            return;
+          }
+
+          // 2. Validate that user is in public.admin_users table
+          const adminProfile = await getAdminProfile(data.user.id);
+
+          if (!adminProfile) {
+            // Immediately sign out unauthorized users so no unprivileged session persists
+            await supabase.auth.signOut();
+            setLoading(false);
+            showError('Access Denied: Your account does not have administrator privileges.');
+            return;
+          }
+
+          // 3. Success -> Redirect to Admin Dashboard
+          window.location.replace('/admin');
+        } catch (err: any) {
+          setLoading(false);
+          showError(err?.message || 'An unexpected error occurred during login. Please try again.');
+        }
+      });
+    </script>
+  </body>
+</html>

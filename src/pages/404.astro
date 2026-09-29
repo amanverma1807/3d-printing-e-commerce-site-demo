@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import { siteConfig, getWhatsAppLink } from '../config/site';
+
+// Ensure 404 status code in SSR mode
+Astro.response.status = 404;
+---
+
+<Layout
+  title={`404: Page Not Found — ${siteConfig.brand.name}`}
+  description="The page you requested could not be found."
+>
+  <main class="py-16 md:py-24 bg-surface min-h-[75vh] flex items-center">
+    <div class="container-page max-w-3xl text-center">
+      <!-- Minimal Modern 404 Graphic -->
+      <div class="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
+        <div class="absolute inset-0 bg-stone-200/50 rounded-full blur-2xl"></div>
+
+        <div class="relative z-10 w-32 h-32 rounded-3xl bg-surface-bright border border-border shadow-xs flex flex-col items-center justify-center p-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 mb-2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="8.01"/>
+            <line x1="11" y1="11" x2="11" y2="14"/>
+          </svg>
+          <span class="text-xs font-mono font-bold tracking-widest text-stone-500 uppercase">404</span>
+        </div>
+      </div>
+
+      <!-- Badge -->
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-700 mb-4 border border-stone-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
+        Page Not Found
+      </span>
+
+      <!-- Title & Explanation -->
+      <h1 class="text-4xl md:text-5xl font-extrabold text-text-primary tracking-tight mb-4">
+        We Couldn't Find That Page
+      </h1>
+      <p class="text-base md:text-lg text-text-secondary max-w-lg mx-auto mb-8 leading-relaxed">
+        The link you followed may be broken, or the page may have been removed. Let's get you back on track.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-12">
+        <Button href="/" variant="primary" size="md">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Back to Homepage
+        </Button>
+        <Button href="/shop" variant="secondary" size="md">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+          Browse Catalog
+        </Button>
+        <Button href="/contact" variant="outline" size="md">
+          Contact Us
+        </Button>
+      </div>
+
+      <!-- Quick Helpful Links Grid -->
+      <div class="pt-8 border-t border-border">
+        <h2 class="text-xs uppercase font-bold tracking-wider text-text-tertiary mb-4">Quick Links</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <a href="/shop" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+            🛍️ All Products
+          </a>
+          <a href="/track-order" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+            📦 Track Order
+          </a>
+          <a href="/custom" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+            ✨ Custom Orders
+          </a>
+          <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+            💬 WhatsApp ({siteConfig.contact.whatsappDisplay})
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

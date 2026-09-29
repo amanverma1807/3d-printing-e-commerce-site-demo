@@ -1,0 +1,942 @@
+---
+interface Props {
+  isNew?: boolean;
+}
+
+const { isNew = false } = Astro.props;
+---
+
+<div class="max-w-4xl mx-auto">
+  <!-- Back Button & Title -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <a
+        href="/admin/products"
+        class="p-2 rounded-xl bg-surface-bright border border-border text-text-secondary hover:text-text-primary hover:bg-surface-muted transition-colors shadow-xs"
+        title="Back to Products"
+      >
+        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+      </a>
+      <div>
+        <h1 id="editor-title" class="text-2xl font-bold tracking-tight text-text-primary">
+          {isNew ? 'Create New Product' : 'Edit Product'}
+        </h1>
+        <p class="text-xs text-text-secondary mt-0.5">
+          {isNew ? 'Fill in specifications and upload product media' : 'Update catalog pricing, details, and visibility'}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast-banner" class="hidden mb-6 p-4 rounded-xl text-sm transition-all flex items-start justify-between gap-3 shadow-xs">
+    <div class="flex items-start gap-3">
+      <div id="toast-icon" class="mt-0.5 shrink-0"></div>
+      <div id="toast-text" class="font-medium"></div>
+    </div>
+  </div>
+
+  <!-- Product Form -->
+  <form id="product-form" class="space-y-6">
+    <input type="hidden" id="product-id" value="" />
+
+    <!-- Section 1: Basic Information -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs space-y-4">
+      <h2 class="text-base font-bold text-text-primary border-b border-border pb-3">Basic Information</h2>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="name" class="block text-xs font-semibold text-text-primary mb-1">Product Name *</label>
+          <input
+            type="text"
+            id="name"
+            required
+            placeholder="e.g. Lithophane Moon Lamp"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+
+        <div>
+          <label for="slug" class="block text-xs font-semibold text-text-primary mb-1">
+            URL Slug * <span class="text-text-tertiary font-normal">(lowercase & hyphens)</span>
+          </label>
+          <input
+            type="text"
+            id="slug"
+            required
+            placeholder="e.g. lithophane-moon-lamp"
+            class="w-full px-3.5 py-2.5 bg-surface text-xs font-mono rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="category_id" class="block text-xs font-semibold text-text-primary mb-1">Category *</label>
+          <select
+            id="category_id"
+            required
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          >
+            <option value="">Select Category...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="badge" class="block text-xs font-semibold text-text-primary mb-1">
+            Product Badge <span class="text-text-tertiary font-normal">(optional: Bestseller, New, Sale)</span>
+          </label>
+          <input
+            type="text"
+            id="badge"
+            placeholder="e.g. Bestseller"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="short_description" class="block text-xs font-semibold text-text-primary mb-1">Short Description *</label>
+        <input
+          type="text"
+          id="short_description"
+          required
+          placeholder="Brief 1-sentence hook for catalog cards"
+          class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        />
+      </div>
+
+      <div>
+        <label for="description" class="block text-xs font-semibold text-text-primary mb-1">Full Description *</label>
+        <textarea
+          id="description"
+          required
+          rows="4"
+          placeholder="Comprehensive description of product design, printing technology, and aesthetic details..."
+          class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600 resize-none leading-relaxed"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Section 2: Pricing & Inventory -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs space-y-4">
+      <h2 class="text-base font-bold text-text-primary border-b border-border pb-3">Pricing & Inventory</h2>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="price" class="block text-xs font-semibold text-text-primary mb-1">Selling Price (INR ₹) *</label>
+          <input
+            type="number"
+            id="price"
+            required
+            min="0"
+            step="1"
+            placeholder="1299"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm font-semibold rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+
+        <div>
+          <label for="original_price" class="block text-xs font-semibold text-text-primary mb-1">
+            Original Price (INR ₹) <span class="text-text-tertiary font-normal">(for strikethrough discount)</span>
+          </label>
+          <input
+            type="number"
+            id="original_price"
+            min="0"
+            step="1"
+            placeholder="1599"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 pt-2">
+        <div>
+          <label for="stock_count" class="block text-xs font-semibold text-text-primary mb-1">Stock Count</label>
+          <input
+            type="number"
+            id="stock_count"
+            min="0"
+            value="10"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+
+        <div class="flex items-center gap-6 pt-5">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="in_stock"
+              checked
+              class="w-4 h-4 rounded text-brand-600 border-border focus:ring-brand-600"
+            />
+            <span class="text-xs font-medium text-text-primary">In Stock</span>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="featured"
+              class="w-4 h-4 rounded text-brand-600 border-border focus:ring-brand-600"
+            />
+            <span class="text-xs font-medium text-text-primary">Featured on Homepage</span>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="is_active"
+              checked
+              class="w-4 h-4 rounded text-brand-600 border-border focus:ring-brand-600"
+            />
+            <span class="text-xs font-medium text-success">Active (Visible in Store)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Technical Specifications -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs space-y-4">
+      <h2 class="text-base font-bold text-text-primary border-b border-border pb-3">Technical Specifications</h2>
+
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div>
+          <label for="material" class="block text-xs font-semibold text-text-primary mb-1">Material</label>
+          <input
+            type="text"
+            id="material"
+            placeholder="e.g. PLA+, PETG, Silk PLA"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+
+        <div>
+          <label for="dimensions" class="block text-xs font-semibold text-text-primary mb-1">Dimensions</label>
+          <input
+            type="text"
+            id="dimensions"
+            placeholder="e.g. 15 × 12 × 20 cm"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+
+        <div>
+          <label for="weight" class="block text-xs font-semibold text-text-primary mb-1">Weight</label>
+          <input
+            type="text"
+            id="weight"
+            placeholder="e.g. 180g"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+        </div>
+      </div>
+
+      <!-- Colors Interactive List -->
+      <div class="pt-2">
+        <label class="block text-xs font-semibold text-text-primary mb-1">Available Colors</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            type="text"
+            id="color-input"
+            placeholder="e.g. Arctic White"
+            class="flex-1 px-3.5 py-2 bg-surface text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+          <button
+            type="button"
+            id="add-color-btn"
+            class="px-4 py-2 bg-surface-muted hover:bg-surface-subtle text-text-primary text-xs font-semibold rounded-xl border border-border transition-colors"
+          >
+            + Add Color
+          </button>
+        </div>
+
+        <!-- Color presets -->
+        <div class="flex flex-wrap items-center gap-1.5 mb-3 text-[11px] text-text-tertiary">
+          <span>Quick add:</span>
+          {['Arctic White', 'Matte Black', 'Silk Gold', 'Sunset Orange', 'Ocean Blue', 'Sage Green'].map((c) => (
+            <button
+              type="button"
+              class="preset-color-btn px-2 py-0.5 rounded-md bg-surface border border-border-subtle hover:border-brand-300 hover:text-brand-600 transition-colors"
+              data-color={c}
+            >
+              +{c}
+            </button>
+          ))}
+        </div>
+
+        <!-- Color Chips Container -->
+        <div id="colors-container" class="flex flex-wrap gap-2 min-h-8">
+          <!-- Dynamically added chips -->
+        </div>
+      </div>
+
+      <!-- Details (Bullet Points) Interactive List -->
+      <div class="pt-2 border-t border-border-subtle">
+        <label class="block text-xs font-semibold text-text-primary mb-1">Product Feature Bullet Points</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            type="text"
+            id="detail-input"
+            placeholder="e.g. Hand-finished with food-safe coating"
+            class="flex-1 px-3.5 py-2 bg-surface text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+          <button
+            type="button"
+            id="add-detail-btn"
+            class="px-4 py-2 bg-surface-muted hover:bg-surface-subtle text-text-primary text-xs font-semibold rounded-xl border border-border transition-colors"
+          >
+            + Add Point
+          </button>
+        </div>
+
+        <!-- Details Container -->
+        <div id="details-container" class="space-y-1.5 min-h-8">
+          <!-- Dynamically added details -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Product Images & Storage Upload -->
+    <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs space-y-4">
+      <div class="flex items-center justify-between border-b border-border pb-3">
+        <div>
+          <h2 class="text-base font-bold text-text-primary">Product Imagery</h2>
+          <p class="text-xs text-text-secondary mt-0.5">Upload to Supabase Storage (<code class="font-mono text-brand-700">product-images</code> bucket) or link URLs.</p>
+        </div>
+      </div>
+
+      <!-- Image Upload Dropzone -->
+      <div class="border-2 border-dashed border-border rounded-2xl p-6 text-center hover:border-brand-400 transition-colors bg-surface/50">
+        <input
+          type="file"
+          id="image-file-input"
+          accept="image/jpeg,image/png,image/webp,image/svg+xml"
+          multiple
+          class="hidden"
+        />
+        <label for="image-file-input" class="cursor-pointer block">
+          <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 mx-auto mb-3 flex items-center justify-center">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-brand-700 hover:underline">Click to upload photos</span>
+          <span class="text-xs text-text-secondary"> or drag and drop</span>
+          <p class="text-[11px] text-text-tertiary mt-1">JPEG, PNG, WebP, SVG up to 5MB</p>
+        </label>
+        
+        <!-- Upload Status Indicator -->
+        <div id="upload-status" class="hidden mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface text-xs text-brand-700 border border-brand-200">
+          <svg class="animate-spin w-3.5 h-3.5 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span id="upload-status-text">Uploading image to storage...</span>
+        </div>
+      </div>
+
+      <!-- Manual URL Add Option -->
+      <div class="flex items-center gap-2 pt-2">
+        <input
+          type="url"
+          id="custom-url-input"
+          placeholder="Or paste an existing image URL..."
+          class="flex-1 px-3.5 py-2 bg-surface text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+        />
+        <button
+          type="button"
+          id="add-url-btn"
+          class="px-4 py-2 bg-surface-muted hover:bg-surface-subtle text-text-primary text-xs font-semibold rounded-xl border border-border transition-colors"
+        >
+          Add URL
+        </button>
+      </div>
+
+      <!-- Image Previews Grid -->
+      <div>
+        <div class="text-xs font-semibold text-text-primary mb-2">Image Gallery (First image is Primary)</div>
+        <div id="images-preview-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 min-h-24">
+          <!-- Dynamically injected previews -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="form-error" class="hidden p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-medium"></div>
+
+    <!-- Sticky Form Actions -->
+    <div class="flex items-center justify-end gap-3 pt-4 border-t border-border">
+      <a
+        href="/admin/products"
+        class="px-5 py-2.5 text-xs font-semibold text-text-secondary hover:bg-surface-muted rounded-xl transition-colors"
+      >
+        Cancel
+      </a>
+      <button
+        type="button"
+        id="submit-btn"
+        class="px-6 py-2.5 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-xl transition-all shadow-sm hover:shadow flex items-center gap-2 disabled:opacity-50"
+      >
+        <span id="submit-text">{isNew ? 'Create Product' : 'Save Changes'}</span>
+        <svg id="submit-spinner" class="hidden animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  import { supabase } from '../../lib/supabase';
+
+  let colorsList: string[] = [];
+  let detailsList: string[] = [];
+  let imagesList: string[] = [];
+  let isSlugManual = false;
+  let currentProductId: string | null = null;
+
+  // Elements
+  const form = document.getElementById('product-form') as HTMLFormElement;
+  const editorTitle = document.getElementById('editor-title');
+  const prodIdInput = document.getElementById('product-id') as HTMLInputElement;
+  const nameInput = document.getElementById('name') as HTMLInputElement;
+  const slugInput = document.getElementById('slug') as HTMLInputElement;
+  const categorySelect = document.getElementById('category_id') as HTMLSelectElement;
+  const badgeInput = document.getElementById('badge') as HTMLInputElement;
+  const shortDescInput = document.getElementById('short_description') as HTMLInputElement;
+  const descInput = document.getElementById('description') as HTMLTextAreaElement;
+  const priceInput = document.getElementById('price') as HTMLInputElement;
+  const origPriceInput = document.getElementById('original_price') as HTMLInputElement;
+  const stockCountInput = document.getElementById('stock_count') as HTMLInputElement;
+  const inStockCheckbox = document.getElementById('in_stock') as HTMLInputElement;
+  const featuredCheckbox = document.getElementById('featured') as HTMLInputElement;
+  const isActiveCheckbox = document.getElementById('is_active') as HTMLInputElement;
+  const materialInput = document.getElementById('material') as HTMLInputElement;
+  const dimensionsInput = document.getElementById('dimensions') as HTMLInputElement;
+  const weightInput = document.getElementById('weight') as HTMLInputElement;
+
+  const colorInput = document.getElementById('color-input') as HTMLInputElement;
+  const addColorBtn = document.getElementById('add-color-btn');
+  const colorsContainer = document.getElementById('colors-container');
+
+  const detailInput = document.getElementById('detail-input') as HTMLInputElement;
+  const addDetailBtn = document.getElementById('add-detail-btn');
+  const detailsContainer = document.getElementById('details-container');
+
+  const fileInput = document.getElementById('image-file-input') as HTMLInputElement;
+  const uploadStatus = document.getElementById('upload-status');
+  const uploadStatusText = document.getElementById('upload-status-text');
+  const customUrlInput = document.getElementById('custom-url-input') as HTMLInputElement;
+  const addUrlBtn = document.getElementById('add-url-btn');
+  const imagesGrid = document.getElementById('images-preview-grid');
+
+  const formError = document.getElementById('form-error');
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const submitText = document.getElementById('submit-text') as HTMLSpanElement;
+  const submitSpinner = document.getElementById('submit-spinner') as HTMLElement;
+
+  const toast = document.getElementById('toast-banner');
+  const toastText = document.getElementById('toast-text');
+  const toastIcon = document.getElementById('toast-icon');
+
+  function slugify(text: string): string {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-')
+      .replace(/^-+/, '')
+      .replace(/-+$/, '');
+  }
+
+  nameInput?.addEventListener('input', () => {
+    if (!isSlugManual && (!currentProductId || slugInput.value === '')) {
+      slugInput.value = slugify(nameInput.value);
+    }
+  });
+
+  slugInput?.addEventListener('input', () => {
+    isSlugManual = true;
+  });
+
+  function showToast(message: string, isError = false) {
+    if (!toast || !toastText || !toastIcon) return;
+    toastText.textContent = message;
+    if (isError) {
+      toast.className = 'mb-6 p-4 rounded-xl text-sm flex items-start justify-between gap-3 shadow-xs bg-danger/10 border border-danger/20 text-danger';
+      toastIcon.innerHTML = `<svg class="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke-width="2"/></svg>`;
+    } else {
+      toast.className = 'mb-6 p-4 rounded-xl text-sm flex items-start justify-between gap-3 shadow-xs bg-success/10 border border-success/20 text-success';
+      toastIcon.innerHTML = `<svg class="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+    }
+    toast.classList.remove('hidden');
+  }
+
+  // Load Categories for dropdown
+  async function loadCategories(selectedId?: string) {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id, name')
+      .order('display_order', { ascending: true });
+
+    if (categorySelect && cats) {
+      categorySelect.innerHTML = `
+        <option value="">Select Category...</option>
+        ${cats.map(c => `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`).join('')}
+      `;
+    }
+  }
+
+  // Determine Product ID from URL
+  function detectProductId(): string | null {
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const editIdx = pathParts.indexOf('edit');
+    if (editIdx > 0) {
+      return pathParts[editIdx - 1];
+    }
+    const queryId = new URLSearchParams(window.location.search).get('id');
+    return queryId || null;
+  }
+
+  // Load existing product if in Edit mode
+  async function initEditor() {
+    currentProductId = detectProductId();
+
+    if (currentProductId && currentProductId !== 'new') {
+      isSlugManual = true;
+      if (editorTitle) editorTitle.textContent = 'Edit Product';
+
+      try {
+        const { data: prod, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', currentProductId)
+          .single();
+
+        if (error || !prod) {
+          showToast('Product not found: ' + (error?.message || 'Invalid ID'), true);
+          return;
+        }
+
+        prodIdInput.value = prod.id;
+        nameInput.value = prod.name;
+        slugInput.value = prod.slug;
+        badgeInput.value = prod.badge || '';
+        shortDescInput.value = prod.short_description || '';
+        descInput.value = prod.description || '';
+        priceInput.value = prod.price?.toString() || '0';
+        origPriceInput.value = prod.original_price?.toString() || '';
+        stockCountInput.value = prod.stock_count?.toString() || '0';
+        inStockCheckbox.checked = Boolean(prod.in_stock);
+        featuredCheckbox.checked = Boolean(prod.featured);
+        isActiveCheckbox.checked = Boolean(prod.is_active);
+        materialInput.value = prod.material || '';
+        dimensionsInput.value = prod.dimensions || '';
+        weightInput.value = prod.weight || '';
+
+        colorsList = Array.isArray(prod.colors) ? [...prod.colors] : [];
+        detailsList = Array.isArray(prod.details) ? [...prod.details] : [];
+        imagesList = Array.isArray(prod.images) ? [...prod.images] : [];
+
+        renderColors();
+        renderDetails();
+        renderImages();
+
+        await loadCategories(prod.category_id);
+      } catch (err: any) {
+        showToast('Error loading product data: ' + err.message, true);
+      }
+    } else {
+      // New Mode
+      await loadCategories();
+      renderColors();
+      renderDetails();
+      renderImages();
+    }
+  }
+
+  // --- Colors Management ---
+  function addColor(val: string) {
+    const clean = val.trim();
+    if (clean && !colorsList.includes(clean)) {
+      colorsList.push(clean);
+      renderColors();
+      if (colorInput) colorInput.value = '';
+    }
+  }
+
+  function renderColors() {
+    if (!colorsContainer) return;
+    if (colorsList.length === 0) {
+      colorsContainer.innerHTML = '<span class="text-xs text-text-tertiary italic">No colors selected yet</span>';
+      return;
+    }
+    colorsContainer.innerHTML = colorsList.map((c, i) => `
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface border border-border rounded-lg text-xs font-medium text-text-primary">
+        <span>${c}</span>
+        <button type="button" data-color-index="${i}" class="remove-color-btn text-text-tertiary hover:text-danger">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </span>
+    `).join('');
+
+    colorsContainer.querySelectorAll('.remove-color-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.currentTarget as HTMLElement).getAttribute('data-color-index') || '0');
+        colorsList.splice(idx, 1);
+        renderColors();
+      });
+    });
+  }
+
+  addColorBtn?.addEventListener('click', () => {
+    if (colorInput) addColor(colorInput.value);
+  });
+  colorInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addColor(colorInput.value);
+    }
+  });
+  document.querySelectorAll('.preset-color-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const col = (e.currentTarget as HTMLElement).getAttribute('data-color');
+      if (col) addColor(col);
+    });
+  });
+
+  // --- Details Bullet Points ---
+  function addDetail(val: string) {
+    const clean = val.trim();
+    if (clean) {
+      detailsList.push(clean);
+      renderDetails();
+      if (detailInput) detailInput.value = '';
+    }
+  }
+
+  function renderDetails() {
+    if (!detailsContainer) return;
+    if (detailsList.length === 0) {
+      detailsContainer.innerHTML = '<span class="text-xs text-text-tertiary italic">No feature bullet points added</span>';
+      return;
+    }
+    detailsContainer.innerHTML = detailsList.map((d, i) => `
+      <div class="flex items-center justify-between p-2 rounded-lg bg-surface border border-border-subtle text-xs text-text-secondary">
+        <span class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+          <span>${d}</span>
+        </span>
+        <button type="button" data-detail-index="${i}" class="remove-detail-btn text-text-tertiary hover:text-danger">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `).join('');
+
+    detailsContainer.querySelectorAll('.remove-detail-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.currentTarget as HTMLElement).getAttribute('data-detail-index') || '0');
+        detailsList.splice(idx, 1);
+        renderDetails();
+      });
+    });
+  }
+
+  addDetailBtn?.addEventListener('click', () => {
+    if (detailInput) addDetail(detailInput.value);
+  });
+  detailInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addDetail(detailInput.value);
+    }
+  });
+
+  // --- Image Upload & Gallery ---
+  function renderImages() {
+    if (!imagesGrid) return;
+    if (imagesList.length === 0) {
+      imagesGrid.innerHTML = `
+        <div class="col-span-full py-8 text-center text-xs text-text-tertiary border border-dashed border-border rounded-xl">
+          No images uploaded yet. Upload a photo or link a URL above.
+        </div>
+      `;
+      return;
+    }
+
+    imagesGrid.innerHTML = imagesList.map((img, i) => `
+      <div class="relative group rounded-xl overflow-hidden border ${i === 0 ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-border'} aspect-square bg-surface">
+        <img src="${img}" alt="Product Image" class="w-full h-full object-cover" onerror="this.src='/images/products/placeholder.svg'" />
+        
+        <!-- Primary Badge -->
+        ${i === 0 ? '<span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-brand-600 text-white shadow-sm">Primary</span>' : ''}
+
+        <!-- Hover Controls -->
+        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-2 text-white">
+          ${i !== 0 ? `<button type="button" data-make-primary="${i}" class="make-primary-btn text-[10px] font-semibold px-2 py-1 bg-white/20 hover:bg-white text-white hover:text-black rounded-lg transition-colors">Set Primary</button>` : ''}
+          <button type="button" data-delete-img="${i}" class="delete-img-btn text-[10px] font-semibold px-2 py-1 bg-danger hover:bg-danger/80 text-white rounded-lg transition-colors">Remove</button>
+        </div>
+      </div>
+    `).join('');
+
+    imagesGrid.querySelectorAll('.make-primary-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.currentTarget as HTMLElement).getAttribute('data-make-primary') || '0');
+        const [moved] = imagesList.splice(idx, 1);
+        imagesList.unshift(moved);
+        renderImages();
+      });
+    });
+
+    imagesGrid.querySelectorAll('.delete-img-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.currentTarget as HTMLElement).getAttribute('data-delete-img') || '0');
+        imagesList.splice(idx, 1);
+        renderImages();
+      });
+    });
+  }
+
+  addUrlBtn?.addEventListener('click', () => {
+    const url = customUrlInput?.value.trim();
+    if (url) {
+      imagesList.push(url);
+      renderImages();
+      if (customUrlInput) customUrlInput.value = '';
+    }
+  });
+
+  // Supabase Storage file upload
+  fileInput?.addEventListener('change', async (e) => {
+    const target = e.target as HTMLInputElement;
+    const files = target.files;
+    if (!files || files.length === 0) return;
+
+    if (uploadStatus && uploadStatusText) {
+      uploadStatus.classList.remove('hidden');
+    }
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // 5MB validation
+        if (file.size > 5 * 1024 * 1024) {
+          showToast(`File "${file.name}" exceeds the 5MB size limit.`, true);
+          continue;
+        }
+
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        if (!['jpg', 'jpeg', 'png', 'webp', 'svg'].includes(ext || '')) {
+          showToast(`Unsupported format for "${file.name}". Please use JPG, PNG, WebP or SVG.`, true);
+          continue;
+        }
+
+        if (uploadStatusText) {
+          uploadStatusText.textContent = `Uploading ${file.name} (${i + 1}/${files.length})...`;
+        }
+
+        const safeName = `store_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+        const filePath = `products/${safeName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          showToast(`Upload failed for ${file.name}: ${uploadError.message}`, true);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        if (publicUrl) {
+          imagesList.push(publicUrl);
+        }
+      }
+
+      renderImages();
+      showToast('Image(s) uploaded successfully.');
+    } catch (err: any) {
+      showToast('Storage error: ' + err.message, true);
+    } finally {
+      if (uploadStatus) uploadStatus.classList.add('hidden');
+      target.value = '';
+    }
+  });
+
+  // --- Enter Key Prevention & Input Handling ---
+  // Pressing Enter must NOT submit the form by default
+  form?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const target = e.target as HTMLElement;
+
+      // Allow natural newlines inside description textarea
+      if (target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Prevent accidental form submission on Enter
+      e.preventDefault();
+
+      // Color input: Enter adds color tag
+      if (target.id === 'color-input') {
+        addColor(colorInput.value);
+        return;
+      }
+
+      // Details input: Enter adds bullet point
+      if (target.id === 'detail-input') {
+        addDetail(detailInput.value);
+        return;
+      }
+
+      // Custom URL input: Enter adds image URL
+      if (target.id === 'custom-url-input') {
+        const url = customUrlInput?.value.trim();
+        if (url) {
+          imagesList.push(url);
+          renderImages();
+          customUrlInput.value = '';
+        }
+        return;
+      }
+    }
+  });
+
+  // --- Explicit Save Handler (Triggered by Save/Create Button Click Only) ---
+  async function handleSaveProduct() {
+    if (formError) formError.classList.add('hidden');
+
+    // Trigger browser HTML5 validation hints if any required field is empty
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const name = nameInput.value.trim();
+    const slug = slugify(slugInput.value.trim());
+    const category_id = categorySelect.value || null;
+    const price = parseFloat(priceInput.value);
+    const original_price = origPriceInput.value ? parseFloat(origPriceInput.value) : null;
+    const short_description = shortDescInput.value.trim();
+    const description = descInput.value.trim();
+    const badge = badgeInput.value.trim() || null;
+    const material = materialInput.value.trim() || null;
+    const dimensions = dimensionsInput.value.trim() || null;
+    const weight = weightInput.value.trim() || null;
+    const stock_count = parseInt(stockCountInput.value) || 0;
+    const in_stock = inStockCheckbox.checked;
+    const featured = featuredCheckbox.checked;
+    const is_active = isActiveCheckbox.checked;
+
+    // Validation
+    if (!name || !slug) {
+      if (formError) {
+        formError.textContent = 'Product Name and Slug are required.';
+        formError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (isNaN(price) || price < 0) {
+      if (formError) {
+        formError.textContent = 'Price must be a valid number greater than or equal to 0.';
+        formError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (original_price !== null && (isNaN(original_price) || original_price < 0)) {
+      if (formError) {
+        formError.textContent = 'Original price must be a valid number greater than or equal to 0.';
+        formError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitText.textContent = 'Saving Product...';
+    submitSpinner.classList.remove('hidden');
+
+    const payload = {
+      name,
+      slug,
+      category_id,
+      price,
+      original_price,
+      short_description,
+      description,
+      badge,
+      material,
+      dimensions,
+      weight,
+      stock_count,
+      in_stock,
+      featured,
+      is_active,
+      colors: colorsList,
+      details: detailsList,
+      images: imagesList.length > 0 ? imagesList : ['/images/products/placeholder.svg'],
+    };
+
+    try {
+      if (currentProductId && currentProductId !== 'new') {
+        // Update
+        const { error } = await supabase
+          .from('products')
+          .update(payload)
+          .eq('id', currentProductId);
+
+        if (error) throw error;
+        showToast('Product updated successfully! Redirecting...');
+      } else {
+        // Insert
+        const { error } = await supabase
+          .from('products')
+          .insert(payload);
+
+        if (error) throw error;
+        showToast('Product created successfully! Redirecting...');
+      }
+
+      setTimeout(() => {
+        window.location.href = '/admin/products';
+      }, 800);
+    } catch (err: any) {
+      if (formError) {
+        if (err?.code === '23505' || err?.message?.includes('duplicate key')) {
+          formError.textContent = `A product with slug "${slug}" already exists. Please choose a unique slug.`;
+        } else {
+          formError.textContent = err?.message || 'Failed to save product. Ensure you have admin privileges.';
+        }
+        formError.classList.remove('hidden');
+      }
+      submitBtn.disabled = false;
+      submitText.textContent = currentProductId ? 'Save Changes' : 'Create Product';
+      submitSpinner.classList.add('hidden');
+    }
+  }
+
+  // Bind explicit click to Save button only
+  submitBtn?.addEventListener('click', handleSaveProduct);
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+  });
+
+  // Wait for admin authentication confirmation
+  window.addEventListener('template:admin-ready', () => {
+    initEditor();
+  });
+</script>

@@ -1,0 +1,10 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import ProductEditor from '../../../../components/admin/ProductEditor.astro';
+
+export const prerender = false;
+---
+
+<AdminLayout title="Edit Product — E-commerce Admin" activeSection="products">
+  <ProductEditor isNew={false} />
+</AdminLayout>

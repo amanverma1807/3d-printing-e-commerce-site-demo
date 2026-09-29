@@ -1,0 +1,843 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+---
+
+<Layout title="Checkout — E-commerce Store">
+  <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <section class="py-12 sm:py-16 bg-surface min-h-[80vh]">
+    <div class="container-page max-w-5xl">
+      <!-- Breadcrumb / Header -->
+      <div class="mb-8 sm:mb-10">
+        <nav class="flex items-center gap-2 text-xs font-mono text-stone-500 mb-2" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-stone-900 transition-colors">Home</a>
+          <span>/</span>
+          <a href="/cart" class="hover:text-stone-900 transition-colors">Cart</a>
+          <span>/</span>
+          <span class="text-stone-900">Checkout</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900">Secure Checkout</h1>
+      </div>
+
+      <div id="empty-checkout" class="hidden text-center py-20 bg-surface-bright border border-border rounded-2xl p-8 shadow-subtle">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-stone-100 border border-stone-200 text-stone-400 flex items-center justify-center">
+          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-semibold tracking-tight text-stone-900 mb-2">Your cart is empty</h2>
+        <p class="text-sm text-stone-500 mb-6 font-light">Add products to your cart before checking out.</p>
+        <Button href="/shop" size="md">Return to Catalog</Button>
+      </div>
+
+      <div id="checkout-content" class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <!-- Checkout Form (7 cols) -->
+        <div class="lg:col-span-7">
+          <form id="checkout-form" class="bg-surface-bright rounded-xl p-6 sm:p-8 border border-border shadow-subtle space-y-6">
+            <div class="border-b border-border/60 pb-4">
+              <h2 class="text-lg font-semibold text-stone-900">Delivery Information</h2>
+              <p class="text-xs text-stone-500 font-light mt-0.5">Please provide accurate shipping details for transit delivery.</p>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <label for="fullName" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">Full Name *</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  required
+                  class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                  placeholder="e.g. Rahul Sharma"
+                />
+                <p id="fullName-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="phone" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">Phone Number *</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                    placeholder="+91 98765 43210"
+                  />
+                  <p id="phone-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+                </div>
+
+                <div>
+                  <label for="email" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">Email (Optional)</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                    placeholder="name@example.com"
+                  />
+                  <p id="email-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+                </div>
+              </div>
+
+              <div>
+                <label for="address" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">Delivery Address *</label>
+                <textarea
+                  id="address"
+                  name="address"
+                  required
+                  rows="3"
+                  class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs resize-none placeholder:text-stone-400"
+                  placeholder="House / Flat No., Street, Landmark"
+                ></textarea>
+                <p id="address-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+              </div>
+
+              <div class="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label for="city" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">City *</label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    required
+                    class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                    placeholder="Mumbai"
+                  />
+                  <p id="city-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+                </div>
+
+                <div>
+                  <label for="state" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">State *</label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    required
+                    class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                    placeholder="Maharashtra"
+                  />
+                  <p id="state-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+                </div>
+
+                <div>
+                  <label for="pincode" class="block text-xs font-mono uppercase tracking-wider text-stone-600 mb-2 font-medium">Pincode *</label>
+                  <input
+                    type="text"
+                    id="pincode"
+                    name="pincode"
+                    required
+                    pattern="[0-9]{6}"
+                    class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-white text-stone-900 text-sm transition-all shadow-xs placeholder:text-stone-400"
+                    placeholder="400001"
+                  />
+                  <p id="pincode-error" class="text-xs text-red-600 mt-1.5 hidden font-mono"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="mt-8 pt-6 border-t border-border/80 space-y-4">
+              <div class="border-b border-border/60 pb-3">
+                <h2 class="text-lg font-semibold text-stone-900">Payment Method</h2>
+                <p class="text-xs text-stone-500 font-light mt-0.5">Select how you want to complete your payment.</p>
+              </div>
+
+              <div class="space-y-3">
+                <!-- Option 1: Razorpay Online Payment (Default) -->
+                <label
+                  for="payment-method-razorpay"
+                  id="label-method-razorpay"
+                  class="flex items-start gap-3.5 p-4 border-2 border-stone-900 rounded-xl bg-stone-50/80 cursor-pointer transition-all duration-200 select-none"
+                >
+                  <input
+                    type="radio"
+                    id="payment-method-razorpay"
+                    name="paymentMethod"
+                    value="razorpay"
+                    checked
+                    class="mt-1 h-4 w-4 text-stone-900 focus:ring-stone-900 border-border cursor-pointer accent-stone-900"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                      <span class="text-sm font-semibold text-stone-900">Pay Online (UPI, Cards, NetBanking, Wallets)</span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-stone-900 text-white tracking-wide">
+                        RECOMMENDED
+                      </span>
+                    </div>
+                    <p class="text-xs text-stone-500 font-light mt-1">
+                      Fast, seamless payment with instant order confirmation via 256-bit encrypted Razorpay gateway.
+                    </p>
+                  </div>
+                </label>
+
+                <!-- Option 2: Cash on Delivery (COD) -->
+                <label
+                  for="payment-method-cod"
+                  id="label-method-cod"
+                  class="flex items-start gap-3.5 p-4 border border-border rounded-xl bg-white hover:border-stone-400 cursor-pointer transition-all duration-200 select-none"
+                >
+                  <input
+                    type="radio"
+                    id="payment-method-cod"
+                    name="paymentMethod"
+                    value="cod"
+                    class="mt-1 h-4 w-4 text-stone-900 focus:ring-stone-900 border-border cursor-pointer accent-stone-900"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-sm font-medium text-stone-900">Cash on Delivery (COD)</span>
+                    </div>
+                    <p class="text-xs text-stone-500 font-light mt-1">
+                      Pay with cash or UPI directly to the delivery executive when your parcel arrives.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-border/80">
+              <!-- Payment Error Alert -->
+              <div id="payment-error-banner" class="hidden mb-4 p-4 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700 flex items-start gap-3">
+                <svg class="w-5 h-5 shrink-0 mt-0.5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="flex-1">
+                  <p id="payment-error-text" class="font-medium"></p>
+                </div>
+              </div>
+
+              <!-- Submit Payment Button -->
+              <button
+                type="submit"
+                id="submit-payment-btn"
+                class="w-full inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-md transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base shadow-subtle select-none"
+              >
+                <svg id="btn-lock-icon" class="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <svg id="btn-cod-icon" class="w-4.5 h-4.5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+                <span id="btn-text">Pay Securely via Razorpay</span>
+                <svg id="btn-spinner" class="animate-spin w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              </button>
+
+              <div id="payment-trust-badge" class="flex items-center justify-center gap-2 mt-4 text-xs text-stone-500 font-light">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <span id="payment-trust-text">Encrypted 256-bit payment transaction via Razorpay</span>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Order Summary (5 cols) -->
+        <div class="lg:col-span-5">
+          <div class="sticky top-24 bg-surface-bright rounded-xl p-6 sm:p-7 border border-border shadow-subtle space-y-6">
+            <h2 class="text-base font-semibold text-stone-900 pb-3 border-b border-border/60">Order Review</h2>
+
+            <div id="checkout-items" class="space-y-3 pb-6 border-b border-border/60 max-h-72 overflow-y-auto divide-y divide-border/40">
+              <!-- Items will be rendered here -->
+            </div>
+
+            <div class="space-y-3 pb-6 border-b border-border/60 text-sm">
+              <div class="flex justify-between items-center">
+                <span class="text-stone-600 font-light">Subtotal</span>
+                <span id="subtotal" class="font-medium text-stone-900 tabular-nums">₹0</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-stone-600 font-light">Shipping</span>
+                  <span class="text-[10px] font-mono text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">Flat rate</span>
+                </div>
+                <span id="shipping" class="font-medium text-stone-900 tabular-nums">₹110</span>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-baseline">
+              <span class="text-base font-medium text-stone-900">Total</span>
+              <span id="total" class="text-2xl font-semibold text-stone-900 tabular-nums tracking-tight">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import {
+    getLocalCart,
+    saveLocalCart,
+    validateAndUpdateCart,
+    updateNavbarCartBadge,
+    type CartItem,
+  } from '../lib/cart';
+  import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase';
+  import { siteConfig } from '../config/site';
+
+  const emptyCheckout = document.getElementById('empty-checkout');
+  const checkoutContent = document.getElementById('checkout-content');
+
+  // Handle empty cart
+  function checkEmptyCart() {
+    const cart = getLocalCart();
+    if (cart.length === 0) {
+      emptyCheckout?.classList.remove('hidden');
+      checkoutContent?.classList.add('hidden');
+    } else {
+      emptyCheckout?.classList.add('hidden');
+      checkoutContent?.classList.remove('hidden');
+    }
+  }
+
+  // Update order summary
+  function updateOrderSummary() {
+    const cart = getLocalCart();
+    const checkoutItems = document.getElementById('checkout-items');
+    const subtotalEl = document.getElementById('subtotal');
+    const totalEl = document.getElementById('total');
+
+    checkEmptyCart();
+
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shipping = cart.length > 0 ? 110 : 0;
+    const total = subtotal + shipping;
+
+    if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+    const shippingEl = document.getElementById('shipping');
+    if (shippingEl) shippingEl.textContent = `₹${shipping.toLocaleString('en-IN')}`;
+    if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+
+    if (checkoutItems) {
+      if (cart.length === 0) {
+        checkoutItems.innerHTML = '<p class="text-sm text-text-tertiary text-center py-4">No items in cart</p>';
+      } else {
+        checkoutItems.innerHTML = cart.map(item => `
+          <div class="flex gap-3.5 items-center py-2">
+            <div class="w-13 h-13 rounded-lg bg-stone-100/60 p-1 border border-border/80 flex items-center justify-center shrink-0">
+              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-xs sm:text-sm font-medium text-stone-900 truncate">${item.name}</h3>
+              <p class="text-[11px] text-stone-500 font-mono">${item.color ? `Color: ${item.color} · ` : ''}Qty: ${item.quantity}</p>
+            </div>
+            <p class="text-xs sm:text-sm font-semibold text-stone-900 tabular-nums tracking-tight">₹${(item.price * item.quantity).toLocaleString('en-IN')}</p>
+          </div>
+        `).join('');
+      }
+    }
+    
+    return subtotal;
+  }
+
+  // Initial render
+  let subtotal = updateOrderSummary();
+
+  // Validate cart against Supabase on checkout init
+  async function initCheckoutValidation() {
+    const { hasChanges, cart: validatedCart } = await validateAndUpdateCart();
+    if (hasChanges) {
+      subtotal = updateOrderSummary();
+      updateNavbarCartBadge();
+    }
+  }
+  initCheckoutValidation();
+
+  // Listen for cart changes (e.g., if user navigates back from cart)
+  window.addEventListener('storage', () => {
+    subtotal = updateOrderSummary();
+  });
+  window.addEventListener('cart:updated', () => {
+    subtotal = updateOrderSummary();
+  });
+
+  // Validation
+  const fullNameInput = document.getElementById('fullName') as HTMLInputElement;
+  const phoneInput = document.getElementById('phone') as HTMLInputElement;
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const addressInput = document.getElementById('address') as HTMLTextAreaElement;
+  const cityInput = document.getElementById('city') as HTMLInputElement;
+  const stateInput = document.getElementById('state') as HTMLInputElement;
+  const pincodeInput = document.getElementById('pincode') as HTMLInputElement;
+
+  // Error elements
+  const fullNameError = document.getElementById('fullName-error');
+  const phoneError = document.getElementById('phone-error');
+  const emailError = document.getElementById('email-error');
+  const addressError = document.getElementById('address-error');
+  const cityError = document.getElementById('city-error');
+  const stateError = document.getElementById('state-error');
+  const pincodeError = document.getElementById('pincode-error');
+
+  // Hide all errors initially
+  [fullNameError, phoneError, emailError, addressError, cityError, stateError, pincodeError].forEach(el => {
+    if (el) el.classList.add('hidden');
+  });
+
+  // Validation functions
+  function validateFullName(): boolean {
+    const value = fullNameInput?.value.trim();
+    const errorEl = fullNameError;
+    if (!value) {
+      errorEl?.classList.remove('hidden');
+      fullNameInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    fullNameInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validatePhone(): boolean {
+    const value = phoneInput?.value.trim();
+    const errorEl = phoneError;
+    // Indian phone: 10 digits, starts with 6-9, optional +91
+    const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+    if (!value) {
+      if (errorEl) errorEl.textContent = 'Phone number is required';
+      errorEl?.classList.remove('hidden');
+      phoneInput?.classList.add('border-danger');
+      return false;
+    }
+    if (!phoneRegex.test(value)) {
+      if (errorEl) errorEl.textContent = 'Please enter a valid Indian phone number (10 digits, starts with 6-9)';
+      errorEl?.classList.remove('hidden');
+      phoneInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    phoneInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validateEmail(): boolean {
+    const value = emailInput?.value.trim();
+    const errorEl = emailError;
+    // Email is optional, but if provided, validate format
+    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      if (errorEl) errorEl.textContent = 'Please enter a valid email address';
+      errorEl?.classList.remove('hidden');
+      emailInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    emailInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validateAddress(): boolean {
+    const value = addressInput?.value.trim();
+    const errorEl = addressError;
+    if (!value) {
+      if (errorEl) errorEl.textContent = 'Address is required';
+      errorEl?.classList.remove('hidden');
+      addressInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    addressInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validateCity(): boolean {
+    const value = cityInput?.value.trim();
+    const errorEl = cityError;
+    if (!value) {
+      if (errorEl) errorEl.textContent = 'City is required';
+      errorEl?.classList.remove('hidden');
+      cityInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    cityInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validateState(): boolean {
+    const value = stateInput?.value.trim();
+    const errorEl = stateError;
+    if (!value) {
+      if (errorEl) errorEl.textContent = 'State is required';
+      errorEl?.classList.remove('hidden');
+      stateInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    stateInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validatePincode(): boolean {
+    const value = pincodeInput?.value.trim();
+    const errorEl = pincodeError;
+    // Indian pincode: exactly 6 digits
+    const pincodeRegex = /^\d{6}$/;
+    if (!value) {
+      if (errorEl) errorEl.textContent = 'Pincode is required';
+      errorEl?.classList.remove('hidden');
+      pincodeInput?.classList.add('border-danger');
+      return false;
+    }
+    if (!pincodeRegex.test(value)) {
+      if (errorEl) errorEl.textContent = 'Please enter a valid 6-digit pincode';
+      errorEl?.classList.remove('hidden');
+      pincodeInput?.classList.add('border-danger');
+      return false;
+    }
+    errorEl?.classList.add('hidden');
+    pincodeInput?.classList.remove('border-danger');
+    return true;
+  }
+
+  function validateAll(): boolean {
+    const isValid = validateFullName() && validatePhone() && validateEmail() && 
+                      validateAddress() && validateCity() && validateState() && validatePincode();
+    return isValid;
+  }
+
+  // Add real-time validation
+  fullNameInput?.addEventListener('blur', validateFullName);
+  phoneInput?.addEventListener('blur', validatePhone);
+  emailInput?.addEventListener('blur', validateEmail);
+  addressInput?.addEventListener('blur', validateAddress);
+  cityInput?.addEventListener('blur', validateCity);
+  stateInput?.addEventListener('blur', validateState);
+  pincodeInput?.addEventListener('blur', validatePincode);
+
+  // Submit state handling
+  const submitBtn = document.getElementById('submit-payment-btn') as HTMLButtonElement | null;
+  const btnText = document.getElementById('btn-text');
+  const btnSpinner = document.getElementById('btn-spinner');
+  const btnLockIcon = document.getElementById('btn-lock-icon');
+  const btnCodIcon = document.getElementById('btn-cod-icon');
+  const errorBanner = document.getElementById('payment-error-banner');
+  const errorText = document.getElementById('payment-error-text');
+  const paymentTrustText = document.getElementById('payment-trust-text');
+
+  // Payment method radio controls
+  const methodRazorpayRadio = document.getElementById('payment-method-razorpay') as HTMLInputElement | null;
+  const methodCodRadio = document.getElementById('payment-method-cod') as HTMLInputElement | null;
+  const labelRazorpay = document.getElementById('label-method-razorpay');
+  const labelCod = document.getElementById('label-method-cod');
+
+  const publicRazorpayKeyId = import.meta.env.PUBLIC_RAZORPAY_KEY_ID || '';
+
+  let isSubmitting = false;
+
+  function getSelectedPaymentMethod(): 'razorpay' | 'cod' {
+    return methodCodRadio?.checked ? 'cod' : 'razorpay';
+  }
+
+  function updatePaymentMethodUI() {
+    const isCod = methodCodRadio?.checked;
+    if (isCod) {
+      labelCod?.classList.remove('border-border', 'bg-white');
+      labelCod?.classList.add('border-2', 'border-stone-900', 'bg-stone-50/80');
+      labelRazorpay?.classList.remove('border-2', 'border-stone-900', 'bg-stone-50/80');
+      labelRazorpay?.classList.add('border', 'border-border', 'bg-white');
+
+      btnLockIcon?.classList.add('hidden');
+      btnCodIcon?.classList.remove('hidden');
+      if (btnText && !isSubmitting) btnText.textContent = 'Place Order (Cash on Delivery)';
+      if (paymentTrustText) paymentTrustText.textContent = 'Verified Cash on Delivery checkout';
+    } else {
+      labelRazorpay?.classList.remove('border-border', 'bg-white');
+      labelRazorpay?.classList.add('border-2', 'border-stone-900', 'bg-stone-50/80');
+      labelCod?.classList.remove('border-2', 'border-stone-900', 'bg-stone-50/80');
+      labelCod?.classList.add('border', 'border-border', 'bg-white');
+
+      btnCodIcon?.classList.add('hidden');
+      btnLockIcon?.classList.remove('hidden');
+      if (btnText && !isSubmitting) btnText.textContent = 'Pay Securely via Razorpay';
+      if (paymentTrustText) paymentTrustText.textContent = 'Encrypted 256-bit payment transaction via Razorpay';
+    }
+  }
+
+  methodRazorpayRadio?.addEventListener('change', updatePaymentMethodUI);
+  methodCodRadio?.addEventListener('change', updatePaymentMethodUI);
+
+  function showError(msg: string) {
+    if (errorBanner && errorText) {
+      errorText.textContent = msg;
+      errorBanner.classList.remove('hidden');
+      errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function hideError() {
+    if (errorBanner) errorBanner.classList.add('hidden');
+  }
+
+  function setSubmittingState(loadingText: string) {
+    isSubmitting = true;
+    if (submitBtn) submitBtn.disabled = true;
+    if (btnText) btnText.textContent = loadingText;
+    btnSpinner?.classList.remove('hidden');
+    btnLockIcon?.classList.add('hidden');
+    btnCodIcon?.classList.add('hidden');
+    hideError();
+  }
+
+  function resetSubmitBtn() {
+    isSubmitting = false;
+    if (submitBtn) submitBtn.disabled = false;
+    btnSpinner?.classList.add('hidden');
+    updatePaymentMethodUI();
+  }
+
+  const form = document.getElementById('checkout-form') as HTMLFormElement | null;
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+
+    if (!validateAll()) {
+      const firstError = document.querySelector('.border-danger');
+      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const cart = getLocalCart();
+    if (cart.length === 0) {
+      showError('Your cart is empty. Please add products to cart before checking out.');
+      return;
+    }
+
+    const selectedMethod = getSelectedPaymentMethod();
+
+    const payload = {
+      customer_name: fullNameInput.value.trim(),
+      customer_phone: phoneInput.value.trim(),
+      customer_email: emailInput.value.trim() || undefined,
+      shipping_address: addressInput.value.trim(),
+      shipping_city: cityInput.value.trim(),
+      shipping_state: stateInput.value.trim(),
+      shipping_pincode: pincodeInput.value.trim(),
+      items: cart.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        selected_color: item.color || undefined
+      }))
+    };
+
+    // ==========================================
+    // FLOW 1: CASH ON DELIVERY (COD)
+    // ==========================================
+    if (selectedMethod === 'cod') {
+      setSubmittingState('Placing Cash on Delivery Order...');
+
+      try {
+        const { data: rpcData, error: rpcError } = await supabase.rpc('create_guest_order', {
+          p_customer_name: payload.customer_name,
+          p_customer_phone: payload.customer_phone,
+          p_shipping_address: payload.shipping_address,
+          p_shipping_city: payload.shipping_city,
+          p_shipping_state: payload.shipping_state,
+          p_shipping_pincode: payload.shipping_pincode,
+          p_items: payload.items,
+          p_customer_email: payload.customer_email || null,
+          p_payment_method: 'cod'
+        });
+
+        if (rpcError || !rpcData || !rpcData.success) {
+          console.error('COD order creation failed:', rpcError);
+          const errorMsg = rpcError?.message || 'Unable to place Cash on Delivery order. Please check your items and try again.';
+          showError(errorMsg);
+          resetSubmitBtn();
+          return;
+        }
+
+        // Store snapshot for confirmation screen
+        localStorage.setItem('lastOrder', JSON.stringify({
+          orderId: rpcData.order_number,
+          orderUuid: rpcData.order_id,
+          phone: payload.customer_phone,
+          total: Number(rpcData.total),
+          paymentMethod: 'cod',
+          items: cart
+        }));
+
+        // Clear cart ONLY AFTER successful order creation!
+        saveLocalCart([]);
+        updateNavbarCartBadge();
+
+        window.location.href = `/order-confirmation?order_id=${encodeURIComponent(rpcData.order_id)}&phone=${encodeURIComponent(payload.customer_phone)}`;
+        return;
+      } catch (err: any) {
+        console.error('COD checkout error:', err);
+        showError(err?.message || 'An unexpected error occurred while placing your order. Please try again.');
+        resetSubmitBtn();
+        return;
+      }
+    }
+
+    // ==========================================
+    // FLOW 2: RAZORPAY ONLINE PAYMENT
+    // ==========================================
+    setSubmittingState('Preparing Order with Server...');
+
+    try {
+      // 1. Call create-razorpay-order Edge Function
+      const createOrderUrl = `${supabaseUrl}/functions/v1/create-razorpay-order`;
+      const response = await fetch(createOrderUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseAnonKey
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const orderData = await response.json().catch(() => null);
+
+      if (!response.ok || !orderData || !orderData.success) {
+        const errorMsg = orderData?.error || 'Unable to initialize order. Please verify your items and try again.';
+        showError(errorMsg);
+        resetSubmitBtn();
+        return;
+      }
+
+      // Verify Razorpay Standard Checkout SDK is available
+      if (typeof (window as any).Razorpay === 'undefined') {
+        showError('Payment gateway script failed to load. Please check your internet connection or ad-blocker and refresh.');
+        resetSubmitBtn();
+        return;
+      }
+
+      setSubmittingState('Waiting for payment confirmation...');
+
+      const razorpayKey = publicRazorpayKeyId || orderData.key_id;
+
+      // 2. Configure Razorpay Standard Checkout
+      const options = {
+        key: razorpayKey,
+        amount: orderData.amount, // Authoritative server-calculated amount in paise
+        currency: orderData.currency || 'INR',
+        name: siteConfig.brand.name || 'Store',
+        description: `Order ${orderData.order_number}`,
+        order_id: orderData.razorpay_order_id,
+        prefill: {
+          name: payload.customer_name,
+          contact: payload.customer_phone,
+          email: payload.customer_email || ''
+        },
+        theme: {
+          color: '#111111'
+        },
+        modal: {
+          ondismiss: function () {
+            resetSubmitBtn();
+            showError('Payment window was closed. Your cart and details remain safely saved.');
+
+            // Notify server to safely mark this abandoned payment attempt as cancelled
+            if (orderData?.order_id) {
+              fetch(createOrderUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'apikey': supabaseAnonKey
+                },
+                body: JSON.stringify({
+                  action: 'cancel',
+                  order_id: orderData.order_id,
+                  customer_phone: payload.customer_phone,
+                  reason: 'Checkout window closed by customer'
+                })
+              }).catch((err) => console.warn('Cancel attempt notice:', err));
+            }
+          }
+        },
+        handler: async function (rzpResp: any) {
+          // Cryptographic response received from Razorpay Checkout:
+          // rzpResp.razorpay_payment_id
+          // rzpResp.razorpay_order_id
+          // rzpResp.razorpay_signature
+          setSubmittingState('Verifying payment securely with server...');
+
+          try {
+            const verifyUrl = `${supabaseUrl}/functions/v1/verify-razorpay-payment`;
+            const verifyResponse = await fetch(verifyUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'apikey': supabaseAnonKey
+              },
+              body: JSON.stringify({
+                order_id: orderData.order_id,
+                razorpay_order_id: rzpResp.razorpay_order_id,
+                razorpay_payment_id: rzpResp.razorpay_payment_id,
+                razorpay_signature: rzpResp.razorpay_signature
+              })
+            });
+
+            const verifyData = await verifyResponse.json().catch(() => null);
+
+            if (verifyResponse.ok && verifyData && verifyData.success) {
+              // Store snapshot for confirmation screen
+              localStorage.setItem('lastOrder', JSON.stringify({
+                orderId: orderData.order_number,
+                orderUuid: orderData.order_id,
+                phone: payload.customer_phone,
+                total: orderData.amount / 100,
+                paymentMethod: 'razorpay',
+                items: cart
+              }));
+
+              // Clear cart ONLY AFTER successful verified payment!
+              saveLocalCart([]);
+              updateNavbarCartBadge();
+
+              // Redirect to order confirmation with order ID and phone
+              window.location.href = `/order-confirmation?order_id=${encodeURIComponent(orderData.order_id)}&phone=${encodeURIComponent(payload.customer_phone)}`;
+            } else {
+              const verifyErr = verifyData?.error || 'Payment signature could not be verified by the server.';
+              showError(`Payment verification failed: ${verifyErr}`);
+              resetSubmitBtn();
+            }
+          } catch (verifyErr: any) {
+            console.error('Payment verification error:', verifyErr);
+            showError('A network error occurred while verifying payment. If amount was debited, your order will be confirmed shortly via SMS/WhatsApp.');
+            resetSubmitBtn();
+          }
+        }
+      };
+
+      const rzpInstance = new (window as any).Razorpay(options);
+
+      rzpInstance.on('payment.failed', function (failureData: any) {
+        resetSubmitBtn();
+        const reason = failureData?.error?.description || failureData?.error?.reason || 'Payment could not be completed';
+        showError(`Payment failed: ${reason}. Please try another payment method.`);
+
+        // Notify server to mark failed payment attempt
+        if (orderData?.order_id) {
+          fetch(createOrderUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': supabaseAnonKey
+            },
+            body: JSON.stringify({
+              action: 'cancel',
+              order_id: orderData.order_id,
+              customer_phone: payload.customer_phone,
+              reason: `Payment failed at gateway: ${reason}`
+            })
+          }).catch((err) => console.warn('Payment failed notice:', err));
+        }
+      });
+
+      rzpInstance.open();
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      showError(err?.message || 'An unexpected error occurred while communicating with the payment gateway.');
+      resetSubmitBtn();
+    }
+  });
+</script>
