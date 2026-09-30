@@ -359,14 +359,17 @@ const discount = product.originalPrice
   // Color selection
   let selectedColor = document.querySelector<HTMLButtonElement>('.color-btn')?.dataset.color;
   const colorBtns = document.querySelectorAll<HTMLButtonElement>('.color-btn');
+  const activeColorClasses = ['border-stone-900', 'bg-stone-900', 'text-white', 'shadow-xs'];
+  const inactiveColorClasses = ['border-border', 'text-stone-700', 'hover:border-stone-400', 'bg-surface-bright'];
+
   colorBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       colorBtns.forEach(b => {
-        b.classList.remove('border-text-primary', 'bg-text-primary', 'text-text-inverse', 'font-medium');
-        b.classList.add('border-border', 'text-text-secondary', 'bg-surface');
+        b.classList.remove(...activeColorClasses);
+        b.classList.add(...inactiveColorClasses);
       });
-      btn.classList.remove('border-border', 'text-text-secondary', 'bg-surface');
-      btn.classList.add('border-text-primary', 'bg-text-primary', 'text-text-inverse', 'font-medium');
+      btn.classList.remove(...inactiveColorClasses);
+      btn.classList.add(...activeColorClasses);
       selectedColor = btn.dataset.color;
     });
   });
