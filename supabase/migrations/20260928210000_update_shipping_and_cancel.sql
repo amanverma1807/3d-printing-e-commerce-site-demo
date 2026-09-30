@@ -220,4 +220,4 @@ $$;
 
 -- 3. Grants
 GRANT EXECUTE ON FUNCTION public.create_guest_order TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.cancel_guest_order TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.cancel_guest_order(UUID, TEXT) TO anon, authenticated;

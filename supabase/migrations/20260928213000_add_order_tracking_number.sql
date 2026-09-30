@@ -60,4 +60,4 @@ END;
 $$;
 
 -- Grant execution to anon and authenticated callers
-GRANT EXECUTE ON FUNCTION public.get_guest_order TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_guest_order(UUID, TEXT) TO anon, authenticated;
