@@ -1,12 +1,17 @@
 ---
 import '../styles/global.css';
+import { siteConfig, getBrandInitials } from '../config/site';
 
 interface Props {
   title?: string;
   activeSection?: 'dashboard' | 'orders' | 'products' | 'categories' | 'hero';
 }
 
-const { title = 'Admin Portal — E-commerce Admin', activeSection = 'dashboard' } = Astro.props;
+const { title = 'Dashboard', activeSection = 'dashboard' } = Astro.props;
+const brandInitials = getBrandInitials(siteConfig.brand.name);
+const pageTitle = title.includes(siteConfig.brand.name)
+  ? title
+  : `${title} — ${siteConfig.brand.name} Admin`;
 ---
 
 <!doctype html>
@@ -18,9 +23,9 @@ const { title = 'Admin Portal — E-commerce Admin', activeSection = 'dashboard'
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="E-commerce Admin" />
+    <meta name="apple-mobile-web-app-title" content={`${siteConfig.brand.name} Admin`} />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>{title}</title>
+    <title>{pageTitle}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -29,7 +34,7 @@ const { title = 'Admin Portal — E-commerce Admin', activeSection = 'dashboard'
     <!-- Auth Verification Loading Overlay -->
     <div id="admin-auth-guard" class="fixed inset-0 bg-surface z-50 flex flex-col items-center justify-center gap-4 transition-opacity duration-300">
       <div class="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold text-xl shadow-lg animate-pulse">
-        ES
+        {brandInitials}
       </div>
       <div class="flex items-center gap-2 text-text-secondary text-sm">
         <svg class="animate-spin w-4 h-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -47,10 +52,10 @@ const { title = 'Admin Portal — E-commerce Admin', activeSection = 'dashboard'
         <div class="flex items-center gap-4">
           <a href="/admin" class="flex items-center gap-2.5">
             <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
-              ES
+              {brandInitials}
             </div>
             <div>
-              <div class="font-bold text-base tracking-tight leading-none">E-commerce Store</div>
+              <div class="font-bold text-base tracking-tight leading-none">{siteConfig.brand.name}</div>
               <div class="text-[10px] text-text-tertiary uppercase tracking-wider font-semibold mt-0.5">Admin Workspace</div>
             </div>
           </a>

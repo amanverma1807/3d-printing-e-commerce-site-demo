@@ -4,7 +4,7 @@ import PolicyNav from '../components/PolicyNav.astro';
 import Button from '../components/Button.astro';
 import { siteConfig, getWhatsAppLink } from '../config/site';
 
-const lastUpdated = "September 2024";
+const lastUpdated = siteConfig.policyLastUpdated;
 ---
 
 <Layout
@@ -177,7 +177,7 @@ const lastUpdated = "September 2024";
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm text-text-secondary">
             <li>The customer certifies that they hold the necessary rights, licenses, or permissions for any logos, graphics, texts, or files supplied for production.</li>
-            <li>{siteConfig.brand.name} acts purely as a fabrication service and assumes no liability for intellectual property or trademark infringements arising from customer-provided assets.</li>
+            <li>{siteConfig.brand.name} acts purely as a production service and assumes no liability for intellectual property or trademark infringements arising from customer-provided assets.</li>
           </ul>
         </section>
       </div>

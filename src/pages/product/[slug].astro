@@ -117,7 +117,7 @@ const discount = product.originalPrice
               {product.inStock ? (
                 <>
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  <span class="font-medium text-stone-900">In Stock and ready for print fabrication</span>
+                  <span class="font-medium text-stone-900">In Stock and ready for dispatch</span>
                 </>
               ) : (
                 <>
@@ -135,7 +135,7 @@ const discount = product.originalPrice
           {product.colors && product.colors.length > 0 && (
             <div>
               <label class="block text-xs font-mono uppercase tracking-wider text-stone-500 mb-3">
-                Selected Filament Color
+                Selected Color
               </label>
               <div class="flex flex-wrap gap-2" id="color-options">
                 {product.colors.map((color, idx) => (
@@ -261,7 +261,7 @@ const discount = product.originalPrice
                 </span>
               </summary>
               <div class="pt-4 border-t border-border/60 mt-3 text-xs sm:text-sm text-stone-600 font-light leading-relaxed">
-                Fabricated with high-grade, durable thermoplastics. Clean with a dry microfiber cloth or lukewarm water. Keep away from extreme continuous heat (>60°C).
+                Crafted with high-grade, durable materials. Clean with a soft microfiber cloth or lukewarm water. Keep away from extreme heat and open flames.
               </div>
             </details>
 

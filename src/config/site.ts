@@ -1,30 +1,60 @@
-// Central site configuration — update these values in one place
+// Central site configuration — template configuration for easy multi-client reusability
 export const siteConfig = {
   brand: {
-    name: 'E-commerce Store',
+    name: 'Store',
     tagline: 'Quality Products. Simple Shopping.',
     description: 'A modern, premium e-commerce store built for high-performance shopping experiences.',
-    url: '',
+    url: '', // Set client production domain (e.g. 'https://example.com')
   },
   contact: {
+    phone: '',
+    phoneRaw: '',
+    phoneDisplay: '',
     whatsapp: '',
     whatsappDisplay: '',
     whatsappUrl: '',
     whatsappMessage: "Hi! I'd like to know more about your products.",
     email: '',
-    phone: '',
-    phoneRaw: '',
-    phoneDisplay: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      pincode: '',
+      country: '',
+    },
+  },
+  businessHours: {
+    weekday: 'Monday - Saturday: 9:00 AM - 8:00 PM',
+    weekend: 'Sunday: 10:00 AM - 6:00 PM',
   },
   social: {
     instagram: '',
     instagramHandle: '',
     instagramDisplay: '',
   },
+  currency: {
+    code: 'INR',
+    symbol: '₹',
+    locale: 'en-IN',
+  },
+  shipping: {
+    flatRate: 110,
+    estimatedDays: '2–3 business days',
+  },
+  features: {
+    enableCustomOrders: true,
+    enableCOD: true,
+    enableOnlinePayment: true,
+  },
+  seo: {
+    defaultTitle: 'Store — Quality Products & Modern Essentials',
+    defaultDescription: 'Explore our curated catalog of quality items designed for style, durability, and everyday living.',
+  },
+  policyLastUpdated: 'October 2024',
   nav: [
     { label: 'Shop', href: '/shop' },
     { label: 'Track Order', href: '/track-order' },
-    { label: 'Custom Printing', href: '/custom' },
+    { label: 'Custom Orders', href: '/custom' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ] as const,
@@ -41,14 +71,6 @@ export const siteConfig = {
     { name: 'Kitchen', slug: 'kitchen', description: 'Practical and elegant dining essentials' },
     { name: 'Utility', slug: 'utility', description: 'Durable gear and versatile everyday tools' },
   ] as const,
-  currency: {
-    code: 'INR',
-    symbol: '₹',
-    locale: 'en-IN',
-  },
-  shipping: {
-    flatRate: 110,
-  },
 } as const;
 
 export type Category = typeof siteConfig.categories[number];
@@ -71,4 +93,18 @@ export function getWhatsAppLink(message?: string): string {
     return `https://wa.me/${phone}?text=${msg}`;
   }
   return `https://wa.me/${phone}`;
+}
+
+/**
+ * Derives a clean 2-letter uppercase initials monogram from the brand name.
+ * e.g., "Atelier Goods" -> "AG", "Store" -> "ST"
+ */
+export function getBrandInitials(name?: string): string {
+  const brandName = (name || siteConfig.brand.name || '').trim();
+  if (!brandName) return 'ST';
+  const words = brandName.split(/\s+/).filter(Boolean);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return brandName.slice(0, 2).toUpperCase();
 }

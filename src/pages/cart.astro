@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
+import { siteConfig } from '../config/site';
 ---
 
-<Layout title="Shopping Cart — E-commerce Store">
+<Layout title={`Shopping Cart — ${siteConfig.brand.name}`}>
   <section class="py-12 sm:py-16 min-h-[70vh] bg-surface">
     <div class="container-page max-w-5xl">
       <!-- Header -->

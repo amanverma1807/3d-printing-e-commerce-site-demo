@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
+import { siteConfig } from '../config/site';
 ---
 
-<Layout title="Checkout — E-commerce Store">
+<Layout title={`Checkout — ${siteConfig.brand.name}`}>
   <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <section class="py-12 sm:py-16 bg-surface min-h-[80vh]">
     <div class="container-page max-w-5xl">

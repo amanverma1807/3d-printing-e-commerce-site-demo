@@ -20,9 +20,13 @@ export interface Product {
 }
 
 export interface CartItem {
-  product: Product;
+  id: string;
+  name: string;
+  price: number;
+  image: string;
   quantity: number;
-  selectedColor?: string;
+  slug: string;
+  color?: string;
 }
 
 export interface CheckoutFormData {

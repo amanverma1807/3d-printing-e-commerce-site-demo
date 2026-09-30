@@ -1,6 +1,6 @@
 {
-  "name": "E-commerce Store",
-  "short_name": "Store",
+  "name": "Storefront",
+  "short_name": "Storefront",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

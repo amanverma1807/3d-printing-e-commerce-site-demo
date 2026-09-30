@@ -1,14 +1,7 @@
 import { supabase } from './supabase';
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-  slug: string;
-  color?: string;
-}
+import type { CartItem } from '../types';
+export type { CartItem };
 
 const CART_KEY = 'cart';
 

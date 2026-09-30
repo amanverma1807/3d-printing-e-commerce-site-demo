@@ -2,12 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
 import { getStoreProducts, getStoreCategories } from '../lib/catalog';
+import { siteConfig } from '../config/site';
 
 const products = await getStoreProducts();
 const categories = await getStoreCategories();
 ---
 
-<Layout title="Shop Catalog — E-commerce Store" description="Browse our complete collection of quality products, accessories, and curated essentials.">
+<Layout title={`Shop Catalog — ${siteConfig.brand.name}`} description="Browse our complete collection of quality products, accessories, and curated essentials.">
   <!-- Architectural Header -->
   <section class="py-12 sm:py-16 bg-surface-subtle border-b border-border">
     <div class="container-page">
