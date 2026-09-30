@@ -139,11 +139,11 @@ const discount = product.originalPrice
         // Visual feedback
         const originalText = target.textContent;
         target.textContent = '✓';
-        target.classList.add('bg-success', 'text-white');
+        target.classList.add('bg-success');
 
         setTimeout(() => {
           target.textContent = originalText;
-          target.classList.remove('bg-success', 'text-white');
+          target.classList.remove('bg-success');
         }, 800);
       }
     }
