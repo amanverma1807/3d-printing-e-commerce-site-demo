@@ -38,13 +38,14 @@ export const siteConfig = {
     locale: 'en-IN',
   },
   shipping: {
-    flatRate: 110,
     estimatedDays: '2–3 business days',
   },
   features: {
     enableCustomOrders: true,
     enableCOD: true,
     enableOnlinePayment: true,
+    enableNewsletter: false,
+    enableContactForm: false,
   },
   seo: {
     defaultTitle: 'Store — Quality Products & Modern Essentials',
@@ -76,23 +77,46 @@ export const siteConfig = {
 export type Category = typeof siteConfig.categories[number];
 export type NavItem = typeof siteConfig.nav[number];
 
-export function formatPrice(price: number): string {
+export function formatPrice(price: number, options?: Intl.NumberFormatOptions): string {
+  const num = typeof price === 'number' && !isNaN(price) ? price : 0;
   return new Intl.NumberFormat(siteConfig.currency.locale, {
     style: 'currency',
     currency: siteConfig.currency.code,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price);
+    ...options,
+  }).format(num);
 }
 
 export function getWhatsAppLink(message?: string): string {
-  const phone = siteConfig.contact.whatsapp.replace(/\D/g, '');
-  if (!phone) return '#';
+  const rawPhone = siteConfig.contact.whatsapp || '';
+  const phone = rawPhone.replace(/\D/g, '');
+  if (!phone) return '';
   if (message && message.trim()) {
     const msg = encodeURIComponent(message.trim());
     return `https://wa.me/${phone}?text=${msg}`;
   }
   return `https://wa.me/${phone}`;
+}
+
+export function hasWhatsApp(): boolean {
+  const rawPhone = siteConfig.contact.whatsapp || '';
+  return Boolean(rawPhone.replace(/\D/g, '').length > 0);
+}
+
+export function hasEmail(): boolean {
+  return Boolean(siteConfig.contact.email && siteConfig.contact.email.trim().length > 0);
+}
+
+export function hasPhone(): boolean {
+  const raw = siteConfig.contact.phoneRaw || '';
+  const display = siteConfig.contact.phoneDisplay || '';
+  return Boolean(raw.trim().length > 0 || display.trim().length > 0);
+}
+
+export function hasSocial(platform: keyof typeof siteConfig.social): boolean {
+  const val = siteConfig.social[platform];
+  return Boolean(typeof val === 'string' && val.trim().length > 0);
 }
 
 /**
@@ -108,3 +132,4 @@ export function getBrandInitials(name?: string): string {
   }
   return brandName.slice(0, 2).toUpperCase();
 }
+

@@ -175,6 +175,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   <script>
     import { supabase } from '../../lib/supabase';
+    import { formatPrice } from '../../config/site';
 
     let allProducts: any[] = [];
     let allCategories: any[] = [];
@@ -246,6 +247,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             slug,
             price,
             original_price,
+            shipping_fee,
             images,
             badge,
             material,
@@ -339,8 +341,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               </span>
             </td>
             <td class="py-3 px-4 text-right">
-              <div class="font-semibold text-text-primary text-sm">₹${Number(p.price).toLocaleString('en-IN')}</div>
-              ${p.original_price ? `<div class="text-xs text-text-tertiary line-through">₹${Number(p.original_price).toLocaleString('en-IN')}</div>` : ''}
+              <div class="font-semibold text-text-primary text-sm">${formatPrice(Number(p.price))}</div>
+              ${p.original_price ? `<div class="text-xs text-text-tertiary line-through">${formatPrice(Number(p.original_price))}</div>` : ''}
+              <div class="text-[11px] text-text-secondary mt-0.5">
+                ${Number(p.shipping_fee || 0) > 0 ? `+${formatPrice(Number(p.shipping_fee))} ship` : '<span class="text-success font-medium">Free ship</span>'}
+              </div>
             </td>
             <td class="py-3 px-4 text-center">
               ${

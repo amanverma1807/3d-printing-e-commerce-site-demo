@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
-import { siteConfig, getWhatsAppLink } from '../config/site';
+import { siteConfig, getWhatsAppLink, hasWhatsApp, hasEmail } from '../config/site';
 
 interface Props {
   error?: unknown;
@@ -73,13 +73,23 @@ const errorMessage = error instanceof Error ? error.message : null;
         <Button href="/" variant="secondary">
           Return to Home
         </Button>
-        <Button href={getWhatsAppLink("Hello! I experienced a server error on the store.")} variant="outline">
-          Report via WhatsApp
-        </Button>
+        {hasWhatsApp() ? (
+          <Button href={getWhatsAppLink("Hello! I experienced a server error on the store.")} variant="outline">
+            Report via WhatsApp
+          </Button>
+        ) : (
+          <Button href="/contact" variant="outline">
+            Contact Support
+          </Button>
+        )}
       </div>
 
       <p class="text-xs text-text-tertiary">
-        If the issue persists, our support team is available at <a href={`mailto:${siteConfig.contact.email}`} class="underline hover:text-brand-600">{siteConfig.contact.email}</a>.
+        {hasEmail() ? (
+          <>If the issue persists, our support team is available at <a href={`mailto:${siteConfig.contact.email}`} class="underline hover:text-brand-600">{siteConfig.contact.email}</a>.</>
+        ) : (
+          <>If the issue persists, please reach out to us via our <a href="/contact" class="underline hover:text-brand-600">contact page</a>.</>
+        )}
       </p>
     </div>
   </main>

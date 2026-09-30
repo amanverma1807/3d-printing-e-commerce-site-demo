@@ -32,7 +32,7 @@ const categories = await getStoreCategories();
   </section>
 
   <!-- Filters and Catalog Grid -->
-  <section class="py-12 sm:py-16 bg-surface">
+  <section id="catalog" class="py-12 sm:py-16 bg-surface">
     <div class="container-page">
       <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
         <!-- Backdrop for mobile drawer -->
@@ -222,7 +222,7 @@ const categories = await getStoreCategories();
     if (productCount) productCount.textContent = String(filtered.length);
   }
 
-  // Initialize category from URL query parameter
+  // Initialize category & sort from URL query parameter or hash anchor
   function initializeCategoryFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get('category');
@@ -239,8 +239,25 @@ const categories = await getStoreCategories();
         allInput.checked = true;
       }
     }
+
+    // Support sort query parameter and hash anchor (e.g. ?sort=newest or #new, #featured)
+    let sortParam = urlParams.get('sort');
+    if (!sortParam && window.location.hash) {
+      const hash = window.location.hash.toLowerCase().replace('#', '');
+      if (hash === 'new' || hash === 'newest') sortParam = 'newest';
+      else if (hash === 'featured') sortParam = 'featured';
+      else if (hash === 'price-low') sortParam = 'price-low';
+      else if (hash === 'price-high') sortParam = 'price-high';
+    }
+
+    if (sortParam && sortSelect) {
+      const matchingOption = Array.from(sortSelect.options).find(opt => opt.value === sortParam);
+      if (matchingOption) {
+        sortSelect.value = sortParam;
+      }
+    }
     
-    // Trigger initial filter
+    // Trigger initial filter and sort
     filterAndSort();
   }
 

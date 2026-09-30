@@ -1,4 +1,6 @@
 ---
+import { siteConfig } from '../../config/site';
+
 interface Props {
   isNew?: boolean;
 }
@@ -124,9 +126,9 @@ const { isNew = false } = Astro.props;
     <div class="bg-surface-bright rounded-2xl p-6 border border-border shadow-xs space-y-4">
       <h2 class="text-base font-bold text-text-primary border-b border-border pb-3">Pricing & Inventory</h2>
 
-      <div class="grid sm:grid-cols-2 gap-4">
+      <div class="grid sm:grid-cols-3 gap-4">
         <div>
-          <label for="price" class="block text-xs font-semibold text-text-primary mb-1">Selling Price (INR ₹) *</label>
+          <label for="price" class="block text-xs font-semibold text-text-primary mb-1">Selling Price ({siteConfig.currency.code} {siteConfig.currency.symbol}) *</label>
           <input
             type="number"
             id="price"
@@ -140,7 +142,7 @@ const { isNew = false } = Astro.props;
 
         <div>
           <label for="original_price" class="block text-xs font-semibold text-text-primary mb-1">
-            Original Price (INR ₹) <span class="text-text-tertiary font-normal">(for strikethrough discount)</span>
+            Original Price ({siteConfig.currency.code} {siteConfig.currency.symbol}) <span class="text-text-tertiary font-normal">(for strikethrough discount)</span>
           </label>
           <input
             type="number"
@@ -150,6 +152,22 @@ const { isNew = false } = Astro.props;
             placeholder="1599"
             class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
+        </div>
+
+        <div>
+          <label for="shipping_fee" class="block text-xs font-semibold text-text-primary mb-1">
+            Shipping / Additional Charge ({siteConfig.currency.code} {siteConfig.currency.symbol})
+          </label>
+          <input
+            type="number"
+            id="shipping_fee"
+            min="0"
+            step="1"
+            value="0"
+            placeholder="0"
+            class="w-full px-3.5 py-2.5 bg-surface text-sm font-semibold rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
+          />
+          <p class="text-[11px] text-text-tertiary mt-1">Charge added to the order when this product is purchased. Set to 0 for Free Shipping.</p>
         </div>
       </div>
 
@@ -411,6 +429,7 @@ const { isNew = false } = Astro.props;
   const descInput = document.getElementById('description') as HTMLTextAreaElement;
   const priceInput = document.getElementById('price') as HTMLInputElement;
   const origPriceInput = document.getElementById('original_price') as HTMLInputElement;
+  const shippingFeeInput = document.getElementById('shipping_fee') as HTMLInputElement;
   const stockCountInput = document.getElementById('stock_count') as HTMLInputElement;
   const inStockCheckbox = document.getElementById('in_stock') as HTMLInputElement;
   const featuredCheckbox = document.getElementById('featured') as HTMLInputElement;
@@ -532,6 +551,7 @@ const { isNew = false } = Astro.props;
         descInput.value = prod.description || '';
         priceInput.value = prod.price?.toString() || '0';
         origPriceInput.value = prod.original_price?.toString() || '';
+        shippingFeeInput.value = prod.shipping_fee !== undefined && prod.shipping_fee !== null ? prod.shipping_fee.toString() : '0';
         stockCountInput.value = prod.stock_count?.toString() || '0';
         inStockCheckbox.checked = Boolean(prod.in_stock);
         featuredCheckbox.checked = Boolean(prod.featured);
@@ -866,6 +886,15 @@ const { isNew = false } = Astro.props;
       return;
     }
 
+    const shipping_fee = shippingFeeInput?.value ? parseFloat(shippingFeeInput.value) : 0;
+    if (isNaN(shipping_fee) || shipping_fee < 0) {
+      if (formError) {
+        formError.textContent = 'Shipping / Additional charge must be a valid number greater than or equal to 0.';
+        formError.classList.remove('hidden');
+      }
+      return;
+    }
+
     submitBtn.disabled = true;
     submitText.textContent = 'Saving Product...';
     submitSpinner.classList.remove('hidden');
@@ -876,6 +905,7 @@ const { isNew = false } = Astro.props;
       category_id,
       price,
       original_price,
+      shipping_fee,
       short_description,
       description,
       badge,

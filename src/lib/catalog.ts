@@ -35,6 +35,7 @@ export interface DbProduct {
   slug: string;
   price: number;
   original_price: number | null;
+  shipping_fee: number;
   short_description: string;
   description: string;
   images: string[];
@@ -70,6 +71,7 @@ export function mapDbProductToProduct(db: DbProduct): Product {
     slug: db.slug,
     price: Number(db.price),
     originalPrice: db.original_price ? Number(db.original_price) : undefined,
+    shippingFee: Number(db.shipping_fee || 0),
     shortDescription: db.short_description,
     description: db.description,
     category: categorySlug,
@@ -104,6 +106,7 @@ export async function getStoreProducts(): Promise<Product[]> {
         slug,
         price,
         original_price,
+        shipping_fee,
         short_description,
         description,
         images,
@@ -179,6 +182,7 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
         slug,
         price,
         original_price,
+        shipping_fee,
         short_description,
         description,
         images,
@@ -232,6 +236,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
         slug,
         price,
         original_price,
+        shipping_fee,
         short_description,
         description,
         images,

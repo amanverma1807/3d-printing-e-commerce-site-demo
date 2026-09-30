@@ -159,27 +159,11 @@ Deno.serve(async (req: Request) => {
 
     const internalOrderId = rpcData.order_id;
     const orderNumber = rpcData.order_number;
-    let orderTotal = Number(rpcData.total);
-    let shippingFee = Number(rpcData.shipping_fee);
+    const orderTotal = Number(rpcData.total);
+    const shippingFee = Number(rpcData.shipping_fee);
 
-    // Server-side enforcement of flat shipping fee:
-    // Template Configuration: Default flat shipping charge (must match database RPC default)
-    const EXPECTED_FLAT_SHIPPING = 110.00;
-    if (isNaN(shippingFee) || shippingFee !== EXPECTED_FLAT_SHIPPING) {
-      const dbSubtotal = Number(rpcData.subtotal);
-      shippingFee = EXPECTED_FLAT_SHIPPING;
-      orderTotal = Math.round((dbSubtotal + shippingFee) * 100) / 100;
-
-      // Update the order record in database with correct shipping_fee and total
-      await supabaseAdmin
-        .from('orders')
-        .update({
-          shipping_fee: shippingFee,
-          total: orderTotal,
-        })
-        .eq('id', internalOrderId);
-    }
-
+    // Validate authoritative total calculated by PostgreSQL create_guest_order RPC
+    // (which computes subtotal from products.price and charges from products.shipping_fee)
     if (isNaN(orderTotal) || orderTotal <= 0) {
       console.error('Invalid order total returned by RPC:', orderTotal);
       return new Response(

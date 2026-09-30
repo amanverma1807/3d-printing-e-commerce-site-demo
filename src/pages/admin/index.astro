@@ -1,5 +1,6 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+import { formatPrice } from '../../config/site';
 ---
 
 <AdminLayout title="Dashboard" activeSection="dashboard">
@@ -65,7 +66,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </svg>
         </div>
       </div>
-      <div id="stat-total-revenue" class="text-3xl font-bold text-text-primary">₹--</div>
+      <div id="stat-total-revenue" class="text-3xl font-bold text-text-primary">{formatPrice(0)}</div>
       <div class="text-xs text-text-tertiary mt-2">Genuinely paid & captured orders</div>
     </div>
 
@@ -219,15 +220,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="pt-4 border-t border-border-subtle space-y-2">
           <div class="flex justify-between text-xs text-text-secondary">
             <span>Subtotal</span>
-            <span id="modal-subtotal">₹0</span>
+            <span id="modal-subtotal">{formatPrice(0)}</span>
           </div>
           <div class="flex justify-between text-xs text-text-secondary">
             <span>Shipping</span>
-            <span id="modal-shipping">₹0</span>
+            <span id="modal-shipping">{formatPrice(0)}</span>
           </div>
           <div class="flex justify-between text-base font-bold text-text-primary pt-2 border-t border-border-subtle">
             <span>Total</span>
-            <span id="modal-total" class="text-brand-600">₹0</span>
+            <span id="modal-total" class="text-brand-600">{formatPrice(0)}</span>
           </div>
         </div>
 
@@ -309,6 +310,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   <script>
     import { supabase } from '../../lib/supabase';
+    import { siteConfig, formatPrice } from '../../config/site';
 
     function escapeHtml(value: unknown): string {
       return String(value ?? '').replace(/[&<>'"]/g, char => ({
@@ -410,7 +412,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       if (statTotalOrders) statTotalOrders.textContent = totalOrdersCount.toString();
       if (statPendingOrders) statPendingOrders.textContent = pendingCount.toString();
-      if (statTotalRevenue) statTotalRevenue.textContent = `₹${totalRevenueSum.toLocaleString('en-IN')}`;
+      if (statTotalRevenue) statTotalRevenue.textContent = formatPrice(totalRevenueSum);
       if (productCount !== undefined && statActiveProducts) {
         statActiveProducts.textContent = productCount.toString();
       }
@@ -523,12 +525,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       emptyState.classList.add('hidden');
 
       tbody.innerHTML = filtered.map(order => {
-        const dateStr = new Date(order.created_at).toLocaleDateString('en-IN', {
+        const dateStr = new Date(order.created_at).toLocaleDateString(siteConfig.currency.locale, {
           day: 'numeric',
           month: 'short',
           year: 'numeric',
         });
-        const timeStr = new Date(order.created_at).toLocaleTimeString('en-IN', {
+        const timeStr = new Date(order.created_at).toLocaleTimeString(siteConfig.currency.locale, {
           hour: '2-digit',
           minute: '2-digit',
         });
@@ -572,7 +574,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               ` : ''}
             </td>
             <td class="py-3 px-4 text-right font-semibold text-text-primary">
-              ₹${Number(order.total).toLocaleString('en-IN')}
+              ${formatPrice(Number(order.total))}
             </td>
             <td class="py-3 px-4 text-center">
               <button
@@ -605,7 +607,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       if (modalOrderNumber) modalOrderNumber.textContent = order.order_number;
       updateModalStatusBadge(order.status);
       if (modalOrderDate) {
-        modalOrderDate.textContent = 'Placed on ' + new Date(order.created_at).toLocaleString('en-IN');
+        modalOrderDate.textContent = 'Placed on ' + new Date(order.created_at).toLocaleString(siteConfig.currency.locale);
       }
       if (modalCustomerName) modalCustomerName.textContent = order.customer_name;
       if (modalCustomerPhone) modalCustomerPhone.textContent = 'Phone: ' + order.customer_phone;
@@ -618,9 +620,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         `;
       }
 
-      if (modalSubtotal) modalSubtotal.textContent = `₹${Number(order.subtotal).toLocaleString('en-IN')}`;
-      if (modalShipping) modalShipping.textContent = `₹${Number(order.shipping_fee).toLocaleString('en-IN')}`;
-      if (modalTotal) modalTotal.textContent = `₹${Number(order.total).toLocaleString('en-IN')}`;
+      if (modalSubtotal) modalSubtotal.textContent = formatPrice(Number(order.subtotal));
+      if (modalShipping) modalShipping.textContent = formatPrice(Number(order.shipping_fee));
+      if (modalTotal) modalTotal.textContent = formatPrice(Number(order.total));
 
       if (modalPaymentMethod) modalPaymentMethod.textContent = order.payment_method;
       if (modalPaymentStatus) modalPaymentStatus.textContent = order.payment_status;
@@ -659,12 +661,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 <div>
                   <div class="font-medium text-text-primary text-xs">${escapeHtml(item.product_name)}</div>
                   <div class="text-[11px] text-text-secondary">
-                    ${item.selected_color ? `Color: ${escapeHtml(item.selected_color)} &bull; ` : ''}Qty: ${Number(item.quantity) || 1} × ₹${Number(item.unit_price).toLocaleString('en-IN')}
+                    ${item.selected_color ? `Color: ${escapeHtml(item.selected_color)} &bull; ` : ''}Qty: ${Number(item.quantity) || 1} × ${formatPrice(Number(item.unit_price))}
                   </div>
                 </div>
               </div>
               <div class="text-xs font-semibold text-text-primary">
-                ₹${Number(item.total_price).toLocaleString('en-IN')}
+                ${formatPrice(Number(item.total_price))}
               </div>
             </div>
           `).join('');

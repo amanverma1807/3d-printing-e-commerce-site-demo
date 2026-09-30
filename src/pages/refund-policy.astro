@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PolicyNav from '../components/PolicyNav.astro';
 import Button from '../components/Button.astro';
-import { siteConfig, getWhatsAppLink } from '../config/site';
+import { siteConfig, getWhatsAppLink, hasWhatsApp, hasEmail } from '../config/site';
 
 const lastUpdated = siteConfig.policyLastUpdated;
 ---
@@ -200,7 +200,7 @@ const lastUpdated = siteConfig.policyLastUpdated;
           <ol class="list-decimal pl-5 space-y-2 text-sm text-text-secondary">
             <li>Re-check your bank account statement or UPI app transaction history.</li>
             <li>Contact your credit card issuer or bank; there is often processing lag before the refund is officially posted.</li>
-            <li>If you have done this and still have not received your funds, please contact our support desk at <a href={`mailto:${siteConfig.contact.email}`} class="text-brand-600 underline font-medium">{siteConfig.contact.email}</a> with your reference number.</li>
+            <li>If you have done this and still have not received your funds, please contact our support desk {hasEmail() ? (<>at <a href={`mailto:${siteConfig.contact.email}`} class="text-brand-600 underline font-medium">{siteConfig.contact.email}</a></>) : (<>via our <a href="/contact" class="text-brand-600 underline font-medium">contact form</a></>)} with your reference number.</li>
           </ol>
         </section>
       </div>
@@ -212,10 +212,12 @@ const lastUpdated = siteConfig.policyLastUpdated;
           Message our billing and support team with your order number for an immediate status update.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-4">
-          <Button href={getWhatsAppLink("Hello! I am inquiring about the status of my refund.")} variant="primary">
-            Inquire on WhatsApp
-          </Button>
-          <Button href="/contact" variant="outline">
+          {hasWhatsApp() && (
+            <Button href={getWhatsAppLink("Hello! I am inquiring about the status of my refund.")} variant="primary">
+              Inquire on WhatsApp
+            </Button>
+          )}
+          <Button href="/contact" variant={hasWhatsApp() ? "outline" : "primary"}>
             Contact Form
           </Button>
         </div>

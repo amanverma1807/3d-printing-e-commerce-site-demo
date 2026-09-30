@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PolicyNav from '../components/PolicyNav.astro';
 import Button from '../components/Button.astro';
-import { siteConfig, getWhatsAppLink } from '../config/site';
+import { siteConfig, getWhatsAppLink, hasWhatsApp } from '../config/site';
 
 const lastUpdated = siteConfig.policyLastUpdated;
 ---
@@ -189,12 +189,21 @@ const lastUpdated = siteConfig.policyLastUpdated;
           Need guidance on material choices or custom requirements? Our support team is here to assist.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-4">
-          <Button href={getWhatsAppLink("Hi! I have a question regarding product specifications.")} variant="primary">
-            Ask Us on WhatsApp
-          </Button>
-          <Button href="/custom" variant="outline">
-            Custom Orders
-          </Button>
+          {hasWhatsApp() && (
+            <Button href={getWhatsAppLink("Hi! I have a question regarding product specifications.")} variant="primary">
+              Ask Us on WhatsApp
+            </Button>
+          )}
+          {siteConfig.features.enableCustomOrders && (
+            <Button href="/custom" variant={hasWhatsApp() ? "outline" : "primary"}>
+              Custom Orders
+            </Button>
+          )}
+          {!hasWhatsApp() && !siteConfig.features.enableCustomOrders && (
+            <Button href="/contact" variant="primary">
+              Contact Support
+            </Button>
+          )}
         </div>
       </div>
     </div>

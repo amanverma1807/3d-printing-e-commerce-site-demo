@@ -79,7 +79,7 @@ export async function validateAndUpdateCart(): Promise<{
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, slug, price, images, is_active, in_stock')
+      .select('id, name, slug, price, shipping_fee, images, is_active, in_stock')
       .in('id', ids);
 
     // If Supabase returns an error (network drop, downtime), do NOT wipe local items
@@ -110,6 +110,7 @@ export async function validateAndUpdateCart(): Promise<{
         hasChanges = true;
       } else {
         const freshPrice = Number(dbProd.price);
+        const freshShippingFee = Number(dbProd.shipping_fee || 0);
         const freshName = dbProd.name;
         const freshSlug = dbProd.slug;
         const freshImage =
@@ -119,6 +120,7 @@ export async function validateAndUpdateCart(): Promise<{
 
         if (
           item.price !== freshPrice ||
+          item.shippingFee !== freshShippingFee ||
           item.name !== freshName ||
           item.slug !== freshSlug ||
           item.image !== freshImage
@@ -130,6 +132,7 @@ export async function validateAndUpdateCart(): Promise<{
           ...item,
           name: freshName,
           price: freshPrice,
+          shippingFee: freshShippingFee,
           slug: freshSlug,
           image: freshImage,
           // Preserves user quantity and selected color
@@ -147,4 +150,32 @@ export async function validateAndUpdateCart(): Promise<{
     console.warn('Exception during cart validation, preserving local cart:', err);
     return { cart: currentCart, removedItems: [], hasChanges: false };
   }
+}
+
+/**
+ * Calculates total product-level shipping fees for a cart.
+ *
+ * DETERMINISTIC CALCULATION RULE:
+ * Each distinct product line's configured charge (shipping_fee) is applied ONCE,
+ * regardless of the unit quantity for that product.
+ *
+ * Example:
+ * - Product A (price ₹500, shipping ₹50, quantity 3) -> shipping = ₹50 (not ₹150)
+ * - Product B (price ₹300, shipping ₹80, quantity 1) -> shipping = ₹80
+ * Total shipping = ₹130.
+ */
+export function calculateCartShipping(cart: CartItem[]): number {
+  if (!cart || cart.length === 0) return 0;
+
+  const seenIds = new Set<string>();
+  let totalShipping = 0;
+
+  for (const item of cart) {
+    if (item.id && !seenIds.has(item.id)) {
+      seenIds.add(item.id);
+      totalShipping += Number(item.shippingFee || 0);
+    }
+  }
+
+  return Math.round(totalShipping * 100) / 100;
 }

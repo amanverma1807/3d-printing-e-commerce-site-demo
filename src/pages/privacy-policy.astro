@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PolicyNav from '../components/PolicyNav.astro';
 import Button from '../components/Button.astro';
-import { siteConfig } from '../config/site';
+import { siteConfig, hasEmail } from '../config/site';
 
 const lastUpdated = siteConfig.policyLastUpdated;
 ---
@@ -145,7 +145,11 @@ const lastUpdated = siteConfig.policyLastUpdated;
             Unless you request otherwise, we retain submitted custom files or references for a period of <strong>90 days</strong> solely for the purpose of re-orders, revisions, or warranty inquiries.
           </p>
           <p class="text-text-secondary text-sm md:text-base leading-relaxed">
-            You may email us at any time at <a href={`mailto:${siteConfig.contact.email}`} class="text-brand-600 underline font-medium">{siteConfig.contact.email}</a> to request immediate and permanent deletion of your custom files from our storage.
+            {hasEmail() ? (
+              <>You may email us at any time at <a href={`mailto:${siteConfig.contact.email}`} class="text-brand-600 underline font-medium">{siteConfig.contact.email}</a> to request immediate and permanent deletion of your custom files from our storage.</>
+            ) : (
+              <>You may contact our support team at any time via our <a href="/contact" class="text-brand-600 underline font-medium">contact page</a> to request immediate and permanent deletion of your custom files from our storage.</>
+            )}
           </p>
         </section>
 
@@ -184,10 +188,12 @@ const lastUpdated = siteConfig.policyLastUpdated;
           Contact our Privacy & Data Grievance Officer directly. We answer all data requests within 48 hours.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-4">
-          <Button href={`mailto:${siteConfig.contact.email}`} variant="primary">
-            Email Privacy Desk
-          </Button>
-          <Button href="/contact" variant="outline">
+          {hasEmail() && (
+            <Button href={`mailto:${siteConfig.contact.email}`} variant="primary">
+              Email Privacy Desk
+            </Button>
+          )}
+          <Button href="/contact" variant={hasEmail() ? "outline" : "primary"}>
             General Contact Page
           </Button>
         </div>

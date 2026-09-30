@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
-import { siteConfig, getWhatsAppLink } from '../config/site';
+import { siteConfig, getWhatsAppLink, hasWhatsApp } from '../config/site';
 
 // Ensure 404 status code in SSR mode
 Astro.response.status = 404;
@@ -71,12 +71,24 @@ Astro.response.status = 404;
           <a href="/track-order" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
             📦 Track Order
           </a>
-          <a href="/custom" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
-            ✨ Custom Orders
-          </a>
-          <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
-            💬 WhatsApp ({siteConfig.contact.whatsappDisplay})
-          </a>
+          {siteConfig.features.enableCustomOrders ? (
+            <a href="/custom" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+              ✨ Custom Orders
+            </a>
+          ) : (
+            <a href="/about" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+              ℹ️ About Us
+            </a>
+          )}
+          {hasWhatsApp() ? (
+            <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+              💬 WhatsApp ({siteConfig.contact.whatsappDisplay || 'Chat'})
+            </a>
+          ) : (
+            <a href="/contact" class="p-3 rounded-xl bg-surface-bright border border-border text-xs font-medium text-text-primary hover:text-brand-600 hover:border-brand-300 transition-all text-center">
+              ✉️ Contact Us
+            </a>
+          )}
         </div>
       </div>
     </div>

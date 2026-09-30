@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
-import { siteConfig } from '../config/site';
+import { siteConfig, formatPrice } from '../config/site';
 ---
 
 <Layout title={`Checkout — ${siteConfig.brand.name}`}>
@@ -249,20 +249,20 @@ import { siteConfig } from '../config/site';
             <div class="space-y-3 pb-6 border-b border-border/60 text-sm">
               <div class="flex justify-between items-center">
                 <span class="text-stone-600 font-light">Subtotal</span>
-                <span id="subtotal" class="font-medium text-stone-900 tabular-nums">₹0</span>
+                <span id="subtotal" class="font-medium text-stone-900 tabular-nums">{formatPrice(0)}</span>
               </div>
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-1.5">
-                  <span class="text-stone-600 font-light">Shipping</span>
-                  <span class="text-[10px] font-mono text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">Flat rate</span>
+                  <span class="text-stone-600 font-light">Shipping / Charges</span>
+                  <span id="shipping-badge" class="text-[10px] font-mono text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">Calculated</span>
                 </div>
-                <span id="shipping" class="font-medium text-stone-900 tabular-nums">₹110</span>
+                <span id="shipping" class="font-medium text-stone-900 tabular-nums">{formatPrice(0)}</span>
               </div>
             </div>
 
             <div class="flex justify-between items-baseline">
               <span class="text-base font-medium text-stone-900">Total</span>
-              <span id="total" class="text-2xl font-semibold text-stone-900 tabular-nums tracking-tight">₹0</span>
+              <span id="total" class="text-2xl font-semibold text-stone-900 tabular-nums tracking-tight">{formatPrice(0)}</span>
             </div>
           </div>
         </div>
@@ -277,10 +277,11 @@ import { siteConfig } from '../config/site';
     saveLocalCart,
     validateAndUpdateCart,
     updateNavbarCartBadge,
+    calculateCartShipping,
     type CartItem,
   } from '../lib/cart';
   import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase';
-  import { siteConfig } from '../config/site';
+  import { siteConfig, formatPrice } from '../config/site';
 
   const emptyCheckout = document.getElementById('empty-checkout');
   const checkoutContent = document.getElementById('checkout-content');
@@ -307,13 +308,19 @@ import { siteConfig } from '../config/site';
     checkEmptyCart();
 
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shipping = cart.length > 0 ? 110 : 0;
+    const shipping = calculateCartShipping(cart);
     const total = subtotal + shipping;
 
-    if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+    if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal);
     const shippingEl = document.getElementById('shipping');
-    if (shippingEl) shippingEl.textContent = `₹${shipping.toLocaleString('en-IN')}`;
-    if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+    const shippingBadgeEl = document.getElementById('shipping-badge');
+    if (shippingEl) {
+      shippingEl.textContent = shipping === 0 ? 'Free' : formatPrice(shipping);
+    }
+    if (shippingBadgeEl) {
+      shippingBadgeEl.textContent = shipping === 0 ? 'Free' : 'Product rates';
+    }
+    if (totalEl) totalEl.textContent = formatPrice(total);
 
     if (checkoutItems) {
       if (cart.length === 0) {
@@ -328,7 +335,7 @@ import { siteConfig } from '../config/site';
               <h3 class="text-xs sm:text-sm font-medium text-stone-900 truncate">${item.name}</h3>
               <p class="text-[11px] text-stone-500 font-mono">${item.color ? `Color: ${item.color} · ` : ''}Qty: ${item.quantity}</p>
             </div>
-            <p class="text-xs sm:text-sm font-semibold text-stone-900 tabular-nums tracking-tight">₹${(item.price * item.quantity).toLocaleString('en-IN')}</p>
+            <p class="text-xs sm:text-sm font-semibold text-stone-900 tabular-nums tracking-tight">${formatPrice(item.price * item.quantity)}</p>
           </div>
         `).join('');
       }
@@ -719,7 +726,7 @@ import { siteConfig } from '../config/site';
       const options = {
         key: razorpayKey,
         amount: orderData.amount, // Authoritative server-calculated amount in paise
-        currency: orderData.currency || 'INR',
+        currency: orderData.currency || siteConfig.currency.code,
         name: siteConfig.brand.name || 'Store',
         description: `Order ${orderData.order_number}`,
         order_id: orderData.razorpay_order_id,

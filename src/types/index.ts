@@ -4,6 +4,7 @@ export interface Product {
   slug: string;
   price: number;
   originalPrice?: number;
+  shippingFee: number;
   description: string;
   shortDescription: string;
   category: string;
@@ -23,6 +24,7 @@ export interface CartItem {
   id: string;
   name: string;
   price: number;
+  shippingFee?: number;
   image: string;
   quantity: number;
   slug: string;
@@ -43,6 +45,7 @@ export interface Order {
   id: string;
   items: CartItem[];
   subtotal: number;
+  shippingFee: number;
   total: number;
   customer: CheckoutFormData;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';

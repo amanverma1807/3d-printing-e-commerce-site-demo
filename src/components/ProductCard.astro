@@ -83,6 +83,7 @@ const discount = product.originalPrice
           data-product-price={product.price}
           data-product-image={product.images[0]}
           data-product-slug={product.slug}
+          data-product-shipping={product.shippingFee || 0}
           aria-label={`Add ${product.name} to cart`}
         >
           Add to Cart
@@ -95,12 +96,15 @@ const discount = product.originalPrice
 <script>
   import { getLocalCart, saveLocalCart, updateNavbarCartBadge } from '../lib/cart';
 
-  function addToCart(product: { id: string; name: string; price: number; image: string; slug: string }, quantity: number = 1) {
+  function addToCart(product: { id: string; name: string; price: number; shippingFee?: number; image: string; slug: string }, quantity: number = 1) {
     const cart = getLocalCart();
     const existingIndex = cart.findIndex((item) => item.id === product.id);
     
     if (existingIndex >= 0) {
       cart[existingIndex].quantity += quantity;
+      if (product.shippingFee !== undefined) {
+        cart[existingIndex].shippingFee = product.shippingFee;
+      }
     } else {
       cart.push({ ...product, quantity });
     }
@@ -118,6 +122,7 @@ const discount = product.originalPrice
       const productId = target.dataset.productId;
       const productName = target.dataset.productName;
       const productPrice = parseFloat(target.dataset.productPrice || '0');
+      const productShipping = parseFloat(target.dataset.productShipping || '0');
       const productImage = target.dataset.productImage || '';
       const productSlug = target.dataset.productSlug || '';
 
@@ -126,6 +131,7 @@ const discount = product.originalPrice
           id: productId,
           name: productName,
           price: productPrice,
+          shippingFee: isNaN(productShipping) ? 0 : productShipping,
           image: productImage,
           slug: productSlug
         }, 1);

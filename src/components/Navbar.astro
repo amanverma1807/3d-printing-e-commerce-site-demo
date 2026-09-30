@@ -3,6 +3,11 @@ import { siteConfig } from '../config/site';
 
 const currentPath = Astro.url.pathname;
 const isHome = currentPath === '/';
+
+const navItems = siteConfig.nav.filter((item) => {
+  if (item.href === '/custom' && !siteConfig.features.enableCustomOrders) return false;
+  return true;
+});
 ---
 
 <header
@@ -30,7 +35,7 @@ const isHome = currentPath === '/';
 
     <!-- Desktop nav -->
     <ul class="hidden md:flex items-center gap-8" role="list">
-      {siteConfig.nav.map((item) => (
+      {navItems.map((item) => (
         <li>
           <a
             href={item.href}
@@ -85,7 +90,7 @@ const isHome = currentPath === '/';
   <!-- Mobile menu -->
   <div id="mobile-menu" class="nav-mobile-drawer md:hidden hidden border-t transition-colors duration-300" role="dialog" aria-label="Mobile navigation">
     <ul class="container-page py-6 space-y-1" role="list">
-      {siteConfig.nav.map((item) => (
+      {navItems.map((item) => (
         <li>
           <a
             href={item.href}
