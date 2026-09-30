@@ -479,8 +479,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     statusFilter?.addEventListener('change', renderTable);
 
     // Initial load when admin authentication is confirmed
-    window.addEventListener('template:admin-ready', () => {
+    if ((window as any).__templateAdminReady) {
       loadCatalog();
-    });
+    } else {
+      window.addEventListener('template:admin-ready', () => {
+        loadCatalog();
+      });
+    }
   </script>
 </AdminLayout>

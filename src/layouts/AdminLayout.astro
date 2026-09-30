@@ -186,6 +186,7 @@ const pageTitle = title.includes(siteConfig.brand.name)
           }
 
           // Dispatch event with verified admin profile for pages to use
+          (window as any).__templateAdminReady = authData;
           window.dispatchEvent(
             new CustomEvent('template:admin-ready', {
               detail: authData,

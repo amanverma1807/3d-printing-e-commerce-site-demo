@@ -41,7 +41,7 @@ const { isNew = false } = Astro.props;
   </div>
 
   <!-- Product Form -->
-  <form id="product-form" class="space-y-6">
+  <form id="product-form" class="space-y-6" novalidate data-is-new={isNew ? 'true' : 'false'}>
     <input type="hidden" id="product-id" value="" />
 
     <!-- Section 1: Basic Information -->
@@ -76,13 +76,14 @@ const { isNew = false } = Astro.props;
 
       <div class="grid sm:grid-cols-2 gap-4">
         <div>
-          <label for="category_id" class="block text-xs font-semibold text-text-primary mb-1">Category *</label>
+          <label for="category_id" class="block text-xs font-semibold text-text-primary mb-1">
+            Category <span class="text-text-tertiary font-normal">(optional)</span>
+          </label>
           <select
             id="category_id"
-            required
             class="w-full px-3.5 py-2.5 bg-surface text-sm rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-brand-600"
           >
-            <option value="">Select Category...</option>
+            <option value="">None (Uncategorized)</option>
           </select>
         </div>
 
@@ -499,21 +500,38 @@ const { isNew = false } = Astro.props;
 
   // Load Categories for dropdown
   async function loadCategories(selectedId?: string) {
-    const { data: cats } = await supabase
-      .from('categories')
-      .select('id, name')
-      .order('display_order', { ascending: true });
+    try {
+      const { data: cats, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .order('display_order', { ascending: true });
 
-    if (categorySelect && cats) {
-      categorySelect.innerHTML = `
-        <option value="">Select Category...</option>
-        ${cats.map(c => `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`).join('')}
-      `;
+      if (error) {
+        console.warn('Could not fetch categories:', error.message);
+      }
+
+      if (categorySelect) {
+        let optionsHtml = '<option value="">None (Uncategorized)</option>';
+        if (cats && cats.length > 0) {
+          optionsHtml += cats
+            .map(c => `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`)
+            .join('');
+        }
+        categorySelect.innerHTML = optionsHtml;
+      }
+    } catch (e: any) {
+      console.warn('Error loading categories:', e);
+      if (categorySelect) {
+        categorySelect.innerHTML = '<option value="">None (Uncategorized)</option>';
+      }
     }
   }
 
-  // Determine Product ID from URL
+  // Determine Product ID from URL or form mode
   function detectProductId(): string | null {
+    if (form?.getAttribute('data-is-new') === 'true') {
+      return null;
+    }
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const editIdx = pathParts.indexOf('edit');
     if (editIdx > 0) {
@@ -835,68 +853,85 @@ const { isNew = false } = Astro.props;
     }
   });
 
-  // --- Explicit Save Handler (Triggered by Save/Create Button Click Only) ---
+  function reportFormError(message: string, targetEl?: HTMLElement | null) {
+    if (formError) {
+      formError.textContent = message;
+      formError.classList.remove('hidden');
+      formError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    showToast(message, true);
+    if (targetEl) {
+      targetEl.focus();
+      targetEl.classList.add('ring-2', 'ring-danger');
+      setTimeout(() => targetEl.classList.remove('ring-2', 'ring-danger'), 3000);
+    }
+  }
+
+  // --- Explicit Save Handler (Triggered by Save/Create Button or Form Submit) ---
   async function handleSaveProduct() {
     if (formError) formError.classList.add('hidden');
 
-    // Trigger browser HTML5 validation hints if any required field is empty
-    if (!form.checkValidity()) {
-      form.reportValidity();
+    const name = nameInput?.value?.trim() || '';
+    const slug = slugify(slugInput?.value?.trim() || '');
+    const category_id = categorySelect?.value ? categorySelect.value : null;
+    const short_description = shortDescInput?.value?.trim() || '';
+    const description = descInput?.value?.trim() || '';
+    const priceRaw = priceInput?.value?.trim() || '';
+    const price = parseFloat(priceRaw);
+    const origPriceRaw = origPriceInput?.value?.trim();
+    const original_price = origPriceRaw ? parseFloat(origPriceRaw) : null;
+    const shippingFeeRaw = shippingFeeInput?.value?.trim() || '0';
+    const shipping_fee = parseFloat(shippingFeeRaw);
+
+    const badge = badgeInput?.value?.trim() || null;
+    const material = materialInput?.value?.trim() || null;
+    const dimensions = dimensionsInput?.value?.trim() || null;
+    const weight = weightInput?.value?.trim() || null;
+    const stock_count = parseInt(stockCountInput?.value || '0') || 0;
+    const in_stock = inStockCheckbox ? inStockCheckbox.checked : true;
+    const featured = featuredCheckbox ? featuredCheckbox.checked : false;
+    const is_active = isActiveCheckbox ? isActiveCheckbox.checked : true;
+
+    // Field-by-field validation with prominent UI feedback (no native scroll-to-top jumps)
+    if (!name) {
+      reportFormError('Product Name is required.', nameInput);
       return;
     }
 
-    const name = nameInput.value.trim();
-    const slug = slugify(slugInput.value.trim());
-    const category_id = categorySelect.value || null;
-    const price = parseFloat(priceInput.value);
-    const original_price = origPriceInput.value ? parseFloat(origPriceInput.value) : null;
-    const short_description = shortDescInput.value.trim();
-    const description = descInput.value.trim();
-    const badge = badgeInput.value.trim() || null;
-    const material = materialInput.value.trim() || null;
-    const dimensions = dimensionsInput.value.trim() || null;
-    const weight = weightInput.value.trim() || null;
-    const stock_count = parseInt(stockCountInput.value) || 0;
-    const in_stock = inStockCheckbox.checked;
-    const featured = featuredCheckbox.checked;
-    const is_active = isActiveCheckbox.checked;
-
-    // Validation
-    if (!name || !slug) {
-      if (formError) {
-        formError.textContent = 'Product Name and Slug are required.';
-        formError.classList.remove('hidden');
-      }
+    if (!slug) {
+      reportFormError('URL Slug is required.', slugInput);
       return;
     }
 
-    if (isNaN(price) || price < 0) {
-      if (formError) {
-        formError.textContent = 'Price must be a valid number greater than or equal to 0.';
-        formError.classList.remove('hidden');
-      }
+    if (!short_description) {
+      reportFormError('Short Description is required for catalog cards.', shortDescInput);
+      return;
+    }
+
+    if (!description) {
+      reportFormError('Full Description is required.', descInput);
+      return;
+    }
+
+    if (!priceRaw || isNaN(price) || price < 0) {
+      reportFormError('Selling Price must be a valid number (0 or greater).', priceInput);
       return;
     }
 
     if (original_price !== null && (isNaN(original_price) || original_price < 0)) {
-      if (formError) {
-        formError.textContent = 'Original price must be a valid number greater than or equal to 0.';
-        formError.classList.remove('hidden');
-      }
+      reportFormError('Original price must be a valid number (0 or greater).', origPriceInput);
       return;
     }
 
-    const shipping_fee = shippingFeeInput?.value ? parseFloat(shippingFeeInput.value) : 0;
     if (isNaN(shipping_fee) || shipping_fee < 0) {
-      if (formError) {
-        formError.textContent = 'Shipping / Additional charge must be a valid number greater than or equal to 0.';
-        formError.classList.remove('hidden');
-      }
+      reportFormError('Shipping / Additional charge must be a valid number (0 or greater).', shippingFeeInput);
       return;
     }
+
+    const isEditMode = Boolean(currentProductId && currentProductId !== 'new');
 
     submitBtn.disabled = true;
-    submitText.textContent = 'Saving Product...';
+    submitText.textContent = isEditMode ? 'Saving Changes...' : 'Creating Product...';
     submitSpinner.classList.remove('hidden');
 
     const payload = {
@@ -922,7 +957,7 @@ const { isNew = false } = Astro.props;
     };
 
     try {
-      if (currentProductId && currentProductId !== 'new') {
+      if (isEditMode) {
         // Update
         const { error } = await supabase
           .from('products')
@@ -943,30 +978,50 @@ const { isNew = false } = Astro.props;
 
       setTimeout(() => {
         window.location.href = '/admin/products';
-      }, 800);
+      }, 700);
     } catch (err: any) {
-      if (formError) {
-        if (err?.code === '23505' || err?.message?.includes('duplicate key')) {
-          formError.textContent = `A product with slug "${slug}" already exists. Please choose a unique slug.`;
-        } else {
-          formError.textContent = err?.message || 'Failed to save product. Ensure you have admin privileges.';
-        }
-        formError.classList.remove('hidden');
+      console.error('Failed to save product:', err);
+      let errMsg = err?.message || 'Failed to save product. Ensure you have admin privileges.';
+      if (err?.code === '23505' || err?.message?.includes('duplicate key') || err?.message?.includes('products_slug_key')) {
+        errMsg = `A product with slug "${slug}" already exists. Please choose a unique slug.`;
       }
+      reportFormError(errMsg);
       submitBtn.disabled = false;
-      submitText.textContent = currentProductId ? 'Save Changes' : 'Create Product';
+      submitText.textContent = isEditMode ? 'Save Changes' : 'Create Product';
       submitSpinner.classList.add('hidden');
     }
   }
 
-  // Bind explicit click to Save button only
+  // Bind submit button and form submit
   submitBtn?.addEventListener('click', handleSaveProduct);
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
+    handleSaveProduct();
   });
 
-  // Wait for admin authentication confirmation
-  window.addEventListener('template:admin-ready', () => {
-    initEditor();
-  });
+  // Guarded initialization to prevent race conditions
+  let editorInitialized = false;
+  async function safeInitEditor() {
+    if (editorInitialized) return;
+    editorInitialized = true;
+    await initEditor();
+  }
+
+  // Support both cached admin auth state and event-based dispatch
+  if ((window as any).__templateAdminReady) {
+    safeInitEditor();
+  } else {
+    window.addEventListener('template:admin-ready', () => {
+      safeInitEditor();
+    });
+  }
+
+  // Always initialize UI controls and categories on DOM ready as fallback
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      safeInitEditor();
+    });
+  } else {
+    safeInitEditor();
+  }
 </script>
