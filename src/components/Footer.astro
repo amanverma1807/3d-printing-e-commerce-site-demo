@@ -1,5 +1,12 @@
 ---
 import { siteConfig, getWhatsAppLink, hasWhatsApp, hasEmail, hasSocial } from '../config/site';
+
+interface Props {
+  categories?: { name: string; slug: string }[];
+}
+
+const { categories } = Astro.props;
+const displayCategories = categories !== undefined ? categories : siteConfig.categories;
 ---
 
 <footer class="bg-surface-subtle border-t border-border mt-auto">
@@ -27,7 +34,7 @@ import { siteConfig, getWhatsAppLink, hasWhatsApp, hasEmail, hasSocial } from '.
           <li><a href="/shop" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">All Products</a></li>
           <li><a href="/shop?sort=featured" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">Featured Items</a></li>
           <li><a href="/shop?sort=newest" class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">New Releases</a></li>
-          {siteConfig.categories.slice(0, 2).map((cat) => (
+          {displayCategories.slice(0, 2).map((cat) => (
             <li><a href={`/shop?category=${cat.slug}`} class="text-sm text-stone-600 hover:text-stone-950 transition-colors font-light">{cat.name}</a></li>
           ))}
           <li><a href="/track-order" class="text-sm font-medium text-brand-700 hover:text-brand-900 transition-colors">Track My Order →</a></li>

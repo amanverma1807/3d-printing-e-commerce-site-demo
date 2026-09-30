@@ -7,11 +7,13 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title?: string;
   description?: string;
+  categories?: { name: string; slug: string }[];
 }
 
 const { 
   title = `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`, 
-  description = siteConfig.brand.description 
+  description = siteConfig.brand.description,
+  categories
 } = Astro.props;
 ---
 
@@ -38,6 +40,6 @@ const {
     <main class="flex-1">
       <slot />
     </main>
-    <Footer />
+    <Footer categories={categories} />
   </body>
 </html>
