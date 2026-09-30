@@ -203,6 +203,16 @@ import { siteConfig, getWhatsAppLink } from '../config/site';
   import { supabase } from '../lib/supabase';
   import { getWhatsAppLink } from '../config/site';
 
+  function escapeHtml(value: unknown): string {
+    return String(value ?? '').replace(/[&<>'"]/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;',
+    }[char] || char));
+  }
+
   const stateLoading = document.getElementById('state-loading');
   const stateConfirmed = document.getElementById('state-confirmed');
   const statePending = document.getElementById('state-pending');
@@ -408,10 +418,10 @@ import { siteConfig, getWhatsAppLink } from '../config/site';
       orderSummaryEl.innerHTML = order.items.map((item: any) => `
         <div class="flex items-center justify-between text-sm py-2">
           <div class="flex items-center gap-3">
-            ${item.product_image ? `<img src="${item.product_image}" alt="${item.product_name}" class="w-12 h-12 rounded-lg object-contain bg-stone-100/60 p-1 border border-border" />` : ''}
+            ${item.product_image ? `<img src="${escapeHtml(item.product_image)}" alt="${escapeHtml(item.product_name)}" class="w-12 h-12 rounded-lg object-contain bg-stone-100/60 p-1 border border-border" />` : ''}
             <div>
-              <span class="font-medium text-stone-900 block">${item.product_name}</span>
-              <span class="text-xs text-stone-500">Qty: ${item.quantity}${item.selected_color ? ` · Color: ${item.selected_color}` : ''}</span>
+              <span class="font-medium text-stone-900 block">${escapeHtml(item.product_name)}</span>
+              <span class="text-xs text-stone-500">Qty: ${Number(item.quantity) || 1}${item.selected_color ? ` · Color: ${escapeHtml(item.selected_color)}` : ''}</span>
             </div>
           </div>
           <span class="font-semibold font-mono text-stone-900">₹${Number(item.total_price).toLocaleString('en-IN')}</span>
