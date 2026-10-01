@@ -255,33 +255,31 @@ const slides = heroSlides.length > 0 ? heroSlides : [
   </section>
 
   <!-- Visual Inspiration Gallery -->
-  <section class="py-24 bg-surface">
-    <div class="container-page">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-stone-900 mb-4">Inspiration Gallery</h2>
-        <p class="text-stone-500 font-light">See what's possible with our advanced additive manufacturing studio.</p>
-      </div>
+  {heroSlides.length > 0 && (
+    <section class="py-24 bg-surface">
+      <div class="container-page">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-stone-900 mb-4">Inspiration Gallery</h2>
+          <p class="text-stone-500 font-light">See what's possible with our advanced additive manufacturing studio.</p>
+        </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[250px]">
-        <div class="col-span-2 row-span-2 rounded-2xl overflow-hidden relative group bg-stone-200">
-          <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1633526543814-9718c8922b7a?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Gallery item" />
-        </div>
-        <div class="rounded-2xl overflow-hidden relative group bg-stone-200">
-          <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1598522325066-1c8803fb2756?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Gallery item" />
-        </div>
-        <div class="rounded-2xl overflow-hidden relative group bg-stone-200">
-          <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1582315758117-0683416e7dd7?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Gallery item" />
-        </div>
-        <div class="col-span-2 rounded-2xl overflow-hidden relative group bg-stone-200">
-          <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1615911477755-9b2446f25455?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Gallery item" />
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[250px]">
+          {heroSlides.map((slide, index) => {
+            let containerClass = "rounded-2xl overflow-hidden relative group bg-stone-200";
+            if (index === 0) containerClass += " col-span-2 row-span-2";
+            else if (index === 3) containerClass += " col-span-2";
+            
+            return (
+              <div class={containerClass}>
+                <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                <img src={slide.image_url} alt={slide.heading || 'Gallery item'} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- Why Choose Us -->
   <section class="py-24 bg-surface-bright border-y border-border">
