@@ -12,9 +12,9 @@ const discount = product.originalPrice
   : 0;
 ---
 
-<article class="group relative flex flex-col h-full bg-surface-bright border border-border rounded-lg overflow-hidden transition-all duration-300 hover:border-stone-400 hover:shadow-product" data-category={product.category} data-price={product.price} data-created={product.createdAt || ''}>
+<article class="group relative flex flex-col h-full bg-surface-bright border border-border/90 rounded-xl overflow-hidden transition-all duration-300 hover:border-stone-400 hover:shadow-product" data-category={product.category} data-price={product.price} data-created={product.createdAt || ''}>
   <!-- Image -->
-  <a href={`/product/${product.slug}`} class="relative aspect-square overflow-hidden bg-stone-100/50 p-6 flex items-center justify-center border-b border-border/60">
+  <a href={`/product/${product.slug}`} class="relative aspect-square overflow-hidden bg-stone-100/70 p-6 flex items-center justify-center border-b border-border/60">
     <img
       src={product.images[0]}
       alt={product.name}
@@ -45,13 +45,18 @@ const discount = product.originalPrice
 
   <!-- Content -->
   <div class="flex-1 flex flex-col p-4 sm:p-5">
-    <!-- Category -->
-    <p class="text-[11px] font-medium text-stone-500 uppercase tracking-wider mb-1">
-      {product.category}
-    </p>
+    <!-- Category & 3D Print Spec -->
+    <div class="flex items-center justify-between gap-2 mb-1.5">
+      <p class="text-[11px] font-mono font-medium text-stone-500 uppercase tracking-wider">
+        {product.category}
+      </p>
+      <span class="text-[10px] font-mono text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200/70">
+        3D Print
+      </span>
+    </div>
 
     <!-- Name -->
-    <h3 class="text-sm sm:text-base font-semibold text-stone-900 mb-1.5 tracking-tight group-hover:text-stone-700 transition-colors line-clamp-1">
+    <h3 class="text-sm sm:text-base font-semibold text-stone-900 mb-1.5 tracking-tight group-hover:text-stone-700 transition-colors line-clamp-1 capitalize">
       <a href={`/product/${product.slug}`}>
         {product.name}
       </a>

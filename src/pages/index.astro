@@ -65,7 +65,7 @@ const slides = heroSlides.length > 0 ? heroSlides : [
 
 <Layout categories={categories}>
   <!-- Hero -->
-  <section class="relative min-h-[100vh] flex items-center bg-surface-night text-text-inverse overflow-hidden">
+  <section class="relative min-h-[88vh] sm:min-h-[92vh] flex items-center bg-surface-night text-text-inverse overflow-hidden">
     <!-- Hero Carousel - integrated as background layer with synchronized content -->
     <div class="hero-carousel-container">
       <!-- Carousel track -->
@@ -85,27 +85,45 @@ const slides = heroSlides.length > 0 ? heroSlides : [
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 z-[1] pointer-events-none"></div>
             
             <!-- Slide Synchronized Content -->
-            <div class="carousel-content-wrapper container-page py-20 relative z-10 w-full flex items-center">
+            <div class="carousel-content-wrapper container-page py-16 sm:py-24 relative z-10 w-full flex items-center">
               <div class="max-w-3xl slide-text-box">
-                <h1 class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter text-text-inverse mb-6 text-balance leading-[1.08] animate-fade-up">
+                <!-- Eyebrow Badge -->
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-900/80 backdrop-blur-md border border-white/20 text-stone-200 text-xs font-mono tracking-widest uppercase mb-5 animate-fade-up">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Additive Studio · Precision 3D Printing
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter text-white mb-5 text-balance leading-[1.08] animate-fade-up capitalize">
                   {slide.heading}
                 </h1>
                 {slide.description && (
-                  <p class="text-base sm:text-lg md:text-xl text-text-tertiary mb-10 text-pretty max-w-2xl animate-fade-up delay-100 font-light">
+                  <p class="text-base sm:text-lg md:text-xl text-stone-200/90 mb-5 text-pretty max-w-2xl animate-fade-up delay-100 font-light leading-relaxed">
                     {slide.description}
                   </p>
                 )}
+
+                <!-- Technical Specifications Strip -->
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono text-stone-300/80 mb-8 animate-fade-up delay-150 py-2 border-y border-white/15 max-w-2xl">
+                  <span class="flex items-center gap-1.5"><span class="text-stone-400">Resolution:</span> 0.12–0.20mm</span>
+                  <span class="hidden sm:inline text-stone-500">•</span>
+                  <span class="flex items-center gap-1.5"><span class="text-stone-400">Materials:</span> PLA+ / PETG / Resin</span>
+                  <span class="hidden sm:inline text-stone-500">•</span>
+                  <span class="flex items-center gap-1.5"><span class="text-stone-400">Custom STL:</span> Supported</span>
+                </div>
+
                 <div class="flex flex-wrap gap-4 animate-fade-up delay-200">
-                  {slide.primary_cta_text && (
-                    <Button href={slide.primary_cta_link || '/shop'} size="lg">
-                      {slide.primary_cta_text}
-                    </Button>
-                  )}
-                  {slide.secondary_cta_text && (
-                    <Button href={slide.secondary_cta_link || '/custom'} variant="outline" size="lg">
-                      {slide.secondary_cta_text}
-                    </Button>
-                  )}
+                  <a
+                    href={slide.primary_cta_link || '/shop'}
+                    class="inline-flex items-center justify-center font-semibold transition-all duration-200 ease-sharp rounded-md px-7 py-3.5 text-base gap-2.5 bg-white text-stone-950 hover:bg-stone-100 shadow-soft active:scale-[0.98] select-none"
+                  >
+                    {slide.primary_cta_text || 'Shop 3D Prints'}
+                  </a>
+                  <a
+                    href={slide.secondary_cta_link || '/custom'}
+                    class="inline-flex items-center justify-center font-medium transition-all duration-200 ease-sharp rounded-md px-7 py-3.5 text-base gap-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/60 backdrop-blur-md active:scale-[0.98] select-none"
+                  >
+                    {slide.secondary_cta_text && slide.secondary_cta_text.toLowerCase() !== 'custom' ? slide.secondary_cta_text : 'Custom 3D Print / Upload STL'}
+                  </a>
                 </div>
               </div>
             </div>
@@ -147,7 +165,7 @@ const slides = heroSlides.length > 0 ? heroSlides : [
     <style>
       .hero-carousel-container {
         position: relative;
-        min-height: 100vh;
+        min-height: 88vh;
         width: 100%;
         overflow: hidden;
         z-index: 0;
@@ -289,6 +307,8 @@ const slides = heroSlides.length > 0 ? heroSlides : [
         }
       }
     </style>
+    <!-- Smooth transitional fade to catalog -->
+    <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-surface to-transparent pointer-events-none z-10"></div>
   </section>
 
   <!-- Category Discovery (Asymmetrical Bento Grid) -->
@@ -297,11 +317,11 @@ const slides = heroSlides.length > 0 ? heroSlides : [
       <div class="container-page">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4">
           <div>
-            <p class="text-xs uppercase tracking-widest text-stone-500 font-mono mb-2">Curated Catalog</p>
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-mono mb-2">Additive Catalog</p>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-stone-900">Explore by Category</h2>
           </div>
           <a href="/shop" class="text-sm font-medium text-stone-600 hover:text-stone-950 inline-flex items-center gap-1.5 transition-colors group">
-            <span>View entire collection</span>
+            <span>View entire catalog</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition-transform group-hover:translate-x-1">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
@@ -326,8 +346,14 @@ const slides = heroSlides.length > 0 ? heroSlides : [
                     loading="lazy"
                   />
                 ) : (
-                  <div class="absolute inset-0 bg-stone-900 transition-transform duration-700 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-[radial-gradient(#ffffff0d_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                  <div class="absolute inset-0 bg-stone-950 transition-transform duration-700 group-hover:scale-105 flex items-center justify-center overflow-hidden">
+                    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    <svg class="w-32 h-32 text-white/10 transition-transform duration-700 group-hover:scale-110" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+                      <polygon points="50,15 90,38 90,82 50,98 10,82 10,38" />
+                      <line x1="50" y1="15" x2="50" y2="98" />
+                      <line x1="50" y1="60" x2="90" y2="38" />
+                      <line x1="50" y1="60" x2="10" y2="38" />
+                    </svg>
                   </div>
                 )}
                 <!-- Legibility gradient overlay -->
@@ -336,7 +362,7 @@ const slides = heroSlides.length > 0 ? heroSlides : [
                 <!-- Top action pill -->
                 <div class="relative z-10 flex justify-between items-start">
                   <span class="text-[11px] font-mono uppercase tracking-widest text-stone-300/90 bg-black/40 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/10">
-                    Collection {String(index + 1).padStart(2, '0')}
+                    Series {String(index + 1).padStart(2, '0')}
                   </span>
                   <span class="w-8 h-8 rounded-full bg-white/15 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-stone-900 transition-all duration-300 shadow-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -347,7 +373,7 @@ const slides = heroSlides.length > 0 ? heroSlides : [
 
                 <!-- Bottom content -->
                 <div class="relative z-10 mt-auto">
-                  <h3 class="text-xl sm:text-2xl font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform duration-300">
+                  <h3 class="text-xl sm:text-2xl font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform duration-300 capitalize">
                     {cat.name}
                   </h3>
                   {cat.description && (
@@ -391,12 +417,12 @@ const slides = heroSlides.length > 0 ? heroSlides : [
   <section class="py-20 sm:py-28 lg:py-32 bg-surface border-t border-border">
     <div class="container-page">
       <div class="max-w-3xl mb-16 sm:mb-20">
-        <p class="text-xs uppercase tracking-widest text-stone-500 font-mono mb-2">Our Philosophy</p>
+        <p class="text-xs uppercase tracking-widest text-stone-500 font-mono mb-2">Additive Manufacturing Standards</p>
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-stone-900 mb-6">
-          Quality in Every Detail.
+          Engineered Layer by Layer.
         </h2>
         <p class="text-base sm:text-lg text-stone-600 font-light leading-relaxed">
-          Great products come from thoughtful design and meticulous execution. We curate durable, expressive pieces designed for modern living.
+          From CAD model slicing to post-processing, every physical piece is engineered for durability, dimensional accuracy, and exceptional surface fidelity.
         </p>
       </div>
 
@@ -407,9 +433,9 @@ const slides = heroSlides.length > 0 ? heroSlides : [
             <div class="w-10 h-10 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center font-mono font-bold text-sm mb-6">
               01
             </div>
-            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Thoughtful Design</h3>
+            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Adaptive Slicing</h3>
             <p class="text-sm text-stone-600 leading-relaxed font-light">
-              Every piece begins with intentional aesthetics, balancing practical utility with timeless minimalist style.
+              Calibrated 0.12mm–0.20mm adaptive layer heights eliminate harsh stepped artifacts, rendering smooth curves and crisp tactile contours.
             </p>
           </div>
         </div>
@@ -420,9 +446,9 @@ const slides = heroSlides.length > 0 ? heroSlides : [
             <div class="w-10 h-10 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center font-mono font-bold text-sm mb-6">
               02
             </div>
-            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Premium Materials</h3>
+            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Engineering Polymers</h3>
             <p class="text-sm text-stone-600 leading-relaxed font-light">
-              We select high-grade, durable materials chosen for their resilience, tactile finish, and lasting quality.
+              Formulated with reinforced PLA+, high-temp PETG, and specialized resins—delivering high rigidity, impact resistance, and lasting color fastness.
             </p>
           </div>
         </div>
@@ -433,9 +459,9 @@ const slides = heroSlides.length > 0 ? heroSlides : [
             <div class="w-10 h-10 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center font-mono font-bold text-sm mb-6">
               03
             </div>
-            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Precision Engineering</h3>
+            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Engineered Gyroid Infill</h3>
             <p class="text-sm text-stone-600 leading-relaxed font-light">
-              Our production processes ensure high consistency, robust build quality, and seamless everyday performance.
+              Internal geometries leverage continuous 3D gyroid infill patterns to maximize strength-to-weight performance and resist stress fractures.
             </p>
           </div>
         </div>
@@ -446,9 +472,9 @@ const slides = heroSlides.length > 0 ? heroSlides : [
             <div class="w-10 h-10 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center font-mono font-bold text-sm mb-6">
               04
             </div>
-            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Quality Inspection</h3>
+            <h3 class="text-lg font-semibold text-stone-900 mb-3 tracking-tight">Hand-Calibrated Finish</h3>
             <p class="text-sm text-stone-600 leading-relaxed font-light">
-              Every item is individually inspected and verified against our standards before careful packaging and delivery.
+              Each piece is manually deburred, post-cured, and verified with digital calipers against original CAD specs before safe packaging.
             </p>
           </div>
         </div>
@@ -464,23 +490,23 @@ const slides = heroSlides.length > 0 ? heroSlides : [
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
         <div class="relative z-10 max-w-2xl mx-auto text-center">
-          <p class="text-xs uppercase tracking-widest text-stone-400 font-mono mb-3">Custom Orders</p>
+          <p class="text-xs uppercase tracking-widest text-stone-400 font-mono mb-3">Custom 3D Printing & Prototyping</p>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-6 text-balance">
-            Have a Specific Vision in Mind?
+            Have an STL File or Custom Vision?
           </h2>
           <p class="text-base sm:text-lg text-stone-300 font-light leading-relaxed mb-10 text-pretty">
-            Looking for personalized pieces, bespoke orders, or tailored solutions? Reach out to discuss your project requirements with our team.
+            From functional replacement parts to custom architectural models, lithophanes, and prototypes. Send us your 3D files (.STL, .OBJ, .STEP) for an instant volume estimate and material recommendation.
           </p>
           {hasWhatsApp() ? (
-            <Button href={getWhatsAppLink("Hi! I'm interested in custom orders.")} variant="inverted" size="lg">
+            <Button href={getWhatsAppLink("Hi! I'd like to get a quote for a custom 3D print.")} variant="inverted" size="lg">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="mr-2">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
               </svg>
-              Discuss via WhatsApp
+              Discuss Custom Print via WhatsApp
             </Button>
           ) : (
             <Button href="/custom" variant="inverted" size="lg">
-              Explore Custom Orders
+              Explore Custom 3D Orders
             </Button>
           )}
         </div>

@@ -2,8 +2,8 @@
 export const siteConfig = {
   brand: {
     name: 'Store',
-    tagline: 'Quality Products. Simple Shopping.',
-    description: 'A modern, premium e-commerce store built for high-performance shopping experiences.',
+    tagline: 'Precision 3D Printing & Bespoke Fabrication',
+    description: 'Precision 3D-printed designs, bespoke additive manufacturing, and engineered physical goods.',
     url: '', // Set client production domain (e.g. 'https://example.com')
   },
   contact: {
