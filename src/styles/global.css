@@ -15,14 +15,20 @@
   --color-brand-900: #1c1917;
   --color-brand-950: #0c0a09;
 
+  /* Accent palette — Lime/Chartreuse */
+  --color-accent-400: #a3e635;
+  --color-accent-500: #84cc16;
+  --color-accent-600: #65a30d;
+  --color-accent-900: #365314;
+
   /* Neutral surfaces — warm tactile tones balanced with obsidian */
-  --color-surface: #f7f5f0;
+  --color-surface: #f8f9fa; /* Clean off-white base */
   --color-surface-bright: #ffffff;
-  --color-surface-muted: #efebe4;
-  --color-surface-subtle: #fcfbf9;
-  --color-surface-night: #0a0a0a;
-  --color-surface-night-elevated: #161618;
-  --color-surface-inverse: #0a0a0a;
+  --color-surface-muted: #f1f3f5;
+  --color-surface-subtle: #fcfcfc;
+  --color-surface-night: #111111; /* Charcoal black */
+  --color-surface-night-elevated: #1a1a1a;
+  --color-surface-inverse: #111111;
 
   --color-text-primary: #121212;
   --color-text-secondary: #57534e;
@@ -30,9 +36,9 @@
   --color-text-inverse: #ffffff;
   --color-text-inverse-secondary: #d6d3d1;
 
-  --color-border: #e6e2da;
-  --color-border-subtle: #eeebe5;
-  --color-border-dark: #27272a;
+  --color-border: #e9ecef;
+  --color-border-subtle: #f1f3f5;
+  --color-border-dark: #2a2a2a;
 
   /* Semantic */
   --color-success: #10b981;

@@ -10,22 +10,22 @@ const categories = await getStoreCategories();
 
 <Layout title={`Shop Catalog — ${siteConfig.brand.name}`} description="Browse our complete collection of quality products, accessories, and curated essentials." categories={categories}>
   <!-- Architectural Header -->
-  <section class="py-12 sm:py-16 bg-surface-subtle border-b border-border">
+  <section class="py-12 sm:py-20 bg-stone-950 border-b border-stone-800 text-white">
     <div class="container-page">
-      <nav class="flex items-center gap-2 text-xs font-mono text-stone-500 mb-3" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-stone-900 transition-colors">Index</a>
+      <nav class="flex items-center gap-2 text-xs font-mono text-stone-400 mb-6" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-accent-500 transition-colors">Index</a>
         <span>/</span>
-        <span class="text-stone-900">Catalog</span>
+        <span class="text-white">Catalog</span>
       </nav>
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-stone-900 mb-3">Shop Collection</h1>
-          <p class="text-sm sm:text-base text-stone-600 max-w-xl font-light leading-relaxed">
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-4">Shop Collection</h1>
+          <p class="text-base sm:text-lg text-stone-400 max-w-xl font-light leading-relaxed">
             Explore our curated selection of quality items designed for style, durability, and modern living.
           </p>
         </div>
-        <div class="hidden lg:block text-xs font-mono text-stone-500">
-          Showing <span id="product-count" class="font-bold text-stone-900 tabular-nums">{products.length}</span> products
+        <div class="hidden lg:block text-xs font-mono text-stone-500 bg-stone-900 px-4 py-2 rounded-full border border-stone-800">
+          Showing <span id="product-count" class="font-bold text-accent-500 tabular-nums">{products.length}</span> products
         </div>
       </div>
     </div>
