@@ -4,7 +4,7 @@ import { siteConfig, getBrandInitials } from '../config/site';
 
 interface Props {
   title?: string;
-  activeSection?: 'dashboard' | 'orders' | 'products' | 'categories' | 'hero';
+  activeSection?: 'dashboard' | 'orders' | 'products' | 'categories' | 'gallery';
 }
 
 const { title = 'Dashboard', activeSection = 'dashboard' } = Astro.props;
@@ -95,9 +95,9 @@ const pageTitle = title.includes(siteConfig.brand.name)
               Categories
             </a>
             <a
-              href="/admin/hero"
+              href="/admin/gallery"
               class={`px-3 py-1.5 rounded-lg transition-colors ${
-                activeSection === 'hero'
+                activeSection === 'gallery'
                   ? 'bg-brand-50 text-brand-700 font-semibold'
                   : 'text-text-secondary hover:text-text-primary hover:bg-surface-muted'
               }`}
@@ -151,7 +151,7 @@ const pageTitle = title.includes(siteConfig.brand.name)
       <a href="/admin" class={`px-3 py-1.5 rounded-lg whitespace-nowrap ${activeSection === 'dashboard' ? 'bg-brand-100 text-brand-700 font-semibold' : 'text-text-secondary'}`}>Dashboard</a>
       <a href="/admin/products" class={`px-3 py-1.5 rounded-lg whitespace-nowrap ${activeSection === 'products' ? 'bg-brand-100 text-brand-700 font-semibold' : 'text-text-secondary'}`}>Products</a>
       <a href="/admin/categories" class={`px-3 py-1.5 rounded-lg whitespace-nowrap ${activeSection === 'categories' ? 'bg-brand-100 text-brand-700 font-semibold' : 'text-text-secondary'}`}>Categories</a>
-      <a href="/admin/hero" class={`px-3 py-1.5 rounded-lg whitespace-nowrap ${activeSection === 'hero' ? 'bg-brand-100 text-brand-700 font-semibold' : 'text-text-secondary'}`}>Inspiration Gallery</a>
+      <a href="/admin/gallery" class={`px-3 py-1.5 rounded-lg whitespace-nowrap ${activeSection === 'gallery' ? 'bg-brand-100 text-brand-700 font-semibold' : 'text-text-secondary'}`}>Inspiration Gallery</a>
     </div>
 
     <!-- Main Admin Content Area -->
