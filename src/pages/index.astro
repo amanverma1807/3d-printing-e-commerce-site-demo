@@ -50,35 +50,39 @@ const slides = heroSlides.length > 0 ? heroSlides : [
 ---
 
 <Layout categories={categories}>
-  <!-- Hero Section -->
-  <section class="relative min-h-[85vh] flex items-center bg-surface-night text-text-inverse overflow-hidden selection:bg-accent-500 selection:text-stone-900">
-    <div class="hero-carousel-container w-full h-full absolute inset-0">
+  <!-- Hero Section with Vanta.js WAVES Animated Background -->
+  <section
+    id="hero-section"
+    class="relative min-h-[85vh] sm:min-h-[88vh] md:min-h-[90vh] flex items-center bg-[#101312] text-text-inverse overflow-hidden selection:bg-accent-500 selection:text-stone-900"
+  >
+    <!-- Vanta.js WAVES Animated Canvas Host: from directly below navbar (top-16 md:top-18) to the exact bottom edge of the black hero section -->
+    <div
+      id="vanta-hero-wrapper"
+      class="hero-vanta-container absolute top-16 md:top-18 inset-x-0 bottom-0 overflow-hidden z-0 pointer-events-none"
+      aria-hidden="true"
+    >
+      <div id="vanta-hero-bg" class="w-full h-full absolute inset-0"></div>
+    </div>
+
+    <!-- Subtle gradient overlay so dark metallic waves remain clearly visible with sharp text contrast -->
+    <div
+      class="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent z-[1] pointer-events-none"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Hero Content Container -->
+    <div class="hero-carousel-container w-full h-full absolute inset-0 z-10 pointer-events-none">
       <div class="carousel-track">
         {slides.map((slide, i) => (
           <div class={`carousel-slide ${i === 0 ? 'active' : ''}`} data-index={i}>
-            <img
-              src={slide.image_url}
-              alt={slide.heading || 'Store Showcase'}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              class="carousel-image object-cover w-full h-full"
-            />
-            
-            <div class="absolute inset-0 bg-gradient-to-r from-surface-night via-surface-night/80 to-transparent z-[1]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-surface-night via-transparent to-transparent z-[1] pointer-events-none"></div>
-            
-            <div class="carousel-content-wrapper container-page relative z-10 w-full h-full flex items-center">
+            <div class="carousel-content-wrapper container-page relative z-10 w-full h-full flex items-center pointer-events-auto">
               <div class="max-w-2xl py-20">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-stone-200 text-xs font-mono tracking-widest uppercase mb-6 animate-fade-up">
-                  <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
-                  Premium 3D Manufacturing
-                </div>
-
-                <h1 class="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white mb-6 text-balance leading-[1.1] animate-fade-up delay-100">
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white mb-6 text-balance leading-[1.1] animate-fade-up delay-100 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
                   {slide.heading}
                 </h1>
                 
                 {slide.description && (
-                  <p class="text-base sm:text-lg text-stone-300 mb-8 text-pretty max-w-xl animate-fade-up delay-200 font-light leading-relaxed">
+                  <p class="text-base sm:text-lg text-stone-200 mb-8 text-pretty max-w-xl animate-fade-up delay-200 font-light leading-relaxed drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
                     {slide.description}
                   </p>
                 )}
@@ -86,25 +90,25 @@ const slides = heroSlides.length > 0 ? heroSlides : [
                 <div class="flex flex-wrap gap-4 animate-fade-up delay-300">
                   <a
                     href={slide.primary_cta_link || '/shop'}
-                    class="inline-flex items-center justify-center font-medium transition-all duration-300 rounded-lg px-8 py-4 text-base bg-accent-500 text-stone-950 hover:bg-accent-400 hover:shadow-[0_0_20px_rgba(132,204,22,0.4)] active:scale-95 select-none"
+                    class="inline-flex items-center justify-center font-medium transition-all duration-300 rounded-lg px-8 py-4 text-base bg-accent-500 text-stone-950 hover:bg-accent-400 shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_20px_rgba(132,204,22,0.4)] hover:shadow-[0_0_25px_rgba(132,204,22,0.6)] active:scale-95 select-none"
                   >
                     {slide.primary_cta_text || 'Shop Products'}
                   </a>
                   <a
                     href={slide.secondary_cta_link || '/custom'}
-                    class="inline-flex items-center justify-center font-medium transition-all duration-300 rounded-lg px-8 py-4 text-base bg-transparent hover:bg-white/10 text-white border border-white/30 backdrop-blur-md active:scale-95 select-none"
+                    class="inline-flex items-center justify-center font-medium transition-all duration-300 rounded-lg px-8 py-4 text-base bg-[#101312]/60 hover:bg-[#101312]/85 text-white border border-white/30 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.4)] active:scale-95 select-none"
                   >
                     {slide.secondary_cta_text && slide.secondary_cta_text.toLowerCase() !== 'custom' ? slide.secondary_cta_text : 'Custom 3D Print'}
                   </a>
                 </div>
 
                 <!-- Trust Indicators -->
-                <div class="mt-12 flex items-center gap-6 animate-fade-up delay-400 text-sm font-medium text-stone-400">
-                  <div class="flex items-center gap-2">
+                <div class="mt-12 flex items-center gap-6 animate-fade-up delay-400 text-sm font-medium text-stone-300">
+                  <div class="flex items-center gap-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                     <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Industrial Quality</span>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                     <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     <span>Fast Production</span>
                   </div>
@@ -356,14 +360,172 @@ const slides = heroSlides.length > 0 ? heroSlides : [
     </div>
   </section>
 
+  <!-- Official Three.js r134 and Vanta WAVES CDN Scripts -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+
   <script src="/carousel.js" is:inline></script>
 </Layout>
 
+<script>
+  let vantaEffect: any = null;
+
+  function hasWebGL(): boolean {
+    try {
+      const canvas = document.createElement('canvas');
+      return !!(
+        window.WebGLRenderingContext &&
+        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function destroyVanta() {
+    if (vantaEffect && typeof vantaEffect.destroy === 'function') {
+      try {
+        vantaEffect.destroy();
+      } catch (e) {
+        console.warn('Error destroying Vanta instance:', e);
+      }
+      vantaEffect = null;
+    }
+  }
+
+  function loadScript(src: string, id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const existing = document.getElementById(id) as HTMLScriptElement | null;
+      if (existing) {
+        if ((existing as any)._loaded) {
+          resolve();
+          return;
+        }
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', (err) => reject(err), { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = id;
+      script.src = src;
+      script.async = false;
+      script.onload = () => {
+        (script as any)._loaded = true;
+        resolve();
+      };
+      script.onerror = (err) => reject(err);
+      document.head.appendChild(script);
+    });
+  }
+
+  async function ensureVantaLoaded(): Promise<boolean> {
+    const w = window as any;
+    if (typeof w.THREE === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js', 'three-r134-cdn');
+    }
+    if (typeof w.VANTA === 'undefined' || typeof w.VANTA.WAVES !== 'function') {
+      await loadScript('https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js', 'vanta-waves-cdn');
+    }
+    return typeof w.VANTA !== 'undefined' && typeof w.VANTA.WAVES === 'function';
+  }
+
+  async function initHeroVanta() {
+    // 1. Accessibility: Respect prefers-reduced-motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      console.info('Vanta: prefers-reduced-motion is active. Skipping animated wave background.');
+      return;
+    }
+
+    // 2. WebGL support check
+    if (!hasWebGL()) {
+      console.warn('Vanta: WebGL is not available. Using dark static fallback.');
+      return;
+    }
+
+    // 3. Locate hero background container
+    const heroBg = document.getElementById('vanta-hero-bg');
+    if (!heroBg) return;
+
+    // 4. Safe cleanup to prevent duplicate contexts or excessive GPU usage
+    destroyVanta();
+
+    // 5. Ensure scripts are ready
+    try {
+      const ready = await ensureVantaLoaded();
+      if (!ready) {
+        console.warn('Vanta WAVES could not be initialized: libraries missing.');
+        return;
+      }
+    } catch (err) {
+      console.warn('Failed to load Vanta/Three scripts:', err);
+      return;
+    }
+
+    // Ensure container is still mounted
+    if (!document.getElementById('vanta-hero-bg')) return;
+
+    try {
+      const isMobile = window.innerWidth < 768;
+      const w = window as any;
+
+      vantaEffect = w.VANTA.WAVES({
+        el: heroBg,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x0f0f0f,
+        shininess: 27.00,
+        waveHeight: isMobile ? 16.00 : 21.50,
+        waveSpeed: 0.75,
+        zoom: 0.65,
+        THREE: w.THREE,
+      });
+    } catch (err) {
+      console.error('Error during Vanta WAVES initialization:', err);
+    }
+  }
+
+  // Handle lifecycle and navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initHeroVanta());
+  } else {
+    initHeroVanta();
+  }
+
+  window.addEventListener('beforeunload', destroyVanta);
+  document.addEventListener('astro:before-swap', destroyVanta);
+  document.addEventListener('astro:page-load', () => initHeroVanta());
+
+  // Handle screen resize safely
+  let resizeTimer: number;
+  window.addEventListener(
+    'resize',
+    () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (vantaEffect && typeof vantaEffect.resize === 'function') {
+          vantaEffect.resize();
+        }
+      }, 100);
+    },
+    { passive: true }
+  );
+</script>
+
 <style>
-  .hero-carousel-container {
-    position: relative;
+  .hero-vanta-container {
+    position: absolute;
     width: 100%;
     z-index: 0;
+  }
+  .hero-carousel-container {
+    position: absolute;
+    width: 100%;
+    z-index: 10;
     display: flex;
     align-items: center;
   }
@@ -382,11 +544,6 @@ const slides = heroSlides.length > 0 ? heroSlides : [
     opacity: 1;
     visibility: visible;
     z-index: 2;
-  }
-  .carousel-image {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
   }
   .carousel-content-wrapper {
     position: relative;
