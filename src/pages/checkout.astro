@@ -697,7 +697,8 @@ import { siteConfig, formatPrice } from '../config/site';
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': supabaseAnonKey
+          'apikey': supabaseAnonKey,
+          'Authorization': `Bearer ${supabaseAnonKey}`
         },
         body: JSON.stringify(payload)
       });
@@ -705,7 +706,15 @@ import { siteConfig, formatPrice } from '../config/site';
       const orderData = await response.json().catch(() => null);
 
       if (!response.ok || !orderData || !orderData.success) {
-        const errorMsg = orderData?.error || 'Unable to initialize order. Please verify your items and try again.';
+        const serverError = orderData?.error || orderData?.message;
+        let errorMsg = serverError;
+
+        if (serverError && serverError.includes('Razorpay payment gateway is not configured')) {
+          errorMsg = 'Razorpay payment gateway is not yet configured on the server. Please select "Cash on Delivery (COD)" below to place your order, or configure your Razorpay API keys in Supabase.';
+        } else if (!errorMsg) {
+          errorMsg = 'Unable to initialize order. Please verify your items or select Cash on Delivery.';
+        }
+
         showError(errorMsg);
         resetSubmitBtn();
         return;
@@ -749,7 +758,8 @@ import { siteConfig, formatPrice } from '../config/site';
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  'apikey': supabaseAnonKey
+                  'apikey': supabaseAnonKey,
+                  'Authorization': `Bearer ${supabaseAnonKey}`
                 },
                 body: JSON.stringify({
                   action: 'cancel',
@@ -774,7 +784,8 @@ import { siteConfig, formatPrice } from '../config/site';
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'apikey': supabaseAnonKey
+                'apikey': supabaseAnonKey,
+                'Authorization': `Bearer ${supabaseAnonKey}`
               },
               body: JSON.stringify({
                 order_id: orderData.order_id,
@@ -829,7 +840,8 @@ import { siteConfig, formatPrice } from '../config/site';
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'apikey': supabaseAnonKey
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
             },
             body: JSON.stringify({
               action: 'cancel',
