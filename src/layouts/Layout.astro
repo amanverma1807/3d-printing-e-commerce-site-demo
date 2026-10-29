@@ -1,8 +1,8 @@
 ---
-import "../styles/global.css";
-import { siteConfig } from "../config/site";
-import Navbar from "../components/Navbar.astro";
-import Footer from "../components/Footer.astro";
+import '../styles/global.css';
+import { siteConfig } from '../config/site';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 
 interface Props {
   title?: string;
@@ -12,23 +12,20 @@ interface Props {
   categories?: { name: string; slug: string }[];
 }
 
-const {
-  title = `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`,
+const { 
+  title = `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`, 
   description = siteConfig.brand.description,
-  image = "/assets/p1.png",
+  image = '/assets/p1.png',
   canonicalUrl,
-  categories,
+  categories
 } = Astro.props;
 
-const siteOrigin =
-  siteConfig.brand.url || Astro.site?.toString() || Astro.url.origin;
-const canonicalHref =
-  canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
-const resolvedImage = image || "/assets/p1.png";
-const resolvedImageUrl =
-  resolvedImage.startsWith("http://") || resolvedImage.startsWith("https://")
-    ? resolvedImage
-    : new URL(resolvedImage, siteOrigin).href;
+const siteOrigin = siteConfig.brand.url || Astro.site?.toString() || Astro.url.origin;
+const canonicalHref = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
+const resolvedImage = image || '/assets/p1.png';
+const resolvedImageUrl = resolvedImage.startsWith('http://') || resolvedImage.startsWith('https://')
+  ? resolvedImage
+  : new URL(resolvedImage, siteOrigin).href;
 ---
 
 <!doctype html>
@@ -65,14 +62,9 @@ const resolvedImageUrl =
     <meta name="twitter:image" content={resolvedImageUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
-  <body
-    class="min-h-screen flex flex-col bg-surface text-text-primary overflow-x-hidden w-full"
-  >
+  <body class="min-h-screen flex flex-col bg-surface text-text-primary overflow-x-hidden w-full">
     <Navbar />
     <main class="flex-1 w-full min-w-0">
       <slot />
