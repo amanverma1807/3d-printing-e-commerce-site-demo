@@ -82,10 +82,13 @@ const displayCategories = categories !== undefined ? categories : siteConfig.cat
           <span>·</span>
           <a href="/return-policy" class="hover:text-stone-300 transition-colors">Returns</a>
         </div>
+        <span class="hidden sm:inline">·</span>
+        <a href="#" class="hover:text-stone-300 transition-colors">Built by Aman Verma</a>
       </div>
 
-      <!-- Social links -->
+      <!-- Trust note & Social links -->
       <div class="flex items-center gap-5">
+        <span class="text-xs text-stone-400 font-mono">Secured by Razorpay</span>
         {hasSocial('instagram') && (
           <a
             href={siteConfig.social.instagram}

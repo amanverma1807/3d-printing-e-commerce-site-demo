@@ -7,14 +7,25 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  canonicalUrl?: string;
   categories?: { name: string; slug: string }[];
 }
 
 const { 
   title = `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`, 
   description = siteConfig.brand.description,
+  image = '/assets/p1.png',
+  canonicalUrl,
   categories
 } = Astro.props;
+
+const siteOrigin = siteConfig.brand.url || Astro.site?.toString() || Astro.url.origin;
+const canonicalHref = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
+const resolvedImage = image || '/assets/p1.png';
+const resolvedImageUrl = resolvedImage.startsWith('http://') || resolvedImage.startsWith('https://')
+  ? resolvedImage
+  : new URL(resolvedImage, siteOrigin).href;
 ---
 
 <!doctype html>
@@ -31,6 +42,24 @@ const {
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalHref} />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalHref} />
+    <meta property="og:site_name" content={siteConfig.brand.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={resolvedImageUrl} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalHref} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedImageUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />

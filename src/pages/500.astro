@@ -74,7 +74,7 @@ const errorMessage = error instanceof Error ? error.message : null;
           Return to Home
         </Button>
         {hasWhatsApp() ? (
-          <Button href={getWhatsAppLink("Hello! I experienced a server error on the store.")} variant="outline">
+          <Button href={getWhatsAppLink(`Hello! I experienced a server error on ${siteConfig.brand.name}.`)} variant="outline">
             Report via WhatsApp
           </Button>
         ) : (

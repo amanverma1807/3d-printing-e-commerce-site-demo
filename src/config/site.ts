@@ -1,9 +1,9 @@
 // Central site configuration — template configuration for easy multi-client reusability
 export const siteConfig = {
   brand: {
-    name: 'Store',
+    name: 'LayerForge',
     tagline: 'Precision 3D Printing & Bespoke Fabrication',
-    description: 'Precision 3D-printed designs, bespoke additive manufacturing, and engineered physical goods.',
+    description: 'LayerForge — Precision 3D-printed designs, bespoke additive manufacturing, and engineered physical goods.',
     url: '', // Set client production domain (e.g. 'https://example.com')
   },
   contact: {
@@ -48,7 +48,7 @@ export const siteConfig = {
     enableContactForm: false,
   },
   seo: {
-    defaultTitle: 'Store — Quality Products & Modern Essentials',
+    defaultTitle: 'LayerForge — Precision 3D Printing & Bespoke Fabrication',
     defaultDescription: 'Explore our curated catalog of quality items designed for style, durability, and everyday living.',
   },
   policyLastUpdated: 'October 2024',
