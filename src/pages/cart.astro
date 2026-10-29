@@ -1,79 +1,164 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Button from '../components/Button.astro';
-import { siteConfig, formatPrice } from '../config/site';
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button.astro";
+import { siteConfig, formatPrice } from "../config/site";
 ---
 
 <Layout title={`Shopping Cart — ${siteConfig.brand.name}`}>
-  <section class="py-12 sm:py-16 min-h-[70vh] bg-surface">
+  <section
+    class="py-8 sm:py-16 min-h-[70vh] bg-surface overflow-x-hidden w-full"
+  >
     <div class="container-page max-w-5xl">
       <!-- Header -->
-      <div class="mb-8 sm:mb-10">
-        <nav class="flex items-center gap-2 text-xs font-mono text-stone-500 mb-2" aria-label="Breadcrumb">
+      <div class="mb-6 sm:mb-10">
+        <nav
+          class="flex items-center gap-2 text-xs font-mono text-stone-500 mb-2"
+          aria-label="Breadcrumb"
+        >
           <a href="/" class="hover:text-stone-900 transition-colors">Home</a>
           <span>/</span>
           <span class="text-stone-900">Cart</span>
         </nav>
-        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900">Shopping Cart</h1>
+        <h1
+          class="text-2xl sm:text-4xl font-semibold tracking-tight text-stone-900"
+        >
+          Shopping Cart
+        </h1>
       </div>
 
       <!-- Notification for removed/unavailable items -->
-      <div id="cart-notice" class="hidden mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-center justify-between">
-        <span id="cart-notice-text">Some items in your cart are no longer available and were removed.</span>
-        <button type="button" id="cart-notice-close" class="text-amber-900 font-bold ml-4 hover:opacity-70 p-1 cursor-pointer">&times;</button>
+      <div
+        id="cart-notice"
+        class="hidden mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-center justify-between"
+      >
+        <span id="cart-notice-text"
+          >Some items in your cart are no longer available and were removed.</span
+        >
+        <button
+          type="button"
+          id="cart-notice-close"
+          class="text-amber-900 font-bold ml-4 hover:opacity-70 p-1 cursor-pointer"
+          >&times;</button
+        >
       </div>
 
-      <div id="cart-content" class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+      <div
+        id="cart-content"
+        class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start w-full min-w-0"
+      >
         <!-- Cart Items List (7 cols) -->
-        <div class="lg:col-span-7 space-y-4">
-          <div id="cart-items" class="divide-y divide-border rounded-xl bg-surface-bright border border-border shadow-subtle overflow-hidden">
+        <div class="w-full min-w-0 lg:col-span-7 space-y-4">
+          <div
+            id="cart-items"
+            class="divide-y divide-border rounded-xl bg-surface-bright border border-border shadow-subtle overflow-hidden w-full min-w-0"
+          >
             <!-- Cart items will be rendered here by JS -->
           </div>
 
-          <div id="empty-cart" class="py-20 text-center bg-surface-bright border border-border rounded-2xl p-8 shadow-subtle">
-            <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-stone-100 border border-stone-200 text-stone-400 flex items-center justify-center">
-              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          <div
+            id="empty-cart"
+            class="py-20 text-center bg-surface-bright border border-border rounded-2xl p-8 shadow-subtle"
+          >
+            <div
+              class="w-14 h-14 mx-auto mb-4 rounded-full bg-stone-100 border border-stone-200 text-stone-400 flex items-center justify-center"
+            >
+              <svg
+                class="w-6 h-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
+                ></path><line x1="3" x2="21" y1="6" y2="6"></line><path
+                  d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
             </div>
-            <h2 class="text-lg font-semibold tracking-tight text-stone-900 mb-2">Your cart is currently empty</h2>
-            <p class="text-sm text-stone-500 mb-6 font-light max-w-sm mx-auto">Explore our collection of quality products and curated essentials.</p>
+            <h2
+              class="text-lg font-semibold tracking-tight text-stone-900 mb-2"
+            >
+              Your cart is currently empty
+            </h2>
+            <p class="text-sm text-stone-500 mb-6 font-light max-w-sm mx-auto">
+              Explore our collection of quality products and curated essentials.
+            </p>
             <Button href="/shop" size="md">Explore Catalog</Button>
           </div>
         </div>
 
         <!-- Cart Summary Card (5 cols) -->
-        <div id="cart-summary" class="hidden lg:block lg:col-span-5">
-          <div class="sticky top-24 bg-surface-bright rounded-xl p-6 sm:p-7 border border-border shadow-subtle space-y-6">
-            <h2 class="text-base font-semibold text-stone-900 pb-3 border-b border-border/60">Order Summary</h2>
+        <div
+          id="cart-summary"
+          class="w-full min-w-0 hidden lg:block lg:col-span-5"
+        >
+          <div
+            class="sticky top-24 bg-surface-bright rounded-xl p-4 sm:p-7 border border-border shadow-subtle space-y-5 sm:space-y-6 w-full min-w-0"
+          >
+            <h2
+              class="text-base font-semibold text-stone-900 pb-3 border-b border-border/60"
+            >
+              Order Summary
+            </h2>
 
             <div class="space-y-3 pb-6 border-b border-border/60 text-sm">
               <div class="flex justify-between items-center">
                 <span class="text-stone-600 font-light">Subtotal</span>
-                <span id="subtotal" class="font-medium text-stone-900 tabular-nums">{formatPrice(0)}</span>
+                <span
+                  id="subtotal"
+                  class="font-medium text-stone-900 tabular-nums"
+                  >{formatPrice(0)}</span
+                >
               </div>
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-1.5">
                   <span class="text-stone-600 font-light">Shipping</span>
-                  <span id="shipping-badge" class="text-[10px] font-mono text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">Calculated</span>
+                  <span
+                    id="shipping-badge"
+                    class="text-[10px] font-mono text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded"
+                    >Calculated</span
+                  >
                 </div>
-                <span id="shipping" class="font-medium text-stone-900 tabular-nums">{formatPrice(0)}</span>
+                <span
+                  id="shipping"
+                  class="font-medium text-stone-900 tabular-nums"
+                  >{formatPrice(0)}</span
+                >
               </div>
             </div>
 
             <div class="flex justify-between items-baseline">
               <span class="text-base font-medium text-stone-900">Total</span>
-              <span id="total" class="text-2xl font-semibold text-stone-900 tabular-nums tracking-tight">{formatPrice(0)}</span>
+              <span
+                id="total"
+                class="text-2xl font-semibold text-stone-900 tabular-nums tracking-tight"
+                >{formatPrice(0)}</span
+              >
             </div>
 
             <div class="space-y-3 pt-2">
-              <Button href="/checkout" class="w-full" size="lg">Proceed to Checkout</Button>
-              <Button href="/shop" variant="ghost" class="w-full" size="sm">Continue Browsing</Button>
+              <Button href="/checkout" class="w-full" size="lg"
+                >Proceed to Checkout</Button
+              >
+              <Button href="/shop" variant="ghost" class="w-full" size="sm"
+                >Continue Browsing</Button
+              >
             </div>
 
-            <div class="pt-4 border-t border-border/40 text-[11px] text-stone-400 font-mono text-center flex items-center justify-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <div
+              class="pt-4 border-t border-border/40 text-[11px] text-stone-400 font-mono text-center flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 break-words"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"
+                ></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
               <span>Secured by Razorpay · Dispatched in 2–3 Days</span>
             </div>
@@ -91,47 +176,50 @@ import { siteConfig, formatPrice } from '../config/site';
     updateNavbarCartBadge,
     validateAndUpdateCart,
     calculateCartShipping,
-  } from '../lib/cart';
-  import { formatPrice } from '../config/site';
+  } from "../lib/cart";
+  import { formatPrice } from "../config/site";
 
-  const cartNotice = document.getElementById('cart-notice');
-  const cartNoticeText = document.getElementById('cart-notice-text');
-  const cartNoticeClose = document.getElementById('cart-notice-close');
+  const cartNotice = document.getElementById("cart-notice");
+  const cartNoticeText = document.getElementById("cart-notice-text");
+  const cartNoticeClose = document.getElementById("cart-notice-close");
 
-  cartNoticeClose?.addEventListener('click', () => {
-    cartNotice?.classList.add('hidden');
+  cartNoticeClose?.addEventListener("click", () => {
+    cartNotice?.classList.add("hidden");
   });
 
   function updateCartUI() {
     const cart = getLocalCart();
-    const cartItems = document.getElementById('cart-items');
-    const emptyCart = document.getElementById('empty-cart');
-    const cartSummary = document.getElementById('cart-summary');
-    const subtotalEl = document.getElementById('subtotal');
-    const totalEl = document.getElementById('total');
+    const cartItems = document.getElementById("cart-items");
+    const emptyCart = document.getElementById("empty-cart");
+    const cartSummary = document.getElementById("cart-summary");
+    const subtotalEl = document.getElementById("subtotal");
+    const totalEl = document.getElementById("total");
 
     if (cart.length === 0) {
-      emptyCart?.classList.remove('hidden');
-      cartSummary?.classList.add('hidden');
-      if (cartItems) cartItems.innerHTML = '';
+      emptyCart?.classList.remove("hidden");
+      cartSummary?.classList.add("hidden");
+      if (cartItems) cartItems.innerHTML = "";
       return;
     }
 
-    emptyCart?.classList.add('hidden');
-    cartSummary?.classList.remove('hidden');
+    emptyCart?.classList.add("hidden");
+    cartSummary?.classList.remove("hidden");
 
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
     const shipping = calculateCartShipping(cart);
     const total = subtotal + shipping;
 
     if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal);
-    const shippingEl = document.getElementById('shipping');
-    const shippingBadgeEl = document.getElementById('shipping-badge');
+    const shippingEl = document.getElementById("shipping");
+    const shippingBadgeEl = document.getElementById("shipping-badge");
     if (shippingEl) {
-      shippingEl.textContent = shipping === 0 ? 'Free' : formatPrice(shipping);
+      shippingEl.textContent = shipping === 0 ? "Free" : formatPrice(shipping);
     }
     if (shippingBadgeEl) {
-      shippingBadgeEl.textContent = shipping === 0 ? 'Free' : 'Product rates';
+      shippingBadgeEl.textContent = shipping === 0 ? "Free" : "Product rates";
     }
     if (totalEl) totalEl.textContent = formatPrice(total);
 
@@ -139,46 +227,69 @@ import { siteConfig, formatPrice } from '../config/site';
       cartItems.innerHTML = cart
         .map(
           (item, index) => `
-        <div class="flex gap-4 sm:gap-5 p-4 sm:p-5 bg-surface-bright items-center">
-          <div class="w-18 h-18 sm:w-20 sm:h-20 rounded-lg bg-stone-100/60 p-2 border border-border/80 flex items-center justify-center shrink-0">
-            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="font-medium text-stone-900 text-sm sm:text-base mb-1 truncate">
-              <a href="/product/${item.slug}" class="hover:text-stone-600 transition-colors">${item.name}</a>
-            </h3>
-            ${item.color ? `<p class="text-xs font-mono text-stone-500 mb-1">Color: <span class="text-stone-800">${item.color}</span></p>` : ''}
-            <p class="text-xs sm:text-sm text-stone-600 font-medium tabular-nums mb-3">${formatPrice(item.price)}</p>
-            <div class="inline-flex items-center gap-1 rounded-md border border-border bg-stone-50/50 p-0.5">
-              <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="decrease" aria-label="Decrease quantity">−</button>
-              <span class="w-8 text-center font-medium tabular-nums text-xs sm:text-sm text-stone-900">${item.quantity}</span>
-              <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="increase" aria-label="Increase quantity">+</button>
+        <div class="p-3.5 sm:p-5 bg-surface-bright flex flex-col sm:flex-row gap-3.5 sm:gap-5 w-full min-w-0">
+          <div class="flex gap-3 sm:gap-5 flex-1 min-w-0 items-start">
+            <a href="/product/${item.slug}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-stone-100/60 p-1.5 sm:p-2 border border-border/80 flex items-center justify-center shrink-0">
+              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain" />
+            </a>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="font-medium text-stone-900 text-sm sm:text-base line-clamp-2">
+                  <a href="/product/${item.slug}" class="hover:text-stone-600 transition-colors">${item.name}</a>
+                </h3>
+                <button class="remove-btn sm:hidden text-stone-400 hover:text-red-600 p-1 rounded hover:bg-red-50 transition-colors cursor-pointer shrink-0" data-index="${index}" aria-label="Remove item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+              ${item.color ? `<p class="text-[11px] sm:text-xs font-mono text-stone-500 mt-0.5">Color: <span class="text-stone-800">${item.color}</span></p>` : ""}
+              <p class="text-xs sm:text-sm text-stone-600 font-medium tabular-nums mt-1">${formatPrice(item.price)}</p>
+
+              <!-- Mobile Stepper & Line Total -->
+              <div class="flex sm:hidden items-center justify-between mt-3 pt-2 border-t border-border/40 gap-2">
+                <div class="inline-flex items-center rounded-md border border-border bg-stone-50/50 p-0.5">
+                  <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="decrease" aria-label="Decrease quantity">−</button>
+                  <span class="w-7 text-center font-medium tabular-nums text-xs text-stone-900">${item.quantity}</span>
+                  <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="increase" aria-label="Increase quantity">+</button>
+                </div>
+                <span class="font-semibold text-stone-900 tabular-nums text-sm">${formatPrice(item.price * item.quantity)}</span>
+              </div>
+
+              <!-- Desktop Stepper -->
+              <div class="hidden sm:inline-flex items-center gap-1 rounded-md border border-border bg-stone-50/50 p-0.5 mt-3">
+                <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="decrease" aria-label="Decrease quantity">−</button>
+                <span class="w-8 text-center font-medium tabular-nums text-sm text-stone-900">${item.quantity}</span>
+                <button class="qty-btn w-7 h-7 rounded flex items-center justify-center text-stone-600 hover:bg-stone-200/60 transition-colors active:scale-95 text-sm cursor-pointer" data-index="${index}" data-action="increase" aria-label="Increase quantity">+</button>
+              </div>
             </div>
           </div>
-          <div class="flex flex-col items-end justify-between self-stretch shrink-0">
+
+          <!-- Desktop Right Column -->
+          <div class="hidden sm:flex flex-col items-end justify-between self-stretch shrink-0">
             <button class="remove-btn text-stone-400 hover:text-red-600 p-1.5 rounded hover:bg-red-50 transition-colors cursor-pointer" data-index="${index}" aria-label="Remove item">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
               </svg>
             </button>
-            <p class="font-semibold text-stone-900 tabular-nums tracking-tight text-sm sm:text-base">${formatPrice(item.price * item.quantity)}</p>
+            <p class="font-semibold text-stone-900 tabular-nums tracking-tight text-base">${formatPrice(item.price * item.quantity)}</p>
           </div>
         </div>
-      `
+      `,
         )
-        .join('');
+        .join("");
 
       // Re-attach event listeners
-      document.querySelectorAll('.qty-btn').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
+      document.querySelectorAll(".qty-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           const target = e.currentTarget as HTMLElement;
-          const index = parseInt(target.dataset.index || '0');
+          const index = parseInt(target.dataset.index || "0");
           const action = target.dataset.action;
           const cart = getLocalCart();
 
-          if (action === 'increase') {
+          if (action === "increase") {
             cart[index].quantity += 1;
-          } else if (action === 'decrease' && cart[index].quantity > 1) {
+          } else if (action === "decrease" && cart[index].quantity > 1) {
             cart[index].quantity -= 1;
           }
 
@@ -188,9 +299,11 @@ import { siteConfig, formatPrice } from '../config/site';
         });
       });
 
-      document.querySelectorAll('.remove-btn').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const index = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+      document.querySelectorAll(".remove-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const index = parseInt(
+            (e.currentTarget as HTMLElement).dataset.index || "0",
+          );
           const cart = getLocalCart();
           cart.splice(index, 1);
           saveLocalCart(cart);
@@ -213,7 +326,7 @@ import { siteConfig, formatPrice } from '../config/site';
       updateNavbarCartBadge();
       if (removedItems.length > 0 && cartNotice && cartNoticeText) {
         cartNoticeText.textContent = `${removedItems.length} item(s) are no longer active or available and were removed from your cart.`;
-        cartNotice.classList.remove('hidden');
+        cartNotice.classList.remove("hidden");
       }
     }
   }
