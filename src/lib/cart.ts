@@ -1,5 +1,3 @@
-import { supabase } from './supabase';
-
 import type { CartItem } from '../types';
 export type { CartItem };
 
@@ -77,6 +75,7 @@ export async function validateAndUpdateCart(): Promise<{
   }
 
   try {
+    const { supabase } = await import('./supabase');
     const { data, error } = await supabase
       .from('products')
       .select('id, name, slug, price, shipping_fee, images, is_active, in_stock')

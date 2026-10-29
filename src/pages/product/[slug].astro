@@ -375,15 +375,15 @@ const discount = product.originalPrice
   });
 
   // Add to cart button handler for main CTA
-  const addToCartBtn = document.getElementById('add-to-cart-main');
+  const addToCartBtn = document.getElementById('add-to-cart-main') as HTMLButtonElement | null;
   addToCartBtn?.addEventListener('click', () => {
     const quantity = parseInt(qtyInput.value) || 1;
-    const productId = addToCartBtn.dataset.productId;
-    const productName = addToCartBtn.dataset.productName;
-    const productPrice = parseFloat(addToCartBtn.dataset.productPrice || '0');
-    const productShipping = parseFloat(addToCartBtn.dataset.productShipping || '0');
-    const productImage = addToCartBtn.dataset.productImage || '';
-    const productSlug = addToCartBtn.dataset.productSlug || '';
+    const productId = addToCartBtn.getAttribute('data-product-id') || addToCartBtn.dataset.productId;
+    const productName = addToCartBtn.getAttribute('data-product-name') || addToCartBtn.dataset.productName;
+    const productPrice = parseFloat(addToCartBtn.getAttribute('data-product-price') || addToCartBtn.dataset.productPrice || '0');
+    const productShipping = parseFloat(addToCartBtn.getAttribute('data-product-shipping') || addToCartBtn.dataset.productShipping || '0');
+    const productImage = addToCartBtn.getAttribute('data-product-image') || addToCartBtn.dataset.productImage || '';
+    const productSlug = addToCartBtn.getAttribute('data-product-slug') || addToCartBtn.dataset.productSlug || '';
 
     if (productId && productName && !isNaN(productPrice)) {
       addToCart({
@@ -397,12 +397,12 @@ const discount = product.originalPrice
       }, quantity);
 
       // Visual feedback
-      const originalText = addToCartBtn.textContent;
+      const originalHtml = addToCartBtn.innerHTML;
       addToCartBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Added`;
       addToCartBtn.classList.add('bg-success');
 
       setTimeout(() => {
-        addToCartBtn.innerHTML = originalText || '';
+        addToCartBtn.innerHTML = originalHtml;
         addToCartBtn.classList.remove('bg-success');
       }, 800);
     }
@@ -412,12 +412,12 @@ const discount = product.originalPrice
   const buyNowBtn = document.getElementById('buy-now-btn');
   buyNowBtn?.addEventListener('click', () => {
     const quantity = parseInt(qtyInput.value) || 1;
-    const productId = addToCartBtn?.dataset.productId;
-    const productName = addToCartBtn?.dataset.productName;
-    const productPrice = parseFloat(addToCartBtn?.dataset.productPrice || '0');
-    const productShipping = parseFloat(addToCartBtn?.dataset.productShipping || '0');
-    const productImage = addToCartBtn?.dataset.productImage || '';
-    const productSlug = addToCartBtn?.dataset.productSlug || '';
+    const productId = addToCartBtn?.getAttribute('data-product-id') || addToCartBtn?.dataset.productId;
+    const productName = addToCartBtn?.getAttribute('data-product-name') || addToCartBtn?.dataset.productName;
+    const productPrice = parseFloat(addToCartBtn?.getAttribute('data-product-price') || addToCartBtn?.dataset.productPrice || '0');
+    const productShipping = parseFloat(addToCartBtn?.getAttribute('data-product-shipping') || addToCartBtn?.dataset.productShipping || '0');
+    const productImage = addToCartBtn?.getAttribute('data-product-image') || addToCartBtn?.dataset.productImage || '';
+    const productSlug = addToCartBtn?.getAttribute('data-product-slug') || addToCartBtn?.dataset.productSlug || '';
 
     if (productId && productName && !isNaN(productPrice)) {
       addToCart({

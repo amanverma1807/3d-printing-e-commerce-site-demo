@@ -123,12 +123,12 @@ const discount = product.originalPrice
   document.addEventListener('click', (e) => {
     const target = (e.target as HTMLElement).closest('.add-to-cart-btn');
     if (target) {
-      const productId = target.dataset.productId;
-      const productName = target.dataset.productName;
-      const productPrice = parseFloat(target.dataset.productPrice || '0');
-      const productShipping = parseFloat(target.dataset.productShipping || '0');
-      const productImage = target.dataset.productImage || '';
-      const productSlug = target.dataset.productSlug || '';
+      const productId = target.getAttribute('data-product-id') || (target as HTMLElement).dataset?.productId;
+      const productName = target.getAttribute('data-product-name') || (target as HTMLElement).dataset?.productName;
+      const productPrice = parseFloat(target.getAttribute('data-product-price') || (target as HTMLElement).dataset?.productPrice || '0');
+      const productShipping = parseFloat(target.getAttribute('data-product-shipping') || (target as HTMLElement).dataset?.productShipping || '0');
+      const productImage = target.getAttribute('data-product-image') || (target as HTMLElement).dataset?.productImage || '';
+      const productSlug = target.getAttribute('data-product-slug') || (target as HTMLElement).dataset?.productSlug || '';
 
       if (productId && productName && !isNaN(productPrice)) {
         addToCart({
