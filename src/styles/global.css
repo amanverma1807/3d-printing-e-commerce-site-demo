@@ -86,8 +86,6 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  max-width: 100vw;
 }
 
 body {
@@ -95,9 +93,6 @@ body {
   color: var(--color-text-primary);
   background-color: var(--color-surface);
   position: relative;
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
 }
 
 /* Subtle layer line background texture - REMOVED */
@@ -121,13 +116,7 @@ body {
 @utility container-page {
   max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-@media (min-width: 640px) {
-  .container-page {
-    padding-inline: var(--container-padding);
-  }
+  padding-inline: var(--container-padding);
 }
 
 @utility text-balance {
